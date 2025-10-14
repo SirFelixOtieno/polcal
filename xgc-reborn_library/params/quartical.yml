@@ -1,0 +1,108 @@
+lib:
+   params:
+      quartical:
+      
+         base:
+      
+            input_model.beam:
+            input_model.beam_l_axis: X
+            input_model.beam_m_axis: Y
+            input_model.invert_uvw: true
+            input_model.source_chunks: 500
+            
+            solver.convergence_fraction: 0.99
+            solver.convergence_criteria: 1e-06
+            solver.reference_antenna: '{recipe.quartical_refant}' 
+             
+            dask.address:
+            dask.workers: 1
+            dask.scheduler: threads  
+            
+            output.overwrite: true
+            output.log_to_terminal: true
+            output.apply_baseline_corrections: false
+            output.compute_baseline_corrections: false
+            
+         primary:
+            _use: lib.params.quartical.base
+             
+            output.columns: [CORRECTED_DATA]
+            output.products: [corrected_data]  
+            
+            input_ms.select_fields: [0]
+            input_ms.select_uv_range: [150,0]
+            input_ms.path: '{recipe.msdir}/calibrators.ms'
+                     
+         secondary:
+            _use: lib.params.quartical.base
+         
+            output.columns: [CORRECTED_DATA]
+            output.products: [corrected_data]
+            
+            input_ms.select_fields: [1]
+            input_ms.select_uv_range: [150,0]
+            input_ms.path: '{recipe.msdir}/calibrators.ms'
+          
+         polarization: 
+            _use: lib.params.quartical.base
+         
+            output.columns: [CORRECTED_DATA]
+            output.products: [corrected_data]
+            
+            input_ms.select_fields: [2]
+            input_ms.select_uv_range: [150,0]
+            input_ms.path: '{recipe.msdir}/calibrators.ms'
+                 
+         transfer-target:
+            _use: lib.params.quartical.base
+        
+            output.columns: [CORRECTED_DATA]
+            output.products: [corrected_data]
+            
+            input_ms.select_fields: [0]
+            input_ms.select_uv_range: [150,0]
+            input_ms.path: '{recipe.msdir}/target.ms'  
+            
+         selfcal:
+            _use: lib.params.quartical.base
+            
+            output.columns: [CORRECTED_DATA]
+            output.products: [corrected_data]
+            
+            input_ms.select_fields: [0]
+            input_ms.select_uv_range: [150,0]
+            input_ms.path: '{recipe.msdir}/target.ms'
+            
+            
+            
+            
+            
+            
+      
+            
+            
+            
+         
+        
+         
+   
+
+  
+  
+  
+  
+  
+            
+            
+            
+           
+                 
+    
+    
+    
+  
+   
+    
+   
+   
+

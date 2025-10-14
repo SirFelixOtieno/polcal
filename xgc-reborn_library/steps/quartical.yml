@@ -1,0 +1,290 @@
+lib:
+   steps:
+      quartical:
+         
+         prim0:
+            cab: quartical
+            params:
+               _use:  lib.params.quartical.primary
+      
+         prim-kg1:
+            cab: quartical
+            params:
+               _use:  lib.params.quartical.primary
+                   
+         prim-kg2:
+            cab: quartical
+            params:
+               _use:  lib.params.quartical.primary
+               
+         prim-b1:
+            cab: quartical
+            params:
+               _use:  lib.params.quartical.primary   
+                       
+         prim-b2:
+            cab: quartical
+            params:
+               _use:  lib.params.quartical.primary   
+               
+         sec-phase:
+            cab: quartical
+            params:
+               _use:  lib.params.quartical.secondary
+               
+         sec-amp:
+            cab: quartical
+            params:
+               _use:  lib.params.quartical.secondary
+               
+         pol-xphase:
+            cab: quartical
+            params:
+               _use:  lib.params.quartical.polarization
+               
+         tranfer-target:
+            cab: quartical
+            params:
+               _use:  lib.params.quartical.transfer-target  
+               
+               input_ms.group_by: [FIELD_ID,DATA_DESC_ID,SCAN_NUMBER]
+         
+               input_model.apply_p_jones: false
+        
+               solver.threads: 2
+               solver.robust: false
+               solver.propagate_flags: false
+               
+               dask.threads: 16
+               dask.scheduler: threads
+               
+               mad_flags.enable: false 
+               mad_flags.threshold_bl: 5
+               mad_flags.max_deviation: 5
+               mad_flags.whitening: disabled
+               mad_flags.threshold_global: 5
+               
+               output.flags: false
+               output.net_gains: [G,D,B]
+               output.apply_p_jones_inv: false
+               output.log_directory: '{recipe.qcaldir}/logs/{self.label}.qc'
+               output.gain_directory: '{recipe.qcaldir}/gains/{self.label}.qc'
+               
+         selfcal:
+            cab: quartical
+            params:
+               _use:  lib.params.quartical.selfcal
+               
+               input_ms.freq_chunk: 0
+               input_ms.time_chunk: 25
+               input_ms.group_by: [SCAN_NUMBER, FIELD_ID, DATA_DESC_ID]
+               
+               input_model.recipe: MODEL_DATA
+               input_model.apply_p_jones: false
+               
+               solver.threads: 2
+               solver.robust: true
+               solver.propagate_flags: true
+               
+               dask.threads: 32
+               dask.scheduler: threads
+               
+               output.flags: true
+               output.net_gains: [G,D,B]
+               output.apply_p_jones_inv: false
+               output.log_directory: '{recipe.qcaldir}/logs/{self.label}.qc'
+               output.gain_directory: '{recipe.qcaldir}/gains/{self.label}.qc'
+               
+               G.type: amplitude
+               G.time_interval: 1
+               G.freq_interval: 0
+               G.load_from: '{recipe.qcaldir}/gains/{self.label}.qc/G'
+               G.interp_mode: amp
+               D.type: delay_and_offset
+               D.time_interval: 1
+               D.freq_interval: 0
+               D.initial_estimate: false
+               D.load_from: '{recipe.qcaldir}/gains/{self.label}.qc/D'
+               B.type: complex
+               B.time_interval: 0
+               B.freq_interval: 1
+               B.load_from: '{recipe.qcaldir}/gains/{self.label}.qc/B'
+             
+        
+        
+        
+        
+        
+        
+        
+       
+        
+        
+        
+
+                    
+         
+               
+               
+               
+               
+               
+               
+               
+            #input_ms.freq_chunk: 0
+            #input_ms.time_chunk: 128
+            
+            
+            #solver.threads: 2
+            #solver.robust: false
+            #solver.propagate_flags: true
+            
+            #K.time_interval: 4
+            #K.freq_interval: 0
+            #K.interp_mode: reim
+            #K.solve_per: antenna
+            #K.pinned_directions: [0]
+            #K.type: delay_and_offset
+            #K.interp_method: 2dlinear
+            #K.initial_estimate: true
+           # K.direction_dependent: false
+            #K.respect_scan_boundaries: true
+               
+            #output.net_gains: 
+            #output.flags: true
+            #output.columns: [CORRECTED_DATA]
+            #output.products: [corrected_data]
+            #output.log_directory: '{recipe.qcaldir}/logs/{self.label}.qc'
+            #output.gain_directory: '{recipe.qcaldir}/gains/{self.label}.qc'
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+        
+        
+        
+       
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+         crosshand-phases:
+         
+               input_ms.time_chunk: 0
+               input_ms.freq_chunk: 0
+               input_ms.select_uv_range: [0,0]
+               input_ms.group_by: [FIELD_ID,DATA_DESC_ID]  #,SCAN_NUMBER]
+        
+               input_model.recipe: #'{recipe.model-column}'
+               input_model.apply_p_jones: true
+               
+               
+               solver.propagate_flags: false
+               solver.robust: false
+               solver.threads: 8
+       
+               output.log_directory: '{recipe.qcaldir}/logs/{self.label}.qc'
+               output.gain_directory: '{recipe.qcaldir}/gains/{self.label}.qc'
+               output.overwrite: true
+               output.products: [corrected_data, corrected_weight]
+               output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+               output.flags: false
+               output.apply_p_jones_inv: true
+               output.net_gains: [G,K,B,D]
+               mad_flags.enable: false
+               dask.threads: 4
+               dask.scheduler: threads
+         
+               
+               
+               
+                   
+         secondary:
+            cab: quartical
+            params:
+               _use:  lib.params.quartical.secondary
+               
+               #solver.threads: 2
+               #solver.robust: false
+               #solver.propagate_flags: true
+               
+               mad_flags.enable: false 
+               mad_flags.threshold_bl: 5
+               mad_flags.max_deviation: 5
+               mad_flags.whitening: disabled
+               mad_flags.threshold_global: 5
+               
+               output.flags: false
+               output.columns: [CORRECTED_DATA]
+               output.products: [corrected_data]
+               output.log_directory: '{recipe.qcaldir}/logs_transfer-target.qc'
+               output.gain_directory: '{recipe.qcaldir}/gains_transfer-target.qc'
+                  
+         polarization:
+            cab: quartical
+            params:
+               _use:  lib.params.quartical.polarization
+               
+               #solver.threads: 2
+               #solver.robust: false
+               #solver.propagate_flags: true
+               
+               output.flags: false
+               output.columns: [CORRECTED_DATA]
+               output.products: [corrected_data]
+               output.log_directory: '{recipe.qcaldir}/logs_transfer-target.qc'
+               output.gain_directory: '{recipe.qcaldir}/gains_transfer-target.qc'
+               
+         transfer-target:
+            cab: quartical
+            params:
+               _use:  lib.params.quartical.transfer-target        
+               
+      selfcal:
+      
+         direction-independent:
+            cab: quartical
+            params:
+               _use:  lib.params.quartical.selfcal
+               
+               
+           
+                   
+     
+         
+         
+        
+               
+               
+               
+               
+              
+               
+               
+              
+     
+     
+             
+   
+   
+

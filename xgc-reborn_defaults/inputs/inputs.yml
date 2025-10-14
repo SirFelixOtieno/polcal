@@ -1,0 +1,224 @@
+  obs:
+     info: Select parameters by label. these parameters are based on (obs.yml). 
+     required: true
+     choices: [default,user]
+     default: 'default'
+     
+  band: 
+     info: Observation band
+     required: true
+     choices: [L,S0,S1,S2,S3,S4,UHF]
+     default: L
+     
+  breizorro_boxsize:
+     info: breizorro box size for masking
+     required: true
+     dtype: int
+     default: 50
+     
+  breizorro_dilate:
+     required: true
+     dtype: int
+     default: 2
+     
+  cal_uvrange:  
+     dtype: str
+     required: true
+     default: '>150m'
+     
+  clean_spw: 
+     required: true
+     dtype: str
+     
+  shadow_tolerance:
+     required: true
+     dtype: float
+     default: 0.0
+     
+  elevation_lowerlimit:
+     required: true
+     dtype: float
+     default: 0.0
+     
+  bad_timeranges: 
+     dtype: str
+     required: false
+     
+  bad_spw: 
+     dtype: str
+     required: false
+     
+  bad_scan: 
+     dtype: str
+     required: false
+     
+  bad_antenna: 
+     dtype: str
+     required: false
+     
+  quackinterval: 
+     dtype: float
+     required: true
+     default: 0
+     
+  mask_uvrange: 
+     dtype: str
+     required: true
+     
+  bandpass_edges: 
+     dtype: str
+     required: true
+     
+  bandpass_fillgaps:
+     dtype: int
+     required: true
+     default: 70
+     
+  rfi_mask: 
+     dtype: str
+     required: true
+     
+  crystallball_sky-model: 
+     required: false
+     dtype: File
+     
+  crystallball_num-sources: 
+     required: true
+     dtype: int
+     default: 0
+     
+  crystallball_num-workers: 
+     required: true
+     dtype: int
+     default: 0
+     
+  crystallball_points-only: 
+     required: true
+     dtype: bool
+     default: true
+     
+  crystallball_memory-fraction: 
+     required: true
+     dtype: float
+     default: 0.1
+     
+  ms_path: 
+     info: Path to the measurement set.
+     dtype: MS
+     policies:
+        positional: true
+     must_exist: true
+     writable: false
+     
+  working-directory: 
+     dtype: str
+     required: false
+     
+  bpcal-field: 
+     dtype: str
+     required: true
+     choices: [0408-65,J1939-6342]
+     
+  bpcal-gaintype: 
+     dtype: str
+     required: true
+     default: 'G'
+     
+  bpcal-solint1: 
+     dtype: str
+     required: true
+     default: 'inf'
+     
+  bpcal-solint2: 
+     dtype: str
+     required: true
+     default: '60s'
+     
+  fcal-field:  
+     dtype: str
+     required: true
+     choices: [0408-65,J1939-6342]
+     
+  gcal-field: 
+     dtype: str
+     required: true
+     
+  gcal-gaintype:
+     dtype: str
+     required: true
+     default: 'G'
+     
+  xcal-field: 
+     dtype: str
+     required: true
+     choices: [J1331+3030,J0521+1638]
+     
+  target-field: 
+     dtype: str
+     required: true
+     
+  quartical_refant: 
+     dtype: int
+     required: true
+     choices: [000,001,002,003,004,005,006,007] 
+     
+  quartical_fcal-field:  
+     dtype: List[int]
+     required: false
+     
+  quartical_gcal-field: 
+     dtype: List[int]
+     required: false
+     
+  quartical_xcal-field: 
+     dtype: List[int]
+     required: false
+     
+  quartical_target-field: 
+     dtype: List[int]
+     required: false
+     
+  tricolour_config-cals: 
+     required: true
+     dtype: str
+     
+  tricolour_config-target:
+     required: true
+     dtype: str
+     default: 'mk_rfi_flagging_target_fields_firstpass'
+  
+  wsclean_nchan: 
+     dtype: int
+     required: true
+     default: 4
+     
+  wsclean_size: 
+     dtype: Union[int, Tuple[int, int]]
+     required: true
+     default: 4096
+     
+  wsclean_auto-threshold: 
+     dtype: float
+     required: true
+     default: 3
+     
+  wsclean_weight: 
+     dtype: Union[str, Tuple[str, float]]
+     required: true
+     default: 'briggs 0.0'
+     
+  wsclean_scale:
+     dtype: Union[str, float]
+     required: true
+     default: 1.0 asec
+     
+  casa_refant: 
+     dtype: str
+     required: true
+     choices: [m000,m001,m002,m003,m004,m005,m006,m007]
+     
+  mstransform_scans:
+     dtype: str
+     required: true
+     default: '1~26'
+  

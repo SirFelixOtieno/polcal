@@ -1,0 +1,541 @@
+#!/usr/bin/env -S stimela run 
+_include:
+          
+   xgc-reborn_cabs:
+      - xgc-reborn_cabs.yml
+   xgc-reborn_vars:
+      - xgc-reborn_vars.yml
+        
+opts:
+
+   backend:
+    
+      select:
+         - singularity
+         - native
+         
+      rlimits:
+         NOFILE: 100000 
+     
+   log:
+    
+      nest: 2
+      level: INFO
+      enable: true
+      symlink: log
+      name: log-{info.fqname}
+      dir: 'xgc-reborn_logs/log-{config.run.datetime}'
+        
+xgc-reborn:
+
+   name: xgc-reborn
+   info: A Generic Pipeline for Polarization Calibration and Imaging for MeerKAT Telescope
+      
+   assign:
+      dirs.base: 
+      dirs.temp: '{config.run.env.HOME}/temp'
+      log.dir: '{recipe.logdir}/log-{config.run.datetime}'
+                      
+   assign_based_on:
+      _include: xgc-reborn_obs.yml
+            
+   inputs:
+      _include: xgc-reborn_defaults/inputs/inputs.yml 
+            
+   outputs:
+      _include: xgc-reborn_defaults/outputs/outputs.yml
+        
+   steps:
+          
+                        
+      split-cals:
+         _use: lib.steps.prepdata.transform.calibrators
+         info: Split the original ms to calibrators fields-only ms
+         params:
+            scan: '1~26'
+            chanbin: 4
+            chanaverage: true
+                        
+      save-flags:
+         _use: lib.steps.prepdata.save-flags.calibrators
+         info: Back up original flags from the observatory.  
+         params:
+            versionname: calibrators-observatory_flags
+                        
+      restore-flags:
+         _use: lib.steps.prepdata.restore-flags.calibrators
+         info: Restore the original flags from the observatory
+         params:
+            versionname: =recipe.steps.save-flags.versionname
+                 
+      swap-labels:
+         _use: lib.steps.prepdata.swap-feeds.calibrators
+         info: 'Swap feed labels and set feed angle to zero'
+         params:
+            ms_path: '{recipe.msdir}/calibrators.ms'
+                  
+      clearcal-cals:
+         _use: lib.steps.prepdata.clearcal.calibrators
+         info: Re-initialize calibrated visibility data in the calibrator-only ms
+         params:
+            addmodel: true 
+                             
+      save-preflags:
+         _use: lib.steps.flagmanager.save-flags.calibrators
+         info: Back up any flags before running flagdata
+         params:
+            versionname: calibrators-preflags
+               
+      flag-autocorr: 
+         _use: lib.steps.flagdata.flag-manual.calibrators
+         info: Flag auto correlations
+         params: 
+            autocorr: true      
+                  
+      flag-extremes:
+         _use: lib.steps.flagdata.flag-clip.data.extremes.calibrators
+         info: Flag very extreme outliers
+         params:
+            clipminmax: [0.00,200.0]
+                  
+      flag-edges:
+         _use: lib.steps.flagdata.flag-manual.calibrators
+         info: Flag bandpass edges and galactic plane
+         params: 
+            spw:   '{recipe.bandpass_edges}' 
+                  
+      flag-summary1:
+         _use: lib.steps.flagdata.flag-summary.calibrators
+         info: Generate a summary of flagged data after basic flagging
+         params: 
+            field:   '{recipe.bpcal-field},{recipe.gcal-field},{recipe.xcal-field}'
+                  
+      save-basicflags:
+         _use: lib.steps.flagmanager.save-flags.calibrators
+         info: Back up any flags before running RFI mask
+         params:
+            versionname: calibrators-basic_flags
+            
+      flag-mask:
+         _use: lib.steps.flagdata.flag-manual.calibrators
+         info: Mask known RFI regions (GSM and aviation,GPS,Galilleo,Irridium,Inmarsat,Afristar etc)
+         params:
+            spw: '{recipe.rfi_mask}'
+            uvrange: '{recipe.mask_uvrange}'    
+                    
+      flag-summary2:
+         _use: lib.steps.flagdata.flag-summary.calibrators
+         info: Generate a summary of flagged data after RFI masking
+         params: 
+            field: '{recipe.bpcal-field},{recipe.gcal-field},{recipe.xcal-field}' 
+                   
+      save-mask:
+         _use: lib.steps.flagmanager.save-flags.calibrators
+         info: Back up any flags before running autoflagdata
+         params:
+            versionname: calibrators-mask_flags
+         
+      flag-auto:
+         _use: lib.steps.flagdata.flag-tricolour.calibrators
+         info: Auto flag RFI using tricolour
+         params:
+            config: 'xgc-reborn_data/tricolour/{recipe.band}/{recipe.tricolour_config-cals}'
+            #config: '${self:dirname}/{recipe.dirs.base}/xgc-reborn_data/tricolour/{recipe.band}/{recipe.tricolour_config-cals}'        
+                  
+      flag-summary3:
+         _use: lib.steps.flagdata.flag-summary.calibrators
+         info: Generate a summary of flagged data after auto-flag
+         params: 
+            field: '{recipe.bpcal-field},{recipe.gcal-field},{recipe.xcal-field}' 
+                  
+      save-autoflags:
+         _use: lib.steps.flagmanager.save-flags.calibrators
+         info: Back up any flags after running autoflagdata
+         params:
+            versionname: calibrators-auto_flags
+                  
+      flag-scan: 
+         _use: lib.steps.flagdata.flag-manual.calibrators
+         info: 'manually flag bad scans'
+         params: 
+            scan: =IFSET(recipe.bad_scan)
+         skip: =not IFSET(recipe.bad_scan)
+                
+      flag-antenna: 
+         _use: lib.steps.flagdata.flag-manual.calibrators
+         info: 'manually flag bad antenna'
+         params: 
+            antenna: =IFSET(recipe.bad_antenna)
+         skip: =not IFSET(recipe.bad_antenna)
+                  
+      save-manualflags:
+         _use: lib.steps.flagmanager.save-flags.calibrators
+         info: Back up any flags after manually flagging data
+         params:
+            versionname: calibrators-manual_flags
+                  
+      flag-summary4:
+         _use: lib.steps.flagdata.flag-summary.calibrators
+         info: Generate a summary of flagged data after manually flagging other bad data
+         params: 
+            field:   '{recipe.bpcal-field},{recipe.gcal-field},{recipe.xcal-field}'
+                
+      save-postflags:
+         _use: lib.steps.flagmanager.save-flags.calibrators
+         info: Back up original flags after flagdata. 
+         params:
+            versionname: calibrators-post_calflags
+             
+      prim-flags:
+         _use: lib.steps.flagmanager.save-flags.calibrators
+         info: Back up flags before performing calibration on bandpass calibrator. 
+         params:
+            versionname: bpcal-preflags
+                              
+      prim-model:
+         _use: lib.steps.calibration.primary.model.crystalball
+         info: 'Populate MODEL_DATA column'
+         params:
+            #sky-model: '${self:dirname}/xgc-reborn_data/crystallball/{recipe.band}/{recipe.bpcal-field}/{recipe.band}.{recipe.bpcal-field}.wsclean.cat.txt'
+            sky-model: 'xgc-reborn_data/crystallball/{recipe.band}/{recipe.bpcal-field}/{recipe.band}.{recipe.bpcal-field}.wsclean.cat.txt'
+                  
+      bpcal:
+         cab: quartical
+         info: Primary calibration on bandpass calibrator
+         params: 
+          
+            input_ms.time_chunk: 0
+            input_ms.freq_chunk: 0
+            input_ms.select_fields: [0]
+            input_ms.select_uv_range: [150,0]
+            input_ms.path: =recipe.steps.split-cals.outputvis
+            input_ms.group_by: [FIELD_ID,DATA_DESC_ID, SCAN_NUMBER]
+               
+            input_model.recipe: MODEL_DATA
+            input_model.apply_p_jones: false 
+            
+            solver.threads: 32
+            solver.reference_antenna: 005
+            
+            output.apply_p_jones_inv: false
+            output.columns: [CORRECTED_DATA]
+            output.products: [corrected_data] 
+            output.log_directory: '{recipe.qcaldir}/logs/{self.label}.qc'
+            output.gain_directory: '{recipe.qcaldir}/gains/{self.label}.qc' 
+            
+            K.type: delay
+            K.time_interval: 0
+            K.freq_interval: 0
+            K.initial_estimate: false
+                       
+            G.type: diag_complex
+            G.time_interval: 0
+            G.freq_interval: 0
+            
+            B.type: diag_complex
+            B.time_interval: 0
+            B.freq_interval: 1
+            B.respect_scan_boundaries: false
+            
+            Df.type: complex
+            Df.time_interval: 0
+            Df.freq_interval: 1
+            Df.initial_estimate: false
+            Df.respect_scan_boundaries: false
+            
+            output.flags: false 
+            output.net_gains: [K,G,B,Df]
+            solver.robust: true   
+            solver.terms: [K,G,B,Df]
+            solver.propagate_flags: true
+            solver.iter_recipe: [150,150,150,150,25,25,25,25,15,15,15,15,5,5,5,5]
+               
+      bpcal1:
+         cab: quartical
+         info: Primary calibration on bandpass calibrator
+         params: 
+         
+            input_ms.time_chunk: 0
+            input_ms.freq_chunk: 0
+            input_ms.select_fields: [0]
+            input_ms.select_uv_range: [150,0]
+            input_ms.path: =recipe.steps.split-cals.outputvis
+            input_ms.group_by: [FIELD_ID,DATA_DESC_ID, SCAN_NUMBER]
+               
+            input_model.recipe: MODEL_DATA
+            input_model.apply_p_jones: false 
+            
+            solver.threads: 32
+            solver.reference_antenna: 005
+            
+            output.apply_p_jones_inv: false
+            output.columns: [CORRECTED_DATA]
+            output.products: [corrected_data] 
+            output.log_directory: '{recipe.qcaldir}/logs/{self.label}.qc'
+            output.gain_directory: '{recipe.qcaldir}/gains/{self.label}.qc' 
+            
+            mad_flags.enable: true
+            mad_flags.threshold_bl: 10
+            mad_flags.max_deviation: 0
+            mad_flags.threshold_global: 0
+               
+            K.type: delay
+            K.time_interval: 0
+            K.freq_interval: 0
+            K.initial_estimate: false
+            K.load_from: '{recipe.qcaldir}/gains/bpcal.qc/K'
+            
+            G.type: diag_complex
+            G.time_interval: 0
+            G.freq_interval: 0
+            G.load_from: '{recipe.qcaldir}/gains/bpcal.qc/G'
+            
+            B.type: diag_complex
+            B.time_interval: 0
+            B.freq_interval: 1
+            B.respect_scan_boundaries: false
+            B.load_from: '{recipe.qcaldir}/gains/bpcal.qc/B'
+            
+            Df.type: complex
+            Df.time_interval: 0
+            Df.freq_interval: 1
+            Df.initial_estimate: false
+            Df.respect_scan_boundaries: false
+            Df.load_from: '{recipe.qcaldir}/gains/bpcal.qc/Df'
+            
+            output.flags: true
+            output.net_gains: [K,G,B,Df]
+            solver.robust: true
+            solver.terms: [K,G,B,Df]
+            solver.propagate_flags: true
+            solver.iter_recipe: [150,150,150,150,25,25,25,25,15,15,15,15,5,5,5,5]
+           
+      g_to_abs:
+         cab: G2abs
+         info: Replace G with abs(G) since we won't need the phase again
+         params:
+            source: '{previous.output.gain_directory}/G'
+            
+      phasecal:
+         cab: quartical
+         info: Phase and amplitude refinement on the secondary
+         params: 
+         
+            input_ms.time_chunk: 0
+            input_ms.freq_chunk: 0
+            input_ms.select_fields: [1]
+            input_ms.select_uv_range: [150,0]
+            input_ms.path: =recipe.steps.split-cals.outputvis
+            input_ms.group_by: [FIELD_ID,DATA_DESC_ID, SCAN_NUMBER]
+               
+            input_model.recipe: 
+            input_model.apply_p_jones: false 
+            
+            solver.threads: 32
+            solver.reference_antenna: 005
+            
+            output.apply_p_jones_inv: false
+            output.columns: [CORRECTED_DATA]
+            output.products: [corrected_data]
+            output.log_directory: '{recipe.qcaldir}/logs/{self.label}.qc'
+            output.gain_directory: '{recipe.qcaldir}/gains/{self.label}.qc' 
+         
+            K.type: delay
+            K.time_interval: 1
+            K.freq_interval: 0
+            K.initial_estimate: false
+            K.load_from: '{recipe.qcaldir}/gains/bpcal1.qc/K'
+            
+            D.type: delay_and_offset
+            D.time_interval: 0
+            D.freq_interval: 0
+            D.initial_estimate: false 
+            
+            Ga.type: diag_complex
+            Ga.time_interval: 1
+            Ga.freq_interval: 0
+            Ga.load_from: '{recipe.qcaldir}/gains/bpcal1.qc/Ga'
+            
+            B.type: diag_complex
+            B.time_interval: 0
+            B.freq_interval: 1
+            B.respect_scan_boundaries: false
+            B.load_from: '{recipe.qcaldir}/gains/bpcal1.qc/B'
+            
+            Df.type: complex
+            Df.time_interval: 0
+            Df.freq_interval: 1
+            Df.initial_estimate: false
+            Df.respect_scan_boundaries: false
+            Df.load_from: '{recipe.qcaldir}/gains/bpcal1.qc/Df'
+            
+            output.flags: true
+            output.net_gains: [K,Ga,B,Df]
+            solver.robust: true  
+            solver.terms: [K,D,Ga,B,Df] 
+            solver.propagate_flags: false
+            solver.iter_recipe: [0,150,0,0,0,  0,50,0,0,0,  0,25,0,0,0, 0,15,0,0,0,  0,5,0,0,0]  
+            
+      phasecal1:
+         cab: quartical
+         info: Phase and amplitude refinement on the secondary
+         params: 
+         
+            input_ms.time_chunk: 0
+            input_ms.freq_chunk: 0
+            input_ms.select_fields: [1]
+            input_ms.select_uv_range: [150,0]
+            input_ms.path: =recipe.steps.split-cals.outputvis
+            input_ms.group_by: [FIELD_ID,DATA_DESC_ID, SCAN_NUMBER]
+               
+            input_model.recipe: 
+            input_model.apply_p_jones: false 
+            
+            solver.threads: 32
+            solver.reference_antenna: 005
+            
+            output.apply_p_jones_inv: false
+            output.columns: [CORRECTED_DATA]
+            output.products: [corrected_data]
+            output.log_directory: '{recipe.qcaldir}/logs/{self.label}.qc'
+            output.gain_directory: '{recipe.qcaldir}/gains/{self.label}.qc' 
+            
+            mad_flags.enable: true
+            mad_flags.threshold_bl: 5.5
+            mad_flags.max_deviation: 0
+            mad_flags.threshold_global: 0
+               
+            K.type: delay
+            K.time_interval: 1
+            K.freq_interval: 0
+            K.initial_estimate: true
+            K.load_from: '{recipe.qcaldir}/gains/bpcal1.qc/K'
+            
+            D.type: delay_and_offset
+            D.time_interval: 0
+            D.freq_interval: 0
+            D.initial_estimate: false 
+            D.load_from: '{recipe.qcaldir}/gains/phasecal.qc/D' 
+            
+            Ga.type: diag_complex
+            Ga.time_interval: 1
+            Ga.freq_interval: 0
+            Ga.load_from: '{recipe.qcaldir}/gains/bpcal1.qc/Ga'
+            
+            B.type: diag_complex
+            B.time_interval: 0
+            B.freq_interval: 1
+            B.respect_scan_boundaries: false
+            B.load_from: '{recipe.qcaldir}/gains/bpcal1.qc/B'
+            
+            Df.type: complex
+            Df.time_interval: 0
+            Df.freq_interval: 1
+            Df.initial_estimate: false
+            Df.respect_scan_boundaries: false
+            Df.load_from: '{recipe.qcaldir}/gains/bpcal1.qc/Df'
+            
+            output.flags: true
+            output.overwrite: true
+            output.net_gains: [K,D,Ga,B,Df]
+            solver.robust: true
+            solver.terms: [K,D,Ga,B,Df] 
+            solver.propagate_flags: true
+            solver.iter_recipe: [0,150,0,0,0,  0,50,0,0,0,  0,25,0,0,0, 0,15,0,0,0,  0,5,0,0,0] 
+            
+      pol-model:
+         _use: lib.steps.calibration.polarization.model
+         info: Fill the model column with the visibilities of a calibrator
+         params:    
+            field: '{recipe.xcal-field}' 
+            
+      polcal:
+         cab: quartical
+         info: Perform polarization calibration on the polarization calibrator
+         params: 
+            
+            input_ms.time_chunk: 0
+            input_ms.freq_chunk: 0
+            input_ms.select_fields: [2] 
+            input_ms.select_uv_range: [150,0]
+            input_ms.group_by: [FIELD_ID,DATA_DESC_ID] 
+            input_ms.path: =recipe.steps.split-cals.outputvis
+      
+            input_model.recipe: MODEL_DATA
+            input_model.apply_p_jones: true
+            
+            solver.threads: 32
+            solver.reference_antenna: 005
+            
+            output.apply_p_jones_inv: true
+            output.columns: [CORRECTED_DATA,WEIGHT_SPECTRUM]
+            output.products: [corrected_data,corrected_weight]
+            output.log_directory: '{recipe.qcaldir}/logs/{self.label}.qc'
+            output.gain_directory: '{recipe.qcaldir}/gains/{self.label}.qc' 
+            
+            mad_flags.enable: true
+            mad_flags.threshold_bl: 10
+            mad_flags.max_deviation: 0
+            mad_flags.threshold_global: 0
+               
+            K.type: delay
+            K.time_interval: 1
+            K.freq_interval: 0
+            K.initial_estimate: false
+            K.load_from: '{recipe.qcaldir}/gains/bpcal1.qc/K'
+            
+            D.type: delay_and_offset
+            D.time_interval: 0
+            D.freq_interval: 0
+            D.load_from: '{recipe.qcaldir}/gains/phasecal1.qc/D' 
+            
+            Ga.type: diag_complex
+            Ga.time_interval: 1
+            Ga.freq_interval: 0
+            Ga.load_from: '{recipe.qcaldir}/gains/bpcal1.qc/Ga'
+            
+            B.type: diag_complex
+            B.time_interval: 0
+            B.freq_interval: 1
+            B.load_from: '{recipe.qcaldir}/gains/bpcal1.qc/B'
+            
+            Gp.type: phase 
+            Gp.time_interval: 1
+            Gp.freq_interval: 0
+            
+            Xf.solve_per: array
+            Xf.time_interval: 0
+            Xf.freq_interval: 1
+            Xf.type: crosshand_phase
+            Xf.respect_scan_boundaries: false
+            
+            Df.type: complex
+            Df.time_interval: 0
+            Df.freq_interval: 1
+            Df.load_from: '{recipe.qcaldir}/gains/bpcal1.qc/Df'
+            
+            output.flags: true
+            output.overwrite: true
+            output.net_gains: [K,D,Ga,B,Df]
+                
+            solver.robust: false
+            solver.propagate_flags: true
+            solver.terms: [K,D,Ga,B,Gp,Xf,Df]
+            solver.iter_recipe: [0,0,0,0,150,150,0]
+                            
+      inspect-cals:
+         info: 'Inspect full polarization calibration solutions'
+         recipe: inspect-vis
+         params:
+            field: '{recipe.bpcal-field},{recipe.gcal-field},{recipe.xcal-field}' 
+       
+            
+     
+            
+        
+               
+             
+                  
+         
+                 
+                                    

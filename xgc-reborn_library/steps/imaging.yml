@@ -1,0 +1,140 @@
+lib:
+   steps: 
+   
+      imaging:
+      
+         1gc:
+         
+             clean1:
+                cab: wsclean
+                params:
+                   prefix: '{recipe.imdir}/1gc'
+                   _use:  lib.params.imaging.wsclean.image
+                   
+             mask1:
+                cab: breizorro
+                params:
+                   _use: lib.params.imaging.breizorro
+                   outfile: '{recipe.imdir}/1gc-MASK.fits'
+                   restored-image: '{recipe.imdir}/1gc-MFS-image.fits' 
+                   
+             clean1-masked:
+                cab: wsclean
+                params:
+                   prefix: '{recipe.imdir}/1gc.MASKED'
+                   fits-mask: '{recipe.imdir}/1gc-MASK.fits'
+                   _use:  lib.params.imaging.wsclean.image
+                   
+             predict1:
+                cab: wsclean
+                params:
+                   prefix: '{recipe.imdir}/1gc'
+                   _use: lib.params.imaging.wsclean.predict
+         2gc:
+         
+             clean2:
+                cab: wsclean
+                params:
+                   prefix: '{recipe.imdir}/2gc'
+                   _use:  lib.params.imaging.wsclean.image
+                   
+             mask2:
+                cab: breizorro
+                params:
+                   _use: lib.params.imaging.breizorro
+                   outfile: '{recipe.imdir}/2gc-MASK.fits'
+                   restored-image: '{recipe.imdir}/2gc-MFS-image.fits' 
+                   
+             clean2-masked:
+                cab: wsclean
+                params:
+                   prefix: '{recipe.imdir}/2gc.MASKED'
+                   fits-mask: '{recipe.imdir}/2gc-MASK.fits'
+                   _use:  lib.params.imaging.wsclean.image
+                   
+             predict2:
+                cab: wsclean
+                params:
+                   prefix: '{recipe.imdir}/2gc'
+                   _use: lib.params.imaging.wsclean.predict
+             
+         3gc:
+         
+             clean3:
+                cab: wsclean
+                params:
+                   prefix: '{recipe.imdir}/3gc'
+                   _use:  lib.params.imaging.wsclean.image
+                   
+             mask3:
+                cab: breizorro
+                params:
+                   _use: lib.params.imaging.breizorro
+                   outfile: '{recipe.imdir}/3gc-MASK.fits'
+                   restored-image: '{recipe.imdir}/3gc-MFS-image.fits' 
+                   
+             clean3-masked:
+                cab: wsclean
+                params:
+                   prefix: '{recipe.imdir}/3gc.MASKED'
+                   fits-mask: '{recipe.imdir}/3gc-MASK.fits'
+                   _use:  lib.params.imaging.wsclean.image
+                   
+             predict3:
+                cab: wsclean
+                params:
+                   prefix: '{recipe.imdir}/3gc'
+                   _use: lib.params.imaging.wsclean.predict
+                   
+         pol:
+             clean-pol:
+                cab: wsclean
+                params:
+                   prefix: '{recipe.imdir}/IQUV'
+                   _use: lib.params.imaging.wsclean.image-pol
+                   
+             mask-pol:
+                cab: breizorro
+                params:
+                   _use: lib.params.imaging.breizorro
+                   outfile: '{recipe.imdir}/IQUV-MASK.fits'
+                   restored-image: '{recipe.imdir}/IQUV-MFS-image.fits' 
+                   
+             clean-pol-masked:
+                cab: wsclean
+                params:
+                   prefix: '{recipe.imdir}/IQUV.MASKED'
+                   fits-mask: '{recipe.imdir}/IQUV-MASK.fits'
+                   _use: lib.params.imaging.wsclean.image-pol
+                   
+             predict-pol:
+                cab: wsclean
+                params:
+                   prefix: '{recipe.imdir}/IQUV'
+                   _use: lib.params.imaging.wsclean.predict-pol
+                   
+                   
+               
+         
+               
+         
+           
+         
+           
+         
+               
+         
+              
+         
+               
+         
+           
+         
+      
+           
+    
+    
+ 
+     
+  
+ 

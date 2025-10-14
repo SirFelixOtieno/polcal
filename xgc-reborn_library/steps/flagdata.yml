@@ -1,0 +1,483 @@
+lib:
+   steps:
+      
+      flagmanager:
+      
+         save-flags:
+         
+            calibrators:
+               cab: casa.flagman
+               params: 
+                  ms: '{root.msdir}/calibrators.ms'
+                  _use: lib.params.flagging.flagmanager.save
+                  
+            target:
+               cab: casa.flagman
+               params: 
+                  ms: '{root.msdir}/target.ms'
+                  _use: lib.params.flagging.flagmanager.save
+                  
+            target-corr:
+               cab: casa.flagman
+               params: 
+                  ms: '{root.msdir}/target-corr.ms'
+                  _use: lib.params.flagging.flagmanager.save
+                  
+         list-flags:
+         
+            calibrators:
+               cab: casa.flagman
+               params: 
+                  ms: '{recipe.msdir}/calibrators.ms'
+                  _use: lib.params.flagging.flagmanager.list
+                  
+            target:
+               cab: casa.flagman
+               params: 
+                  ms: '{recipe.msdir}/target.ms'
+                  _use: lib.params.flagging.flagmanager.list
+                  
+            target-corr:
+               cab: casa.flagman
+               params: 
+                  ms: '{recipe.msdir}/target-corr.ms'
+                  _use: lib.params.flagging.flagmanager.list
+               
+         restore-flags:
+         
+            calibrators:
+               cab: casa.flagman
+               params:
+                  ms: '{recipe.msdir}/calibrators.ms' 
+                  _use: lib.params.flagging.flagmanager.restore
+                  
+            target:
+               cab: casa.flagman
+               params: 
+                  ms: '{recipe.msdir}/target.ms'
+                  _use: lib.params.flagging.flagmanager.restore
+                  
+            target-corr:
+               cab: casa.flagman
+               params: 
+                  ms: '{recipe.msdir}/target-corr.ms'
+                  _use: lib.params.flagging.flagmanager.restore
+                  
+         delete-flags:
+         
+            calibrators:
+               cab: casa.flagman
+               params: 
+                  ms: '{recipe.msdir}/calibrators.ms'
+                  _use: lib.params.flagging.flagmanager.delete
+                  
+            target:
+               cab: casa.flagman
+               params: 
+                  ms: '{recipe.msdir}/target.ms'
+                  _use: lib.params.flagging.flagmanager.delete
+                  
+            target-corr:
+               cab: casa.flagman
+               params: 
+                  ms: '{recipe.msdir}/target-corr.ms'
+                  _use: lib.params.flagging.flagmanager.delete
+                  
+      flagdata:
+               
+         unflag:
+         
+            calibrators:
+               cab: casa.flagdata
+               params:
+                  ms: '{recipe.msdir}/calibrators.ms'
+                  _use: lib.params.flagging.flagdata.unflag
+                  
+            target:
+               cab: casa.flagdata
+               params: 
+                  ms: '{recipe.msdir}/target.ms'
+                  _use: lib.params.flagging.flagdata.unflag
+                      
+            target-corr:
+               cab: casa.flagdata
+               params: 
+                  ms: '{recipe.msdir}/target-corr.ms'
+                  _use: lib.params.flagging.flagdata.unflag
+                  
+         flag-manual:
+         
+            calibrators:
+               cab: casa.flagdata
+               params: 
+                  ms: '{recipe.msdir}/calibrators.ms'
+                  _use: lib.params.flagging.flagdata.manual
+                  field: '{recipe.bpcal-field},{recipe.gcal-field},{recipe.xcal-field}'
+                  
+            target:
+               cab: casa.flagdata
+               params: 
+                  field: '{recipe.target-field}'
+                  ms: '{recipe.msdir}/target.ms'
+                  _use: lib.params.flagging.flagdata.manual
+                 
+            target-corr:
+               cab: casa.flagdata
+               params: 
+                  field: '{recipe.target-field}'
+                  ms: '{recipe.msdir}/target-corr.ms'
+                  _use: lib.params.flagging.flagdata.manual
+                  
+         flag-shadow:
+         
+            calibrators:
+               cab: casa.flagdata
+               params: 
+                  ms: '{recipe.msdir}/calibrators.ms'
+                  _use: lib.params.flagging.flagdata.shadow
+                  field: '{recipe.bpcal-field},{recipe.gcal-field},{recipe.xcal-field}'
+                  
+            target:
+               cab: casa.flagdata
+               params: 
+                  field: '{recipe.target-field}'
+                  ms: '{recipe.msdir}/target.ms'
+                  _use: lib.params.flagging.flagdata.shadow
+                  
+            target-corr:
+               cab: casa.flagdata
+               params: 
+                  field: '{recipe.target-field}'
+                  ms: '{recipe.msdir}/target-corr.ms'
+                  _use: lib.params.flagging.flagdata.shadow
+                    
+         flag-elevation:
+        
+            calibrators:
+               cab: casa.flagdata
+               params: 
+                  ms: '{recipe.msdir}/calibrators.ms'
+                  _use: lib.params.flagging.flagdata.elevation
+                  field: '{recipe.bpcal-field},{recipe.gcal-field},{recipe.xcal-field}'
+                  
+            target:
+               cab: casa.flagdata
+               params: 
+                  field: '{recipe.target-field}'
+                  ms: '{recipe.msdir}/target.ms'
+                  _use: lib.params.flagging.flagdata.elevation  
+                  
+            target-corr:
+               cab: casa.flagdata
+               params: 
+                  field: '{recipe.target-field}'
+                  ms: '{recipe.msdir}/target-corr.ms'
+                  _use: lib.params.flagging.flagdata.elevation 
+                  
+         flag-quack:
+   
+            calibrators:
+               cab: casa.flagdata
+               params: 
+                  ms: '{recipe.msdir}/calibrators.ms' 
+                  _use: lib.params.flagging.flagdata.quack
+                  field: '{recipe.bpcal-field},{recipe.gcal-field},{recipe.xcal-field}'
+                  
+            target:
+               cab: casa.flagdata
+               params: 
+                  field: '{recipe.target-field}'
+                  ms: '{recipe.msdir}/target.ms' 
+                  _use: lib.params.flagging.flagdata.quack   
+                  
+            target-corr:
+               cab: casa.flagdata
+               params: 
+                  field: '{recipe.target-field}'
+                  ms: '{recipe.msdir}/target-corr.ms' 
+                  _use: lib.params.flagging.flagdata.quack 
+                  
+         flag-tricolour:
+        
+            calibrators:
+               cab: tricolour 
+               params: 
+                  window-backend: 'numpy' 
+                  ms: '{recipe.msdir}/calibrators.ms' 
+                  _use: lib.params.flagging.flagdata.tricolour
+                  field-names: '{recipe.bpcal-field},{recipe.gcal-field},{recipe.xcal-field}'  
+                  
+            target:
+               cab: tricolour 
+               params: 
+                  window-backend: zarr-disk
+                  ms: '{recipe.msdir}/target.ms'
+                  field-names: '{recipe.target-field}'
+                  _use: lib.params.flagging.flagdata.tricolour   
+                  
+            target-corr:
+               cab: tricolour 
+               params: 
+                  window-backend: zarr-disk
+                  ms: '{recipe.msdir}/target-corr.ms'
+                  field-names: '{recipe.target-field}'
+                  _use: lib.params.flagging.flagdata.tricolour   
+                 
+         flag-stats:
+        
+            calibrators:
+               cab: rfinder
+               params: 
+                  ms: '{recipe.msdir}/calibrators.ms'
+                  _use: lib.params.flagging.flagdata.rfinder
+                  
+            target:
+               cab: rfinder
+               params: 
+                 ms: '{recipe.msdir}/target.ms'
+                 _use: lib.params.flagging.flagdata.rfinder  
+                        
+            target-corr:
+               cab: rfinder
+               params: 
+                 ms: '{recipe.msdir}/target-corr.ms'
+                 _use: lib.params.flagging.flagdata.rfinder    
+                
+         flag-summary:
+        
+            calibrators:
+               cab: casa5.flagsummary 
+               params: 
+                  ms: '{root.msdir}/calibrators.ms'
+                  _use: lib.params.flagging.flagdata.summary
+                  
+            target:
+               cab: casa5.flagsummary 
+               params: 
+                  ms: '{root.msdir}/target.ms'
+                  _use: lib.params.flagging.flagdata.summary   
+                    
+            target-corr:
+               cab: casa5.flagsummary 
+               params: 
+                  ms: '{root.msdir}/target-corr.ms'
+                  _use: lib.params.flagging.flagdata.summary
+                  
+         inspect-flags:
+         
+            ampfreq:
+            
+               calibrators:
+                  cab: shadems
+                  params:
+                     iter-field: true 
+                     dir: '{recipe.flagsdir}'
+                     ms: '{recipe.msdir}/calibrators.ms'
+                     field: '{recipe.bpcal-field},{recipe.gcal-field},{recipe.xcal-field}'
+                     _use: lib.params.visualization.shadems.ampfreq.data
+                     
+               target:
+                  cab: shadems
+                  params:
+                     dir: '{recipe.flagsdir}'
+                     field: '{recipe.target-field}'
+                     ms: '{recipe.msdir}/target.ms'
+                     _use: lib.params.visualization.shadems.ampfreq.data
+                     
+               target-corr:
+                  cab: shadems
+                  params:
+                     dir: '{recipe.flagsdir}'
+                     field: '{recipe.target-field}'
+                     ms: '{recipe.msdir}/target-corr.ms'
+                     _use: lib.params.visualization.shadems.ampfreq.data
+               
+            amptime:
+            
+               calibrators:
+                  cab: casa.plotms
+                  params:
+                     ydatacolumn: 'data'
+                     xdatacolumn: 'data'
+                     field: '{root.bpcal-field}' 
+                     ms: '{root.msdir}/calibrators.ms'
+                     plotfile: '{root.flagsdir}/amptime-cals.png'
+                     _use: lib.params.visualization.plotms.amptime
+                     
+               target:
+                  cab: casa.plotms
+                  params:
+                     ydatacolumn: 'data'
+                     xdatacolumn: 'data'
+                     field: '{root.target-field}'
+                     ms: '{root.msdir}/target.ms'
+                     plotfile: '{root.flagsdir}/amptime-target.png'
+                     _use: lib.params.visualization.plotms.amptime
+                     
+               target-corr:
+                  cab: casa.plotms
+                  params:
+                     ydatacolumn: 'data'
+                     xdatacolumn: 'data'
+                     field: '{root.target-field}'
+                     ms: '{root.msdir}/target-corr.ms'
+                     plotfile: '{root.flagsdir}/amptime-target.png'
+                     _use: lib.params.visualization.plotms.amptime    
+                  
+         flag-clip:
+         
+            data:
+            
+               zeros:
+               
+                  calibrators:
+                     cab: casa.flagdata
+                     params: 
+                        datacolumn: 'DATA'
+                        ms: '{recipe.msdir}/calibrators.ms'
+                        _use: lib.params.flagging.flagdata.clip
+                        field: '{recipe.bpcal-field},{recipe.gcal-field},{recipe.xcal-field}'
+                        
+                  target:
+                     cab: casa.flagdata
+                     params: 
+                        datacolumn: 'DATA'
+                        field: '{recipe.target-field}'
+                        ms: '{recipe.msdir}/target.ms'
+                        _use: lib.params.flagging.flagdata.clip
+                  
+                  target-corr:
+                     cab: casa.flagdata
+                     params: 
+                        datacolumn: 'DATA'
+                        field: '{recipe.target-field}'
+                        ms: '{recipe.msdir}/target-corr.ms'
+                        _use: lib.params.flagging.flagdata.clip
+                  
+               extremes:
+               
+                  calibrators:
+                     cab: casa.flagdata
+                     params: 
+                        clipoutside: true
+                        datacolumn: 'DATA'
+                        ms: '{recipe.msdir}/calibrators.ms'
+                        _use: lib.params.flagging.flagdata.clip
+                        field: '{recipe.bpcal-field},{recipe.gcal-field},{recipe.xcal-field}'
+                        
+                  target:
+                     cab: casa.flagdata
+                     params: 
+                        clipoutside: true
+                        datacolumn: 'DATA'
+                        field: '{recipe.target-field}'
+                        ms: '{recipe.msdir}/target.ms'
+                        _use: lib.params.flagging.flagdata.clip
+                  
+                  target-corr:
+                     cab: casa.flagdata
+                     params: 
+                        clipoutside: true
+                        datacolumn: 'DATA'
+                        field: '{recipe.target-field}'
+                        ms: '{recipe.msdir}/target-corr.ms'
+                        _use: lib.params.flagging.flagdata.clip
+                  
+            corrected:
+            
+               leakages:
+                  
+                  prim-Df0:
+                     cab: casa.flagdata
+                     params: 
+                        clipoutside: true
+                        clipzeros: 'false'
+                        datacolumn: 'CPARAM'
+                        ms: '{recipe.caldir}/prim.Df0' 
+                        _use: lib.params.flagging.flagdata.clip 
+                        
+                  prim-Df1:
+                     cab: casa.flagdata
+                     params: 
+                        clipoutside: true
+                        clipzeros: 'false'
+                        datacolumn: 'CPARAM'
+                        ms: '{recipe.caldir}/prim.Df1' 
+                        _use: lib.params.flagging.flagdata.clip 
+              
+         flag-tfcrop:
+         
+            corrected:
+            
+               prim:
+                  cab: casa.flagdata
+                  params: 
+                     ntime: 'scan'
+                     combinescans: false
+                     usewindowstats: 'std'
+                     field: '{recipe.bpcal-field}'
+                     ms: '{recipe.msdir}/calibrators.ms'
+                     _use: lib.params.flagging.flagdata.tfcrop
+                     
+               sec:
+                  cab: casa.flagdata
+                  params: 
+                     ntime: 'scan'
+                     combinescans: false
+                     usewindowstats: 'std'
+                     field: '{recipe.gcal-field}'
+                     ms: '{recipe.msdir}/calibrators.ms'
+                     _use: lib.params.flagging.flagdata.tfcrop
+                     
+               target:
+                  cab: casa.flagdata
+                  params: 
+                     ntime: 'scan'
+                     combinescans: false
+                     usewindowstats: 'std'
+                     field: '{recipe.target-field}'
+                     ms: '{recipe.msdir}/target.ms'
+                     _use: lib.params.flagging.flagdata.tfcrop
+              
+               target-corr:
+                  cab: casa.flagdata
+                  params: 
+                     ntime: 'scan'
+                     combinescans: false
+                     usewindowstats: 'std'
+                     field: '{recipe.target-field}'
+                     ms: '{recipe.msdir}/target-corr.ms'
+                     _use: lib.params.flagging.flagdata.tfcrop
+                     
+               xphase:
+                  cab: casa.flagdata
+                  params: 
+                     combinescans: true
+                     datacolumn: 'CPARAM'
+                     field: '{recipe.xcal-field}'
+                     ms: '{recipe.caldir}/pol.Xf1'
+                     _use: lib.params.flagging.flagdata.tfcrop   
+            
+         flag-extend:
+            cab: casa.flagdata
+            params: 
+               ntime: '60s'
+               datacolumn: 'DATA' 
+               combinescans: 'true'
+               ms: '{recipe.msdir}/calibrators.ms'
+               field: '{recipe.bpcal-field},{recipe.xcal-field}'
+               _use: lib.params.flagging.flagdata.extend
+               
+         
+   
+   
+     
+ 
+   
+     
+  
+    
+    
+   
+   
+

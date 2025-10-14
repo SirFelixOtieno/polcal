@@ -1,0 +1,46 @@
+
+obs:  
+      
+      user:
+            band:                                ### observation Band (L or UHF)
+            _use:                                ### options depends on the band eg  (vars.bands.L or vars.bands.UHF) 
+            ms_path:                             ### path to measurement set
+            bpcal-field:                         ### Bandpass calibrator (choices: 0408-65,J1939-6342)
+            fcal-field:                          ### Flux calibrator (choices: 0408-65,J1939-6342)
+            gcal-field:                          ### Amplitude and Phase calibrator (Any MeerKAT gain calibrator)
+            xcal-field:                          ### Polarization calibrator (choices: J1331+3030,J0521+1638)
+            target-field:                        ### Target (observed target)
+            casa_refant:                         ### Reference antenna as a string (eg m002)
+            quartical_refant:                    ### Reference antenna as an integer (eg 002)
+            bad_spw:                             
+            bad_scan:                            
+            bad_antenna:                         
+            bad_timeranges:                      
+            tricolour_config-cals: 'mk_rfi_flagging_calibrator_fields_firstpass.yaml'
+            tricolour_config-target: 'gorbachev.yaml'
+            
+      default:
+            band: L
+            _use: vars.bands.L
+            bpcal-field: '0408-65'
+            fcal-field:  '0408-65'
+            gcal-field: 'J0538-4405'
+            xcal-field: 'J0521+1638'
+            target-field: 'PictorA'
+            casa_refant: m005
+            tricolour_config-cals: 'mk_rfi_flagging_calibrator_fields_firstpass.yaml'
+            tricolour_config-target: 'gorbachev.yaml'
+            ms_path: /net/sinatra/vault-ike/andati/pica_redux/msdir/1576687564_sdp_l0.ms 
+            quartical_refant: 005
+            outdir-path: QuatiCAL
+            bad_scan: 22
+            bad_antenna: m003
+            
+            #bad_timeranges: '0'
+             
+            
+            
+           
+                               
+            
+
