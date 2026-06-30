@@ -1,0 +1,1211 @@
+lib:
+  recipes:
+  
+    inspect-prim2:
+      name: inspect-prim2
+      info: A recipe for inspecting primary gain solutions
+      
+      assign:
+            dirs.base: 
+            dirs.temp: '{config.run.env.HOME}/tmp'
+            log.dir: '{root.logdir}/log-{config.run.datetime}'
+            
+      inputs:
+            field:
+                 dtype: str 
+            
+      steps:
+            
+            plot1-prim-K0:
+                  _use: lib.steps.inspect.gains.prim.prim-K0
+                  info: Plot delay calibration solutions
+                  params:
+                        xaxis: 'antenna1'
+                        plotfile: '{root.calplotdir}/prim-K0_antenna1.png'
+                        
+            plot2-prim-K0:
+                  _use: lib.steps.inspect.gains.prim.prim-K0
+                  info: Plot delay calibration solutions
+                  params:
+                        xaxis: 'time'
+                        plotfile: '{root.calplotdir}/prim-K0_time.png'
+                      
+            plot1-prim-G0:
+                  _use: lib.steps.inspect.gains.prim.prim-G0
+                  info: Plot Gain phase calibration solutions
+                  params:
+                        yaxis: 'phase'
+                        xaxis: 'time'
+                        plotfile: '{root.calplotdir}/prim-Gp0_time.png'
+                       
+            plot2-prim-G0:
+                  _use: lib.steps.inspect.gains.prim.prim-G0
+                  info: Plot Gain phase calibration solutions
+                  params:
+                        yaxis: 'phase'
+                        xaxis: 'antenna1'
+                        plotfile: '{root.calplotdir}/prim-Gp0_antenna1.png'
+                       
+            plot3-prim-G0:
+                  _use: lib.steps.inspect.gains.prim.prim-G0
+                  info: Plot Gain amplitude calibration solutions
+                  params:
+                        xaxis: 'antenna1' 
+                        yaxis: 'amplitude'
+                        plotfile: '{root.calplotdir}/prim-Ga0_antenna1.png' 
+                       
+            plot4-prim-G0:
+                  _use: lib.steps.inspect.gains.prim.prim-G0
+                  info: Plot Gain amplitude calibration solutions
+                  params:
+                        xaxis: 'time'
+                        yaxis: 'amplitude'
+                        plotfile: '{root.calplotdir}/prim-Ga0_time.png' 
+                        
+            plot1-prim-B0:
+                  _use: lib.steps.inspect.gains.prim.prim-B0
+                  info: Plot Bandpass calibration solutions-amplitude
+                  params:
+                        yaxis: 'amp'
+                        plotfile: '{root.calplotdir}/prim-B0_amp.png'
+                       
+            plot2-prim-B0:
+                  _use: lib.steps.inspect.gains.prim.prim-B0
+                  info: Plot bandpass calibration solutions
+                  params:
+                        yaxis: 'phase'
+                        plotfile: '{root.calplotdir}/prim-B0_phase.png' 
+                       
+            plot1-prim-K1:
+                  _use: lib.steps.inspect.gains.prim.prim-K1
+                  info: Plot delay calibration solutions
+                  params:
+                        xaxis: 'antenna1'
+                        plotfile: '{root.calplotdir}/prim-K1_antenna1.png'
+                       
+            plot2-prim-K1:
+                  _use: lib.steps.inspect.gains.prim.prim-K1
+                  info: Plot delay calibration solutions
+                  params:
+                        xaxis: 'time'
+                        plotfile: '{root.calplotdir}/prim-K1_time.png'
+                        
+            plot1-prim-G1:
+                  _use: lib.steps.inspect.gains.prim.prim-G1
+                  info: Plot Gain phase calibration solutions
+                  params:
+                        yaxis: 'phase'
+                        xaxis: 'time'
+                        plotfile: '{root.calplotdir}/prim-Gp1_time.png'
+                       
+            plot2-prim-G1:
+                  _use: lib.steps.inspect.gains.prim.prim-G1
+                  info: Plot Gain phase calibration solutions
+                  params:
+                        yaxis: 'phase'
+                        xaxis: 'antenna1'
+                        plotfile: '{root.calplotdir}/prim-Gp1_antenna1.png'
+                       
+            plot3-prim-G1:
+                  _use: lib.steps.inspect.gains.prim.prim-G1
+                  info: Plot Gain amplitude calibration solutions
+                  params:
+                        xaxis: 'antenna1' 
+                        yaxis: 'amplitude'
+                        plotfile: '{root.calplotdir}/prim-Ga1_antenna1.png' 
+                       
+            plot4-prim-G1:
+                  _use: lib.steps.inspect.gains.prim.prim-G1
+                  info: Plot Gain amplitude calibration solutions
+                  params:
+                        xaxis: 'time'
+                        yaxis: 'amplitude'
+                        plotfile: '{root.calplotdir}/prim-Ga1_time.png'
+                       
+            plot1-prim-B1:
+                  _use: lib.steps.inspect.gains.prim.prim-B1
+                  info: Plot Bandpass calibration solutions-amplitude
+                  params:
+                        yaxis: 'amp'
+                        plotfile: '{root.calplotdir}/prim-B1_amp.png'
+                       
+            plot2-prim-B1:
+                  _use: lib.steps.inspect.gains.prim.prim-B1
+                  info: Plot bandpass calibration solutions
+                  params:
+                        yaxis: 'phase'
+                        plotfile: '{root.calplotdir}/prim-B1_phase.png' 
+                                     
+    inspect-sec2:
+      name: inspect-sec2
+      info: A recipe for inspecting secondary gain solutions
+      
+      assign:
+            dirs.base: 
+            dirs.temp: '{config.run.env.HOME}/tmp'
+            log.dir: '{root.logdir}/log-{config.run.datetime}'
+            
+      inputs:
+            field:
+                 dtype: str 
+            
+      steps:
+      
+            plot1-sec-K0:
+                  _use: lib.steps.inspect.gains.sec.sec-K0
+                  info: Plot delay calibration solutions
+                  params:
+                        xaxis: 'antenna1'
+                        plotfile: '{root.calplotdir}/sec-K0_antenna1.png'
+                       
+            plot2-sec-K0:
+                  _use: lib.steps.inspect.gains.sec.sec-K0
+                  info: Plot delay calibration solutions
+                  params:
+                        xaxis: 'time'
+                        plotfile: '{root.calplotdir}/sec-K0_time.png'
+                        
+            plot1-sec-K1:
+                  _use: lib.steps.inspect.gains.sec.sec-K1
+                  info: Plot delay calibration solutions
+                  params:
+                        xaxis: 'antenna1'
+                        plotfile: '{root.calplotdir}/sec-K1_antenna1.png'
+                       
+            plot2-sec-K1:
+                  _use: lib.steps.inspect.gains.sec.sec-K1
+                  info: Plot delay calibration solutions
+                  params:
+                        xaxis: 'time'
+                        plotfile: '{root.calplotdir}/sec-K1_time.png'
+       
+            plot1-sec-G0:
+                  _use: lib.steps.inspect.gains.sec.sec-G0
+                  info: Plotting Gain phase calibration solutions
+                  params:
+                        yaxis: 'phase'
+                        xaxis: 'antenna1'
+                        plotfile: '{root.calplotdir}/sec-Gp0_antenna1.png'
+                      
+            plot2-sec-G0:
+                  _use: lib.steps.inspect.gains.sec.sec-G0
+                  info: Plotting Gain phase calibration solutions
+                  params:
+                        yaxis: 'phase'
+                        xaxis: 'time'
+                        plotfile: '{root.calplotdir}/sec-Gp0_time.png'
+                       
+            plot3-sec-G0:
+                  _use: lib.steps.inspect.gains.sec.sec-G0
+                  info: Plotting Gain amplitude calibration solutions
+                  params:
+                        yaxis: 'amplitude'
+                        xaxis: 'antenna1'
+                        plotfile: '{root.calplotdir}/sec-Ga0_antenna1.png'
+                       
+            plot4-sec-G0:
+                  _use: lib.steps.inspect.gains.sec.sec-G0
+                  info: Plotting Gain amplitude calibration solutions
+                  params:
+                        xaxis: 'time'
+                        yaxis: 'amplitude'
+                        plotfile: '{root.calplotdir}/sec-Ga0_time.png'
+                       
+            plot1-sec-G1:
+                  _use: lib.steps.inspect.gains.sec.sec-G1
+                  info: Plotting Gain phase calibration solutions
+                  params:
+                        yaxis: 'phase'
+                        xaxis: 'antenna1'
+                        plotfile: '{root.calplotdir}/sec-Gp1_antenna1.png'
+                      
+            plot2-sec-G1:
+                  _use: lib.steps.inspect.gains.sec.sec-G1
+                  info: Plotting Gain phase calibration solutions
+                  params:
+                        yaxis: 'phase'
+                        xaxis: 'time'
+                        plotfile: '{root.calplotdir}/sec-Gp1_time.png'
+                       
+            plot3-sec-G1:
+                  _use: lib.steps.inspect.gains.sec.sec-G1
+                  info: Plotting Gain amplitude calibration solutions
+                  params:
+                        yaxis: 'amplitude'
+                        xaxis: 'antenna1'
+                        plotfile: '{root.calplotdir}/sec-Ga1_antenna1.png'
+                       
+            plot4-sec-G1:
+                  _use: lib.steps.inspect.gains.sec.sec-G1
+                  info: Plotting Gain amplitude calibration solutions
+                  params:
+                        xaxis: 'time'
+                        yaxis: 'amplitude'
+                        plotfile: '{root.calplotdir}/sec-Ga1_time.png'
+                       
+            plot1-Sec-F0:
+                  _use: lib.steps.inspect.gains.sec.sec-F0
+                  info: Plot Gain phase calibration solutions
+                  params:
+                        xaxis: 'time'
+                        plotfile: '{root.calplotdir}/sec-F0_time.png'
+                       
+            plot2-Sec-F0:
+                  _use: lib.steps.inspect.gains.sec.sec-F0
+                  info: Plot Gain phase calibration solutions
+                  params:
+                        xaxis: 'antenna1'
+                        plotfile: '{root.calplotdir}/sec-F0_antenna1.png'
+                                  
+    inspect-pol2:
+      name: inspect-pol2
+      info: A recipe for inspecting polarization gain solutions
+      
+      assign:
+            dirs.base: 
+            dirs.temp: '{config.run.env.HOME}/tmp'
+            log.dir: '{root.logdir}/log-{config.run.datetime}'
+            
+      inputs:
+            field:
+                 dtype: str 
+            
+      steps:
+      
+            plot1-Pol-Gp0:
+                  _use: lib.steps.inspect.gains.pol.pol-Gp0
+                  info: Plot Gain phase calibration solutions
+                  params:
+                        xaxis: 'time'
+                        plotfile: '{root.calplotdir}/pol-Gp0_time.png'
+                       
+            plot2-Pol-Gp0:
+                  _use: lib.steps.inspect.gains.pol.pol-Gp0
+                  info: Plot Gain phase calibration solutions
+                  params:
+                        xaxis: 'antenna1'
+                        plotfile: '{root.calplotdir}/pol-Gp0_antenna1.png'
+                       
+            plot1-pol-KCROSS:
+                  _use: lib.steps.inspect.gains.pol.pol-KCROSS
+                  info: Plot cross-hand delay calibration solutions
+                  params:
+                        xaxis: 'time'
+                        plotfile: '{root.calplotdir}/pol-KCROSS_time.png'
+                        
+            plot2-pol-KCROSS:
+                  _use: lib.steps.inspect.gains.pol.pol-KCROSS
+                  info: Plot cross-hand delay calibration solutions
+                  params:
+                        xaxis: 'antenna1'
+                        plotfile: '{root.calplotdir}/pol-KCROSS_antenna1.png'
+                       
+            plot-Pol-Xf:
+                  _use: lib.steps.inspect.gains.pol.pol-Xf
+                  info: Plot cross-hand phase calibration solutions
+                  params:
+                        yaxis: 'phase' 
+                        plotfile: '{root.calplotdir}/pol-Xf.png'
+                        
+            plot-Pol-Xf1:
+                  _use: lib.steps.inspect.gains.pol.pol-Xf1
+                  info: Plot cross-hand phase calibration solutions
+                  params:
+                        yaxis: 'phase' 
+                        plotfile: '{root.calplotdir}/pol-Xf1.png'
+                        
+            plot1-prim-Df0:
+                  _use: lib.steps.inspect.gains.prim.prim-Df0
+                  info: Plot leakage solutions-amplitude
+                  params:
+                        yaxis: 'amplitude'
+                        plotfile: '{root.calplotdir}/prim-Df0_amp.png'
+                       
+            plot2-prim-Df0:
+                  _use: lib.steps.inspect.gains.prim.prim-Df0
+                  info: Plot leakage solutions-phase
+                  params:
+                        yaxis: 'phase'
+                        plotfile: '{root.calplotdir}/prim-Df0_phase.png'
+                       
+            plot3-prim-Df0:
+                  _use: lib.steps.inspect.gains.prim.prim-Df0
+                  info: Plot leakage solutions-amplitude
+                  params:
+                        yaxis: 'real'
+                        plotfile: '{root.calplotdir}/prim-Df0_real.png'
+                       
+            plot1-pol-Df1:
+                  _use: lib.steps.inspect.gains.prim.prim-Df1
+                  info: Plot leakage solutions-amplitude
+                  params:
+                        yaxis: 'amplitude'
+                        plotfile: '{root.calplotdir}/pol-Df1_amp.png'
+                        
+            plot2-pol-Df1:
+                  _use: lib.steps.inspect.gains.prim.prim-Df1
+                  info: Plot leakage solutions-phase
+                  params:
+                        yaxis: 'phase'
+                        plotfile: '{root.calplotdir}/pol-Df1_phase.png'
+                       
+            plot3-pol-Df1:
+                  _use: lib.steps.inspect.gains.prim.prim-Df1
+                  info: Plot leakage solutions-amplitude
+                  params:
+                        yaxis: 'real'
+                        plotfile: '{root.calplotdir}/pol-Df1_real.png'
+                        
+             
+    inspect-crosscal:
+      name: inspect-crosscal
+      info: A recipe for inspecting cross calibration calibration solutions
+      
+      assign:
+            dirs.base: 
+            dirs.temp: '{config.run.env.HOME}/tmp'
+            log.dir: '{root.logdir}/log-{config.run.datetime}'
+            
+      inputs:
+            field:
+                 dtype: str 
+            
+      steps:
+      
+            plot1-ampchan:
+                  _use: lib.steps.inspect.visibilities.ampchan
+                  info: Plot amplitude against channel 
+                  params:
+                        iter-field: true 
+                        suffix: 'ampchan'
+                        colour-by: 'ANTENNA1'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                        
+            plot2-ampchan:
+                  _use: lib.steps.inspect.visibilities.ampchan
+                  info: Plot amplitude against channel 
+                  params:
+                        iter-field: true 
+                        suffix: 'ampchan'
+                        colour-by: 'SCAN_NUMBER'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                        
+            plot1-ampuvdist:
+                  _use: lib.steps.inspect.visibilities.ampuvdist
+                  info: Plot amplitude against UVdist  
+                  params:
+                        iter-field: true 
+                        suffix: 'ampuvdist1'
+                        colour-by: 'ANTENNA1'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'uv-distance'
+                        
+            plot2-ampuvdist:
+                  _use: lib.steps.inspect.visibilities.ampuvdist
+                  info: Plot amplitude against UVdist  
+                  params:
+                        iter-field: true 
+                        suffix: 'ampuvdist2'
+                        colour-by: 'SCAN_NUMBER'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'uv-distance'
+                        
+            plot3-ampuvdist:
+                  _use: lib.steps.inspect.visibilities.ampuvdist
+                  info: Plot amplitude against UVdist  
+                  params:
+                        iter-field: true 
+                        suffix: 'ampuvdist3'
+                        colour-by: 'CORR'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'uv-distance'
+                  
+            plot1-phaseuvdist:
+                  _use: lib.steps.inspect.visibilities.phaseuvdist
+                  info: Plot phase against UVdist  
+                  params:
+                        iter-field: true 
+                        suffix: 'phaseuvdist1'
+                        colour-by: 'ANTENNA1'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'uv-distance'
+                        
+            plot2-phaseuvdist:
+                  _use: lib.steps.inspect.visibilities.phaseuvdist
+                  info: Plot phase against UVdist  
+                  params:
+                        iter-field: true 
+                        suffix: 'phaseuvdist2'
+                        colour-by: 'SCAN_NUMBER'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'uv-distance'
+                        
+            plot3-phaseuvdist:
+                  _use: lib.steps.inspect.visibilities.phaseuvdist
+                  info: Plot phase against UVdist  
+                  params:
+                        iter-field: true 
+                        suffix: 'phaseuvdist3'
+                        colour-by: 'CORR'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'uv-distance'
+                    
+            plot1-phasefreq1:
+                  _use: lib.steps.inspect.visibilities.phasefreq
+                  info: Plot phase against frequency  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'phasefreq'
+                        colour-by: 'ANTENNA1'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                        
+            plot1-phasefreq2:
+                  _use: lib.steps.inspect.visibilities.phasefreq
+                  info: Plot phase against frequency  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'phasefreq'
+                        colour-by: 'SCAN_NUMBER'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                        
+            plot1-phasefreq3:
+                  _use: lib.steps.inspect.visibilities.phasefreq
+                  info: Plot phase against frequency  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'phasefreq'
+                        colour-by: 'CORR'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                    
+            plot-realfreq:
+                  _use: lib.steps.inspect.visibilities.realfreq
+                  info: Plot real against frequency  
+                  params:
+                        colour-by: 'CORR'
+                        iter-field: true 
+                        suffix: 'realfreq'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                        
+            plot1-ampfreq1:
+                  _use: lib.steps.inspect.visibilities.ampfreq.corrected.calibrators
+                  info: Plot amplitude against frequency 
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'ampfreq'
+                        colour-by: 'ANTENNA1'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                    
+            plot1-ampfreq2:
+                  _use: lib.steps.inspect.visibilities.ampfreq.corrected.calibrators
+                  info: Plot amplitude against frequency 
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'ampfreq'
+                        colour-by: 'CORR'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                        
+            plot2-ampfreq1:
+                  _use: lib.steps.inspect.visibilities.ampfreq.corrected.calibrators
+                  info: Plot amplitude against frequency  
+                  params:
+                        iter-field: true 
+                        suffix: 'ampfreq'
+                        colour-by: 'CORR'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                        
+            plot2-ampfreq2:
+                  _use: lib.steps.inspect.visibilities.ampfreq.corrected.calibrators
+                  info: Plot amplitude against frequency  
+                  params:
+                        corr: 'IQUV'
+                        iter-field: true 
+                        suffix: 'ampfreq'
+                        colour-by: 'CORR'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                        
+            plot2-ampfreq3:
+                  _use: lib.steps.inspect.visibilities.ampfreq.corrected.calibrators
+                  info: Plot amplitude against frequency  
+                  params:
+                        corr: 'XY,YX'
+                        iter-field: true 
+                        suffix: 'ampfreq'
+                        colour-by: 'CORR'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                          
+            plot1-ampphase:
+                  _use: lib.steps.inspect.visibilities.ampphase
+                  info: Plot amplitude against phase  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'ampphase'
+                        colour-by: 'ANTENNA1'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                    
+            plot2-ampphase:
+                  _use: lib.steps.inspect.visibilities.ampphase
+                  info: Plot amplitude against phase  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'ampphase'
+                        colour-by: 'SCAN_NUMBER'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                        
+            plot1-amptime1:
+                  _use: lib.steps.inspect.visibilities.amptime
+                  info: Plot amplitude against time  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'amptime'
+                        colour-by: 'ANTENNA1'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                                
+            plot2-amptime:
+                  _use: lib.steps.inspect.visibilities.amptime
+                  info: Plot amplitude against time  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'amptime'
+                        colour-by: 'SCAN_NUMBER'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                        
+            plot1-amptime2:
+                  _use: lib.steps.inspect.visibilities.amptime
+                  info: Plot amplitude against time  
+                  params:
+                        corr: 'XY,YX'
+                        iter-field: true 
+                        suffix: 'amptime'
+                        colour-by: 'CORR'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                        
+            plot1-phasetime1:
+                  _use: lib.steps.inspect.visibilities.phasetime
+                  info: Plot amplitude against time  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'phasetime'
+                        colour-by: 'ANTENNA1'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                        
+            plot1-phasetime2:
+                  _use: lib.steps.inspect.visibilities.phasetime
+                  info: Plot amplitude against time  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'phasetime'
+                        colour-by: 'CORR'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                              
+            plot2-phasetime:
+                  _use: lib.steps.inspect.visibilities.phasetime
+                  info: Plot amplitude against time  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'phasetime'
+                        colour-by: 'SCAN_NUMBER'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'spectra'
+                    
+            plot1-normballs1:
+                  _use: lib.steps.inspect.visibilities.normballs
+                  info: Plot real against imaginary
+                  params:
+                        corr: 'XX' 
+                        iter-field: true  
+                        suffix: 'normballs' 
+                        colour-by: 'ANTENNA1'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'normballs'
+                        
+            plot1-normballs2:
+                  _use: lib.steps.inspect.visibilities.normballs
+                  info: Plot real against imaginary
+                  params:
+                        corr: 'XX' 
+                        iter-field: true  
+                        suffix: 'normballs' 
+                        colour-by: 'SCAN_NUMBER'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'normballs'
+                            
+            plot2-normballs1:
+                  _use: lib.steps.inspect.visibilities.normballs
+                  info: Plot real against imaginary 
+                  params:
+                        corr: 'YY' 
+                        iter-field: true  
+                        suffix: 'normballs' 
+                        colour-by: 'ANTENNA1'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'normballs'
+                    
+            plot2-normballs2:
+                  _use: lib.steps.inspect.visibilities.normballs
+                  info: Plot real against imaginary 
+                  params:
+                        corr: 'YY' 
+                        iter-field: true  
+                        suffix: 'normballs' 
+                        colour-by: 'SCAN_NUMBER'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'normballs'
+                                              
+            plot1-phaseballs1:
+                  _use: lib.steps.inspect.visibilities.phaseballs
+                  info: Plot real against imaginary
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'phaseballs'
+                        colour-by: 'ANTENNA1' 
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'phaseballs'        
+                        
+            plot1-phaseballs2:
+                  _use: lib.steps.inspect.visibilities.phaseballs
+                  info: Plot real against imaginary
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'phaseballs'
+                        colour-by: 'SCAN_NUMBER' 
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'phaseballs'
+                        
+            plot2-phaseballs1:
+                  _use: lib.steps.inspect.visibilities.phaseballs
+                  info: Plot real against imaginary 
+                  params:
+                        corr: 'XY,YX'
+                        iter-field: true 
+                        suffix: 'phaseballs' 
+                        colour-by: 'ANTENNA1' 
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'phaseballs'
+                        
+            plot2-phaseballs2:
+                  _use: lib.steps.inspect.visibilities.phaseballs
+                  info: Plot real against imaginary 
+                  params:
+                        corr: 'XY,YX'
+                        iter-field: true 
+                        suffix: 'phaseballs' 
+                        colour-by: 'CORR'
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'phaseballs'
+                        
+            plot5-phaseballs:
+                  _use: lib.steps.inspect.visibilities.phaseballs
+                  info: Plot real against imaginary  
+                  params:
+                        vline: '0:'
+                        hline: '0:'
+                        corr: 'IQUV' 
+                        iter-field: true 
+                        colour-by: 'CORR'
+                        suffix: 'phaseballs' 
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'phaseballs'
+                    
+            plot1-baseline:
+                  _use: lib.steps.inspect.visibilities.freqbaseline
+                  info: Plot frequency against baseline
+                  params:
+                        colour-by: 'amp'
+                        iter-field: true 
+                        suffix: 'freqbaseline' 
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'baseline'
+                    
+            plot2-baseline:
+                  _use: lib.steps.inspect.visibilities.ampbaseline
+                  info: Plot Amplitude against Baseline
+                  params:
+                        iter-field: true 
+                        colour-by: 'ANTENNA1'
+                        suffix: 'ampbaseline'  
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}' 
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'baseline'
+                          
+            plot1-UV:
+                  _use: lib.steps.inspect.visibilities.uv
+                  info: Plot V against U
+                  params:
+                        iter-field: true 
+                        colour-by: 'amp'
+                        suffix: 'UV-amp' 
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'uv-distance'
+                    
+            plot2-UV:
+                  _use: lib.steps.inspect.visibilities.uv
+                  info: Plot V against U
+                  params:
+                        cmax: 5
+                        cmin: -5
+                        iter-field: true 
+                        colour-by: 'phase'
+                        suffix: 'UV-phase' 
+                        field: '{root.obsconf.bpcal},{root.obsconf.gcal}' 
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'crosscal' + '/' + 'uv-distance'
+                        
+    inspect-target:
+      name: inspect-target
+      info: A recipe for inspecting polarization calibration solutions
+      
+      assign:
+            dirs.base: 
+            dirs.temp: '{config.run.env.HOME}/tmp'
+            log.dir: '{root.logdir}/log-{config.run.datetime}'
+            
+      inputs:
+            field:
+                 dtype: str 
+            
+      steps:
+            
+            plot1-ampuvdist:
+                  _use: lib.steps.inspect.visibilities.ampuvdist
+                  info: Plot amplitude against UVdist  
+                  params:
+                        iter-field: true 
+                        suffix: 'ampuvdist1'
+                        colour-by: 'ANTENNA1'
+                        ms:            =root.steps.transform2-split_ms.outputvis
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'target' + '/' + 'uv-distance'
+                        
+            #plot2-ampuvdist:
+                  #_use: lib.steps.inspect.visibilities.ampuvdist
+                  #info: Plot amplitude against UVdist  
+                  #params:
+                        #iter-field: true 
+                        #suffix: 'ampuvdist2'
+                        #colour-by: 'SCAN_NUMBER'
+                        #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'target' + '/' + 'uv-distance'
+                        
+            #plot3-ampuvdist:
+                  #_use: lib.steps.inspect.visibilities.ampuvdist
+                  #info: Plot amplitude against UVdist  
+                  #params:
+                        #iter-field: true 
+                        #suffix: 'ampuvdist3'
+                        #colour-by: 'CORR'
+                        #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'target' +'/' + 'uv-distance'
+               
+    inspect-polcal:
+      name: inspect-polcal
+      info: A recipe for inspecting polarization calibration solutions
+      
+      assign:
+            dirs.base: 
+            dirs.temp: '{config.run.env.HOME}/tmp'
+            log.dir: '{root.logdir}/log-{config.run.datetime}'
+            
+      inputs:
+            field:
+                 dtype: str 
+            
+      steps:
+      
+            plot1-ampchan:
+                  _use: lib.steps.inspect.visibilities.ampchan
+                  info: Plot amplitude against channel 
+                  params:
+                        iter-field: true 
+                        suffix: 'ampchan'
+                        colour-by: 'ANTENNA1'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'spectra'
+                        
+            plot2-ampchan:
+                  _use: lib.steps.inspect.visibilities.ampchan
+                  info: Plot amplitude against channel 
+                  params:
+                        iter-field: true 
+                        suffix: 'ampchan'
+                        colour-by: 'SCAN_NUMBER'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'spectra'
+                        
+            plot1-ampuvdist:
+                  _use: lib.steps.inspect.visibilities.ampuvdist
+                  info: Plot amplitude against UVdist  
+                  params:
+                        iter-field: true 
+                        suffix: 'ampuvdist1'
+                        colour-by: 'ANTENNA1'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'uv-distance'
+                        
+            plot2-ampuvdist:
+                  _use: lib.steps.inspect.visibilities.ampuvdist
+                  info: Plot amplitude against UVdist  
+                  params:
+                        iter-field: true 
+                        suffix: 'ampuvdist2'
+                        colour-by: 'SCAN_NUMBER'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'uv-distance'
+                        
+            plot3-ampuvdist:
+                  _use: lib.steps.inspect.visibilities.ampuvdist
+                  info: Plot amplitude against UVdist  
+                  params:
+                        iter-field: true 
+                        suffix: 'ampuvdist3'
+                        colour-by: 'CORR'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' +'/' + 'uv-distance'
+                  
+            plot1-phaseuvdist:
+                  _use: lib.steps.inspect.visibilities.phaseuvdist
+                  info: Plot phase against UVdist  
+                  params:
+                        iter-field: true 
+                        suffix: 'phaseuvdist1'
+                        colour-by: 'ANTENNA1'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' +'/' + 'uv-distance'
+                        
+            plot2-phaseuvdist:
+                  _use: lib.steps.inspect.visibilities.phaseuvdist
+                  info: Plot phase against UVdist  
+                  params:
+                        iter-field: true 
+                        suffix: 'phaseuvdist2'
+                        colour-by: 'SCAN_NUMBER'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'uv-distance'
+                        
+            plot3-phaseuvdist:
+                  _use: lib.steps.inspect.visibilities.phaseuvdist
+                  info: Plot phase against UVdist  
+                  params:
+                        iter-field: true 
+                        suffix: 'phaseuvdist3'
+                        colour-by: 'CORR'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'uv-distance'
+                    
+            plot1-phasefreq1:
+                  _use: lib.steps.inspect.visibilities.phasefreq
+                  info: Plot phase against frequency  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'phasefreq'
+                        colour-by: 'ANTENNA1'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'spectra'
+                        
+            plot1-phasefreq2:
+                  _use: lib.steps.inspect.visibilities.phasefreq
+                  info: Plot phase against frequency  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'phasefreq'
+                        colour-by: 'SCAN_NUMBER'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'spectra'
+                        
+            plot1-phasefreq3:
+                  _use: lib.steps.inspect.visibilities.phasefreq
+                  info: Plot phase against frequency  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'phasefreq'
+                        colour-by: 'CORR'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'spectra'
+                    
+            plot-realfreq:
+                  _use: lib.steps.inspect.visibilities.realfreq
+                  info: Plot real against frequency  
+                  params:
+                        colour-by: 'CORR'
+                        iter-field: true 
+                        suffix: 'realfreq'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'spectra'
+                        
+            plot1-ampfreq1:
+                  _use: lib.steps.inspect.visibilities.ampfreq.corrected.calibrators
+                  info: Plot amplitude against frequency 
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'ampfreq'
+                        colour-by: 'ANTENNA1'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'spectra'
+                    
+            plot1-ampfreq2:
+                  _use: lib.steps.inspect.visibilities.ampfreq.corrected.calibrators
+                  info: Plot amplitude against frequency 
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'ampfreq'
+                        colour-by: 'CORR'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'spectra'
+                        
+            plot2-ampfreq1:
+                  _use: lib.steps.inspect.visibilities.ampfreq.corrected.calibrators
+                  info: Plot amplitude against frequency  
+                  params:
+                        iter-field: true 
+                        suffix: 'ampfreq'
+                        colour-by: 'CORR'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'spectra'
+                        
+            plot2-ampfreq2:
+                  _use: lib.steps.inspect.visibilities.ampfreq.corrected.calibrators
+                  info: Plot amplitude against frequency  
+                  params:
+                        corr: 'IQUV'
+                        iter-field: true 
+                        suffix: 'ampfreq'
+                        colour-by: 'CORR'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' +'/' + 'spectra'
+                        
+            plot2-ampfreq3:
+                  _use: lib.steps.inspect.visibilities.ampfreq.corrected.calibrators
+                  info: Plot amplitude against frequency  
+                  params:
+                        corr: 'XY,YX'
+                        iter-field: true 
+                        suffix: 'ampfreq'
+                        colour-by: 'CORR'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'spectra'
+        
+            plot1-ampphase:
+                  _use: lib.steps.inspect.visibilities.ampphase
+                  info: Plot amplitude against phase  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'ampphase'
+                        colour-by: 'ANTENNA1'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal'+ '/' + 'spectra'
+                    
+            plot2-ampphase:
+                  _use: lib.steps.inspect.visibilities.ampphase
+                  info: Plot amplitude against phase  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'ampphase'
+                        colour-by: 'SCAN_NUMBER'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal'+ '/' + 'spectra'
+                        
+            plot1-amptime1:
+                  _use: lib.steps.inspect.visibilities.amptime
+                  info: Plot amplitude against time  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'amptime'
+                        colour-by: 'ANTENNA1'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'spectra'
+                                
+            plot2-amptime:
+                  _use: lib.steps.inspect.visibilities.amptime
+                  info: Plot amplitude against time  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'amptime'
+                        colour-by: 'SCAN_NUMBER'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'spectra'
+                        
+            plot1-amptime2:
+                  _use: lib.steps.inspect.visibilities.amptime
+                  info: Plot amplitude against time  
+                  params:
+                        corr: 'XY,YX'
+                        iter-field: true 
+                        suffix: 'amptime'
+                        colour-by: 'CORR'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'spectra'
+                        
+            plot1-phasetime1:
+                  _use: lib.steps.inspect.visibilities.phasetime
+                  info: Plot amplitude against time  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'phasetime'
+                        colour-by: 'ANTENNA1'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'spectra'
+                        
+            plot1-phasetime2:
+                  _use: lib.steps.inspect.visibilities.phasetime
+                  info: Plot amplitude against time  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'phasetime'
+                        colour-by: 'CORR'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'spectra'
+                              
+            plot2-phasetime:
+                  _use: lib.steps.inspect.visibilities.phasetime
+                  info: Plot amplitude against time  
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'phasetime'
+                        colour-by: 'SCAN_NUMBER'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'spectra'
+                    
+            plot1-normballs1:
+                  _use: lib.steps.inspect.visibilities.normballs
+                  info: Plot real against imaginary
+                  params:
+                        corr: 'XX' 
+                        iter-field: true  
+                        suffix: 'normballs' 
+                        colour-by: 'ANTENNA1'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'normballs'
+                        
+            plot1-normballs2:
+                  _use: lib.steps.inspect.visibilities.normballs
+                  info: Plot real against imaginary
+                  params:
+                        corr: 'XX' 
+                        iter-field: true  
+                        suffix: 'normballs' 
+                        colour-by: 'SCAN_NUMBER'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'normballs'
+                            
+            plot2-normballs1:
+                  _use: lib.steps.inspect.visibilities.normballs
+                  info: Plot real against imaginary 
+                  params:
+                        corr: 'YY' 
+                        iter-field: true  
+                        suffix: 'normballs' 
+                        colour-by: 'ANTENNA1'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'normballs'
+                    
+            plot2-normballs2:
+                  _use: lib.steps.inspect.visibilities.normballs
+                  info: Plot real against imaginary 
+                  params:
+                        corr: 'YY' 
+                        iter-field: true  
+                        suffix: 'normballs' 
+                        colour-by: 'SCAN_NUMBER'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'normballs'
+                                              
+            plot1-phaseballs1:
+                  _use: lib.steps.inspect.visibilities.phaseballs
+                  info: Plot real against imaginary
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'phaseballs'
+                        colour-by: 'ANTENNA1' 
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'phaseballs'        
+                        
+            plot1-phaseballs2:
+                  _use: lib.steps.inspect.visibilities.phaseballs
+                  info: Plot real against imaginary
+                  params:
+                        corr: 'XX,YY'
+                        iter-field: true 
+                        suffix: 'phaseballs'
+                        colour-by: 'SCAN_NUMBER' 
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'phaseballs'
+                        
+            plot2-phaseballs1:
+                  _use: lib.steps.inspect.visibilities.phaseballs
+                  info: Plot real against imaginary 
+                  params:
+                        corr: 'XY,YX'
+                        iter-field: true 
+                        suffix: 'phaseballs' 
+                        colour-by: 'ANTENNA1' 
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'phaseballs'
+                        
+            plot2-phaseballs2:
+                  _use: lib.steps.inspect.visibilities.phaseballs
+                  info: Plot real against imaginary 
+                  params:
+                        corr: 'XY,YX'
+                        iter-field: true 
+                        suffix: 'phaseballs' 
+                        colour-by: 'CORR'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'phaseballs'
+                        
+            plot5-phaseballs:
+                  _use: lib.steps.inspect.visibilities.phaseballs
+                  info: Plot real against imaginary  
+                  params:
+                        vline: '0:'
+                        hline: '0:'
+                        corr: 'IQUV' 
+                        iter-field: true 
+                        colour-by: 'CORR'
+                        suffix: 'phaseballs' 
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'phaseballs'
+                    
+            plot1-baseline:
+                  _use: lib.steps.inspect.visibilities.freqbaseline
+                  info: Plot frequency against baseline
+                  params:
+                        colour-by: 'amp'
+                        iter-field: true 
+                        suffix: 'freqbaseline' 
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' +  '/' + 'baseline'
+                    
+            plot2-baseline:
+                  _use: lib.steps.inspect.visibilities.ampbaseline
+                  info: Plot Amplitude against Baseline
+                  params:
+                        iter-field: true 
+                        colour-by: 'ANTENNA1'
+                        suffix: 'ampbaseline'   
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'baseline'
+                          
+            plot1-UV:
+                  _use: lib.steps.inspect.visibilities.uv
+                  info: Plot V against U
+                  params:
+                        iter-field: true 
+                        colour-by: 'amp'
+                        suffix: 'UV-amp' 
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'uv-distance'
+                    
+            plot2-UV:
+                  _use: lib.steps.inspect.visibilities.uv
+                  info: Plot V against U
+                  params:
+                        cmax: 5
+                        cmin: -5
+                        iter-field: true 
+                        colour-by: 'phase'
+                        suffix: 'UV-phase'
+                        dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'polcal' + '/' + 'uv-distance'
+      
+            

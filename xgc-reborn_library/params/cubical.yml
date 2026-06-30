@@ -1,0 +1,44 @@
+lib:
+   params:
+      cubical:
+      
+         base:
+         
+            flags.save: "cubical"
+            flags.apply: "-cubical"
+            flags.auto-init: legacy
+            flags.save-legacy: auto
+            flags.reinit-bitflags: false
+            
+            madmax.enable: 0
+            madmax.residuals: 0
+            
+            data.ms: =root.steps.preptarget-mstransform.outputvis 
+            
+         paralactic-angle:
+            _use:  lib.params.cubical.base
+            
+            model.list: ''
+            out.name: cc
+            out.mode: ac
+            out.column: 'CORRECTED_DATA'
+            dist.ncpu:       =IFSET(recipe.selfcal.calibrate.parang-rotate.ncpu,     recipe.selfcal.calibrate.parang-rotate.ncpu, 64)
+            dist.min-chunks: =IFSET(recipe.selfcal.calibrate.parang-rotate.ncpu,     recipe.selfcal.calibrate.parang-rotate.ncpu, 64)
+        
+        
+       
+
+            
+         selfcal:
+            _use:  lib.params.cubical.base
+            
+            sol.jones: [K]
+            sol.term-iters: 0
+            k.type: f-slope
+            k.max-iter: 0
+            
+            
+            out.column: PA_CORRECTED_DATA
+            out.derotate: =recipe.selfcal.pa-rotate
+            model.pa-rotate: =recipe.selfcal.pa-rotate
+            model.feed-rotate: =IF(recipe.selfcal.pa-rotate, "auto", 0)

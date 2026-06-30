@@ -1,0 +1,105 @@
+    
+transform:
+  calibrators:
+    enable: 
+      dtype: bool
+      required: true
+    label:
+      dtype: str
+      required: true
+    field:
+      dtype: str
+      required: true 
+      default: 'calibrators'
+    mstransform:
+      enable: 
+        dtype: bool
+        required: true
+      scan: 
+        dtype: str
+        required: false
+      chanbin: 
+        dtype: int
+        required: false
+      timebin: 
+        dtype: str
+        required: false
+      nthreads:
+        dtype: int
+        required: false
+      chanaverage: 
+        dtype: bool 
+        required: false
+      timeaverage: 
+        dtype: bool
+        required: false
+      correlation:
+        dtype: str
+        required: false
+    obsinfo:
+      enable:
+        dtype: bool
+        required: true
+        default: true
+  target:
+    enable: 
+      dtype: bool
+      required: true
+    label:
+      dtype: str
+      required: true
+    field:
+      dtype: str
+      required: true 
+      default: 'target'
+    mstransform:
+      enable: 
+        dtype: bool
+        required: true
+      scan: 
+        dtype: str
+        required: false
+      chanbin: 
+        dtype: int
+        required: false
+      timebin: 
+        dtype: str
+        required: false
+      nthreads:
+        dtype: int
+        required: false
+      chanaverage: 
+        dtype: bool 
+        required: false
+      timeaverage: 
+        dtype: bool
+        required: false
+      correlation:
+        dtype: str
+        required: false
+    obsinfo:
+      enable:
+        dtype: bool
+        required: true
+        default: true
+  
+         
+         
+            
+        
+        
+                  
+            
+           
+  
+
+            
+      
+               
+
+  
+     
+  
+   
+  
+  

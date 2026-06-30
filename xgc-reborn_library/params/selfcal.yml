@@ -1,0 +1,108 @@
+lib:
+   params:
+      selfcal:
+         quartical:
+         
+            dask.address:
+            dask.workers:        =IFSET(recipe.selfcal.calibrate.quartical.dask.workers,                          recipe.selfcal.calibrate.quartical.dask.workers,                          1)
+            dask.threads:        =IFSET(recipe.selfcal.calibrate.quartical.dask.threads,                          recipe.selfcal.calibrate.quartical.dask.threads,                          2) 
+            dask.scheduler:      =IFSET(recipe.selfcal.calibrate.quartical.dask.scheduler,                        recipe.selfcal.calibrate.quartical.dask.scheduler,                'threads') 
+            
+            input_ms.select_fields: [0]
+            input_ms.select_corr: 
+            input_ms.select_uv_range:  [150,0]
+            input_ms.group_by: [DATA_DESC_ID, FIELD_ID, SCAN_NUMBER]
+            input_ms.path: =recipe.steps.transform2-split_ms.outputvis
+            
+            input_ms.data_column:    =IFSET(recipe.selfcal.calibrate.quartical.input_ms.data_column,              recipe.selfcal.calibrate.quartical.input_ms.data_column,             'DATA')
+            input_ms.sigma_column:   =IFSET(recipe.selfcal.calibrate.quartical.input_ms.sigma_column,             recipe.selfcal.calibrate.quartical.input_ms.sigma_column,  'SIGMA_SPECTRUM')
+            input_ms.weight_column:  =IFSET(recipe.selfcal.calibrate.quartical.input_ms.weight_column,            recipe.selfcal.calibrate.quartical.input_ms.weight_column,            UNSET)
+            
+            input_model.beam:
+            input_model.beam_l_axis: X
+            input_model.beam_m_axis: Y
+            input_model.invert_uvw: true
+            input_model.source_chunks: 500
+            input_model.recipe:         =IFSET(recipe.selfcal.calibrate.quartical.input_model.recipe,             recipe.selfcal.calibrate.quartical.input_model.recipe,         'MODEL_DATA') 
+            input_model.apply_p_jones:  =IFSET(recipe.selfcal.calibrate.quartical.input_model.apply_p_jones,      recipe.selfcal.calibrate.quartical.input_model.apply_p_jones,         false)
+            
+            solver.convergence_fraction: 0.99
+            solver.convergence_criteria: 1e-06
+            solver.reference_antenna: =recipe.obsconf.refant.quartical
+            solver.threads:           =IFSET(recipe.selfcal.calibrate.quartical.solver.threads,                   recipe.selfcal.calibrate.quartical.solver.threads,                       32)
+            solver.robust:            =IFSET(recipe.selfcal.calibrate.quartical.solver.robust,                    recipe.selfcal.calibrate.quartical.solver.robust,                      true)
+            solver.propagate_flags:   =IFSET(recipe.selfcal.calibrate.quartical.solver.propagate_flags,           recipe.selfcal.calibrate.quartical.solver.propagate_flags,             true)
+            solver.iter_recipe:       =IFSET(recipe.selfcal.calibrate.quartical.solver.iter_recipe,               recipe.selfcal.calibrate.quartical.solver.iter_recipe,                UNSET)
+            
+            output.net_gains:
+            output.apply_baseline_corrections:    false
+            output.compute_baseline_corrections:  false
+            output.products: [corrected_data]
+            output.columns:  [CORRECTED_DATA] 
+            output.log_directory:     =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'selfcal/logs/{self.label}.qc'
+            output.gain_directory:    =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'selfcal/gains/{self.label}.qc'
+            output.flags:             =IFSET(recipe.selfcal.calibrate.quartical.output.flags,                     recipe.selfcal.calibrate.quartical.output.flags,                       true)
+            output.overwrite:         =IFSET(recipe.selfcal.calibrate.quartical.output.overwrite,                 recipe.selfcal.calibrate.quartical.output.overwrite,                   true) 
+            output.log_to_terminal:   =IFSET(recipe.selfcal.calibrate.quartical.log_to_terminal,                  recipe.selfcal.calibrate.quartical.log_to_terminal,                    true)
+            output.apply_p_jones_inv: =IFSET(recipe.selfcal.calibrate.quartical.output.apply_p_jones_inv,         recipe.selfcal.calibrate.quartical.output.apply_p_jones_inv,          false)
+            
+            mad_flags.max_deviation:     =IFSET(recipe.selfcal.calibrate.quartical.mad_flags.max_deviation,       recipe.selfcal.calibrate.quartical.mad_flags.max_deviation,            1000)
+            mad_flags.threshold_global:  =IFSET(recipe.selfcal.calibrate.quartical.mad_flags.threshold_global,    recipe.selfcal.calibrate.quartical.mad_flags.threshold_global,            8)
+            mad_flags.threshold_bl:      =IFSET(recipe.selfcal.calibrate.quartical.mad_flags.threshold_bl,        recipe.selfcal.calibrate.quartical.mad_flags.threshold_bl,                6)
+            mad_flags.whitening:         =IFSET(recipe.selfcal.calibrate.quartical.mad_flags.whitening,           recipe.selfcal.calibrate.quartical.mad_flags.whitening,          'disabled')
+            mad_flags.use_off_diagonals: =IFSET(recipe.selfcal.calibrate.quartical.mad_flags.use_off_diagonals,   recipe.selfcal.calibrate.quartical.mad_flags.use_off_diagonals,       false)
+               
+            
+            
+            
+           
+            
+            
+            
+             
+            
+            
+            
+            
+            
+            
+            
+      
+            
+             
+            
+        
+            
+            
+            
+            
+            
+            
+      
+            
+            
+            
+         
+        
+         
+   
+
+  
+  
+  
+  
+  
+            
+            
+            
+           
+                 
+    
+    
+    
+  
+   
+    
+   
+   
+

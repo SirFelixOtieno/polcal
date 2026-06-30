@@ -1,0 +1,459 @@
+lib:
+   params:
+   
+      imaging:
+        
+         setjy:
+         
+            listmodels:  true
+            usescratch:  true
+            scalebychan: true
+            
+         pfb:
+            init:
+               ms: =recipe.ms
+               nthreads: 1
+               nworkers: 16
+               sigma-column: SIGMA_SPECTRUM
+               channels-per-image: 128
+               integrations-per-image: -1
+               chan-average: 4
+               bda-decorr: 0.98
+               overwrite: true
+            grid:
+               super-resolution-factor: 2.0
+               field-of-view: 1.8
+               robustness: -0.3
+               nthreads: 6
+               nworkers: 6 
+               psf-oversize: 1.4
+               overwrite: true
+            sara:
+               niter: 8
+               bases: 'self,db1,db2'
+               nlevels: 2
+               l1-reweight-from: 5
+               pd-tol: [2e-4]
+               pd-maxit: 450
+               pd-verbose: 2
+               pd-report-freq: 50
+               tol: 1e-3
+               gamma: 0.99
+               rmsfactor: 1.0
+               eta: 1e-3
+               alpha: 2.0
+               positivity: 2
+               nthreads: 36
+            restore:
+               nworkers: 6
+               nthreads: 6
+               outputs: I
+            
+         source-finder:
+         
+            base:
+               rms_box: [50,50]
+               thresh_pix: 5
+               thresh_isl: 3
+               catalog_format: ascii
+               rms_map: true
+               flagging_opts: false
+               adaptive_rms_box: true
+               polarisation_do: true
+               spectralindex_do: true
+               
+            bpcal:
+               image: =steps.image-bpcal.prefix
+               outfile_srl:  =steps.image-bpcal.prefix + '.srl'
+               outfile_gaul: =steps.image-bpcal.prefix + '.gaul'
+               _use: lib.params.imaging.source-finder.base
+               
+            gcal:
+               image: =steps.image-gcal.prefix
+               outfile_srl:  =steps.image-gcal.prefix + '.srl'
+               outfile_gaul: =steps.image-gcal.prefix + '.gaul'
+               _use: lib.params.imaging.source-finder.base
+               
+            xcal:
+               image: =steps.image-xcal.prefix
+               outfile_srl:  =steps.image-xcal.prefix + '.srl'
+               outfile_gaul: =steps.image-xcal.prefix + '.gaul'
+               _use: lib.params.imaging.source-finder.base
+               
+            target:
+            
+               i:
+                  image: =steps.image-*.prefix
+                  outfile_srl:  =steps.image-*.prefix + '.srl'
+                  outfile_gaul: =steps.image-*.prefix + '.gaul'
+                  _use: lib.params.imaging.source-finder.base
+                  
+               iquv:
+                  image: =steps.image-pol.prefix
+                  outfile_srl:  =steps.image-pol.prefix + '.srl'
+                  outfile_gaul: =steps.image-pol.prefix + '.gaul'
+                  _use: lib.params.imaging.source-finder.base
+      
+         crystalball:
+         
+            bpcal:
+               num-workers:     =IFSET(recipe.crosscal.set_model.crystalball.num-workers,                 recipe.crosscal.set_model.crystalball.num-workers,                               0)
+               num-sources:     =IFSET(recipe.crosscal.set_model.crystalball.num-sources,                 recipe.crosscal.set_model.crystalball.num-sources,                               0)
+               memory-fraction: =IFSET(recipe.crosscal.set_model.crystalball.memory-fraction,             recipe.crosscal.set_model.crystalball.memory-fraction,                         0.1)
+               points-only:     =IFSET(recipe.crosscal.set_model.crystalball.points-only,                 recipe.crosscal.set_model.crystalball.points-only,                            true)
+               output-column:   =IFSET(recipe.crosscal.set_model.crystalball.output-column,               recipe.crosscal.set_model.crystalball.output-column,                  'MODEL_DATA')
+               
+         aimfast:
+         
+            bpcal:
+               tolerance:                  =IFSET(recipe.crosscal.primary.assess.aimfast.tolerance,                 recipe.crosscal.primary.assess.aimfast.tolerance,                    0.6)
+               all_source:                 =IFSET(recipe.crosscal.primary.assess.aimfast.all_source,                recipe.crosscal.primary.assess.aimfast.all_source,                 false)
+               
+            gcal:
+               tolerance:                  =IFSET(recipe.crosscal.secondary.assess.aimfast.tolerance,               recipe.crosscal.secondary.assess.aimfast.tolerance,                  0.6)
+               all_source:                 =IFSET(recipe.crosscal.secondary.assess.aimfast.all_source,              recipe.crosscal.secondary.assess.aimfast.all_source,               false)
+               
+            xcal:  
+               tolerance:                  =IFSET(recipe.polcal.assess.aimfast.tolerance,                           recipe.polcal.assess.aimfast.tolerance,                              0.6)
+               all_source:                 =IFSET(recipe.polcal.assess.aimfast.all_source,                          recipe.polcal.assess.aimfast.all_source,                           false)
+               
+            target:
+               i:
+                  tolerance:               =IFSET(recipe.selfcal.assess.aimfast.tolerance,                          recipe.selfcal.assess.aimfast.tolerance,                             0.6)
+                  all_source:              =IFSET(recipe.selfcal.assess.aimfast.all_source,                         recipe.selfcal.assess.aimfast.all_source,                          false)
+            
+               iquv:
+                  tolerance:               =IFSET(recipe.image-pol.assess.aimfast.tolerance,                        recipe.image-pol.assess.aimfast.tolerance,                           0.6)
+                  all_source:              =IFSET(recipe.image-pol.assess.aimfast.all_source,                       recipe.image-pol.assess.aimfast.all_source,                        false)
+            
+         smops:
+         
+            bpcal:
+               stokes:                     ='{steps.image-bpcal.pol}'
+               ms:                         =root.steps.transform1-split_ms.outputvis
+               polynomial-order:           =IFSET(recipe.crosscal.primary.upsample.smops.polynomial-order,          recipe.crosscal.primary.upsample.smops.polynomial-order,               4)
+               num-threads:                =IFSET(recipe.crosscal.primary.upsample.smops.num-threads,               recipe.crosscal.primary.upsample.smops.num-threads,                   64)
+               channels-out:               =IFSET(recipe.crosscal.primary.upsample.smops.channels-out,              recipe.crosscal.primary.upsample.smops.channels-out,                   8)
+                
+            gcal:
+               stokes:                     ='{steps.image-gcal.pol}'
+               ms:                         =root.steps.transform1-split_ms.outputvis
+               polynomial-order:           =IFSET(recipe.crosscal.secondary.upsample.smops.polynomial-order,        recipe.crosscal.secondary.upsample.smops.polynomial-order,             4)
+               num-threads:                =IFSET(recipe.crosscal.secondary.upsample.smops.num-threads,             recipe.crosscal.secondary.upsample.smops.num-threads,                 64)
+               channels-out:               =IFSET(recipe.crosscal.secondary.upsample.smops.channels-out,            recipe.crosscal.secondary.upsample.smops.channels-out,                 8)
+               
+            xcal:
+               stokes:                     ='{steps.image-xcal.pol}'
+               ms:                         =root.steps.transform1-split_ms.outputvis
+               polynomial-order:           =IFSET(recipe.polcal.upsample.smops.polynomial-order,                    recipe.polcal.upsample.smops.polynomial-order,                         4)
+               num-threads:                =IFSET(recipe.polcal.upsample.smops.num-threads,                         recipe.polcal.upsample.smops.num-threads,                             64)
+               channels-out:               =IFSET(recipe.polcal.upsample.smops.channels-out,                        recipe.polcal.upsample.smops.channels-out,                             8)
+               
+            target:
+               i:
+                  stokes:                  ='{steps.image*.pol}'
+                  ms:                      =root.steps.transform2-split_ms.outputvis
+                  polynomial-order:        =IFSET(recipe.selfcal.upsample.smops.polynomial-order,                   recipe.selfcal.upsample.smops.polynomial-order,                        4)
+                  num-threads:             =IFSET(recipe.selfcal.upsample.smops.num-threads,                        recipe.selfcal.upsample.smops.num-threads,                            64)
+                  channels-out:            =IFSET(recipe.selfcal.upsample.smops.channels-out,                       recipe.selfcal.upsample.smops.channels-out,                        UNSET)
+               
+               iquv:
+                  stokes:                  ='{steps.image-pol.pol}'
+                  ms:                      =root.steps.transform2-split_ms.outputvis
+                  polynomial-order:        =IFSET(recipe.image-pol.upsample.smops.polynomial-order,                 recipe.image-pol.upsample.smops.polynomial-order,                      4) 
+                  num-threads:             =IFSET(recipe.image-pol.upsample.smops.num-threads,                      recipe.image-pol.upsample.smops.num-threads,                          64)
+                  channels-out:            =IFSET(recipe.image-pol.upsample.smops.channels-out,                     recipe.image-pol.upsample.smops.channels-out,                      UNSET)
+                
+         breizorro:
+         
+            bpcal:
+               dilate:                     =IFSET(recipe.crosscal.primary.mask.breizorro.dilate,                    recipe.crosscal.primary.mask.breizorro.dilate,                        3)
+               boxsize:                    =IFSET(recipe.crosscal.primary.mask.breizorro.boxsize,                   recipe.crosscal.primary.mask.breizorro.boxsize,                      50)
+               savenoise:                  =IFSET(recipe.crosscal.primary.mask.breizorro.savenoise,                 recipe.crosscal.primary.mask.breizorro.savenoise,                 false)
+               fill-holes:                 =IFSET(recipe.crosscal.primary.mask.breizorro.fill-holes,                recipe.crosscal.primary.mask.breizorro.fill-holes,                 true)
+               
+            gcal:
+               dilate:                     =IFSET(recipe.crosscal.secondary.mask.breizorro.dilate,                  recipe.crosscal.secondary.mask.breizorro.dilate,                      3)
+               boxsize:                    =IFSET(recipe.crosscal.secondary.mask.breizorro.boxsize,                 recipe.crosscal.secondary.mask.breizorro.boxsize,                    50)
+               savenoise:                  =IFSET(recipe.crosscal.secondary.mask.breizorro.savenoise,               recipe.crosscal.secondary.mask.breizorro.savenoise,               false)
+               fill-holes:                 =IFSET(recipe.crosscal.secondary.mask.breizorro.fill-holes,              recipe.crosscal.secondary.mask.breizorro.fill-holes,               true)
+               
+            xcal:
+               dilate:                     =IFSET(recipe.polcal.mask.breizorro.dilate,                              recipe.polcal.mask.breizorro.dilate,                                  3)
+               boxsize:                    =IFSET(recipe.polcal.mask.breizorro.boxsize,                             recipe.polcal.mask.breizorro.boxsize,                                50)
+               savenoise:                  =IFSET(recipe.polcal.mask.breizorro.savenoise,                           recipe.polcal.mask.breizorro.savenoise,                           false)
+               fill-holes:                 =IFSET(recipe.polcal.mask.breizorro.fill-holes,                          recipe.polcal.mask.breizorro.fill-holes,                           true)
+               
+            target:
+               i:
+                  dilate:                  =IFSET(recipe.selfcal.mask.breizorro.dilate,                             recipe.selfcal.mask.breizorro.dilate,                                 3)
+                  boxsize:                 =IFSET(recipe.selfcal.mask.breizorro.boxsize,                            recipe.selfcal.mask.breizorro.boxsize,                               50)
+                  savenoise:               =IFSET(recipe.selfcal.mask.breizorro.savenoise,                          recipe.selfcal.mask.breizorro.savenoise,                          false)
+                  fill-holes:              =IFSET(recipe.selfcal.mask.breizorro.fill-holes,                         recipe.selfcal.mask.breizorro.fill-holes,                          true)
+                  
+               iquv:
+                  dilate:                  =IFSET(recipe.image-pol.mask.breizorro.dilate,                           recipe.image-pol.mask.breizorro.dilate,                               3)
+                  boxsize:                 =IFSET(recipe.image-pol.mask.breizorro.boxsize,                          recipe.image-pol.mask.breizorro.boxsize,                             50)
+                  savenoise:               =IFSET(recipe.image-pol.mask.breizorro.savenoise,                        recipe.image-pol.mask.breizorro.savenoise,                        false)
+                  fill-holes:              =IFSET(recipe.image-pol.mask.breizorro.fill-holes,                       recipe.image-pol.mask.breizorro.fill-holes,                        true)  
+                  
+         wsclean:
+         
+            bpcal:
+               base:
+                  niter:  500000 
+                  field:                    ='{recipe.obsconf.bpcal}'
+                  ms:                       =steps.transform1-split_ms.outputvis
+                  temp-dir:                 =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/images/temp/bpcal'
+                  wstack-nwlayers-factor:   =IFSET(recipe.crosscal.primary.image.wsclean.wstack-nwlayers-factor,   recipe.crosscal.primary.image.wsclean.wstack-nwlayers-factor,          3)
+                  mem:                      =IFSET(recipe.crosscal.primary.image.wsclean.mem,                      recipe.crosscal.primary.image.wsclean.mem,                            90)
+                  abs-mem:                  =IFSET(recipe.crosscal.primary.image.wsclean.abs-mem,                  recipe.crosscal.primary.image.wsclean.abs-mem,                       100)
+                  padding:                  =IFSET(recipe.crosscal.primary.image.wsclean.padding,                  recipe.crosscal.primary.image.wsclean.padding,                     UNSET)
+                  size:                     =IFSET(recipe.crosscal.primary.image.wsclean.size,                     recipe.crosscal.primary.image.wsclean.size,                         2560) 
+                  log-time:                 =IFSET(recipe.crosscal.primary.image.wsclean.log-time,                 recipe.crosscal.primary.image.wsclean.log-time,                     true)
+                  verbose:                  =IFSET(recipe.crosscal.primary.image.wsclean.verbose,                  recipe.crosscal.primary.image.wsclean.verbose,                      true)
+                  gridder:                  =IFSET(recipe.crosscal.primary.image.wsclean.gridder,                  recipe.crosscal.primary.image.wsclean.gridder,                'wgridder')
+                  model-column:             =IFSET(recipe.crosscal.primary.image.wsclean.model-column,             recipe.crosscal.primary.image.wsclean.model-column,         'MODEL_DATA')
+                  column:                   =IFSET(recipe.crosscal.primary.image.wsclean.column,                   recipe.crosscal.primary.image.wsclean.column,           'CORRECTED_DATA')
+                  scale:                    =IFSET(recipe.crosscal.primary.image.wsclean.scale,                    recipe.crosscal.primary.image.wsclean.scale,                  '1.1 asec')
+                  fit-spectral-pol:         =IFSET(recipe.crosscal.primary.image.wsclean.fit-spectral-pol,         recipe.crosscal.primary.image.wsclean.fit-spectral-pol,                4)
+                  threads:                  =IFSET(recipe.crosscal.primary.image.wsclean.threads,                  recipe.crosscal.primary.image.wsclean.threads,                        64)
+                  gain:                     =IFSET(recipe.crosscal.primary.image.wsclean.gain,                     recipe.crosscal.primary.image.wsclean.gain,                         0.15)
+                  auto-threshold:           =IFSET(recipe.crosscal.primary.image.wsclean.auto-threshold,           recipe.crosscal.primary.image.wsclean.auto-threshold,                1.0)
+                  mgain:                    =IFSET(recipe.crosscal.primary.image.wsclean.mgain,                    recipe.crosscal.primary.image.wsclean.mgain,                        0.90)
+                  multiscale:               =IFSET(recipe.crosscal.primary.image.wsclean.multiscale,               recipe.crosscal.primary.image.wsclean.multiscale,                  false)
+                  abs-threshold:            =IFSET(recipe.crosscal.primary.image.wsclean.abs-threshold,            recipe.crosscal.primary.image.wsclean.abs-threshold,               UNSET) 
+                  save-source-list:         =IFSET(recipe.crosscal.primary.image.wsclean.save-source-list,         recipe.crosscal.primary.image.wsclean.save-source-list,            false)
+                  join-channels:            =IFSET(recipe.crosscal.primary.image.wsclean.join-channels,            recipe.crosscal.primary.image.wsclean.join-channels,                true)
+                  no-update-model-required: =IFSET(recipe.crosscal.primary.image.wsclean.no-update-model-required, recipe.crosscal.primary.image.wsclean.no-update-model-required,     true)
+                  weight:                   =IFSET(recipe.crosscal.primary.image.wsclean.weight,                   recipe.crosscal.primary.image.wsclean.weight,                  'uniform')
+                  parallel-reordering:       =IFSET(recipe.crosscal.primary.image.wsclean.parallel-reordering,      recipe.crosscal.primary.image.wsclean.parallel-reordering,             8)
+                  parallel-gridding:        =IFSET(recipe.crosscal.primary.image.wsclean.parallel-gridding,        recipe.crosscal.primary.image.wsclean.parallel-gridding,               8)
+                  parallel-deconvolution:   =IFSET(recipe.crosscal.primary.image.wsclean.parallel-deconvolution,   recipe.crosscal.primary.image.wsclean.parallel-deconvolution,       2560)
+                  
+               image:
+                  i:
+                     pol: I
+                     nchan:                 =IFSET(recipe.crosscal.primary.image.wsclean.nchan,                    recipe.crosscal.primary.image.wsclean.nchan,                           8)
+                     mf-weighting:          =IFSET(recipe.crosscal.primary.image.wsclean.mf-weighting,             recipe.crosscal.primary.image.wsclean.mf-weighting,                 true)
+                     _use: lib.params.imaging.wsclean.bpcal.base
+                     
+                  iquv:
+                     pol: IQUV
+                     nchan:                 =IFSET(recipe.crosscal.primary.image.wsclean.nchan,                    recipe.crosscal.primary.image.wsclean.nchan,                          16)
+                     no-mf-weighting:       =IFSET(recipe.crosscal.primary.image.wsclean.no-mf-weighting,          recipe.crosscal.primary.image.wsclean.no-mf-weighting,              true)
+                     join-polarizations:    =IFSET(recipe.crosscal.primary.image.wsclean.join-polarizations,       recipe.crosscal.primary.image.wsclean.join-polarizations,           true)
+                     _use: lib.params.imaging.wsclean.bpcal.base
+
+            gcal:
+               base:
+                  niter:  500000 
+                  field:                    ='{recipe.obsconf.gcal}'
+                  ms:                       =steps.transform1-split_ms.outputvis
+                  temp-dir:                 =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/images/temp/gcal'
+                  wstack-nwlayers-factor:   =IFSET(recipe.crosscal.secondary.image.wsclean.wstack-nwlayers-factor,   recipe.crosscal.secondary.image.wsclean.wstack-nwlayers-factor,      3)
+                  mem:                      =IFSET(recipe.crosscal.secondary.image.wsclean.mem,                      recipe.crosscal.secondary.image.wsclean.mem,                        90)
+                  abs-mem:                  =IFSET(recipe.crosscal.secondary.image.wsclean.abs-mem,                  recipe.crosscal.secondary.image.wsclean.abs-mem,                   100)
+                  padding:                  =IFSET(recipe.crosscal.secondary.image.wsclean.padding,                  recipe.crosscal.secondary.image.wsclean.padding,                 UNSET)
+                  size:                     =IFSET(recipe.crosscal.secondary.image.wsclean.size,                     recipe.crosscal.secondary.image.wsclean.size,                     2560) 
+                  log-time:                 =IFSET(recipe.crosscal.secondary.image.wsclean.log-time,                 recipe.crosscal.secondary.image.wsclean.log-time,                 true)
+                  verbose:                  =IFSET(recipe.crosscal.secondary.image.wsclean.verbose,                  recipe.crosscal.secondary.image.wsclean.verbose,                  true)
+                  gridder:                  =IFSET(recipe.crosscal.secondary.image.wsclean.gridder,                  recipe.crosscal.secondary.image.wsclean.gridder,            'wgridder')
+                  model-column:             =IFSET(recipe.crosscal.secondary.image.wsclean.model-column,             recipe.crosscal.secondary.image.wsclean.model-column,     'MODEL_DATA')
+                  column:                   =IFSET(recipe.crosscal.secondary.image.wsclean.column,                   recipe.crosscal.secondary.image.wsclean.column,       'CORRECTED_DATA')
+                  scale:                    =IFSET(recipe.crosscal.secondary.image.wsclean.scale,                    recipe.crosscal.secondary.image.wsclean.scale,              '1.1 asec')
+                  fit-spectral-pol:         =IFSET(recipe.crosscal.secondary.image.wsclean.fit-spectral-pol,         recipe.crosscal.secondary.image.wsclean.fit-spectral-pol,            4)
+                  threads:                  =IFSET(recipe.crosscal.secondary.image.wsclean.threads,                  recipe.crosscal.secondary.image.wsclean.threads,                    64)
+                  gain:                     =IFSET(recipe.crosscal.secondary.image.wsclean.gain,                     recipe.crosscal.secondary.image.wsclean.gain,                     0.15)
+                  auto-threshold:           =IFSET(recipe.crosscal.secondary.image.wsclean.auto-threshold,           recipe.crosscal.secondary.image.wsclean.auto-threshold,            1.0)
+                  mgain:                    =IFSET(recipe.crosscal.secondary.image.wsclean.mgain,                    recipe.crosscal.secondary.image.wsclean.mgain,                    0.90)
+                  multiscale:               =IFSET(recipe.crosscal.secondary.image.wsclean.multiscale,               recipe.crosscal.secondary.image.wsclean.multiscale,              false)
+                  abs-threshold:            =IFSET(recipe.crosscal.secondary.image.wsclean.abs-threshold,            recipe.crosscal.secondary.image.wsclean.abs-threshold,           UNSET) 
+                  save-source-list:         =IFSET(recipe.crosscal.secondary.image.wsclean.save-source-list,         recipe.crosscal.secondary.image.wsclean.save-source-list,        false)
+                  join-channels:            =IFSET(recipe.crosscal.secondary.image.wsclean.join-channels,            recipe.crosscal.secondary.image.wsclean.join-channels,            true)
+                  no-update-model-required: =IFSET(recipe.crosscal.secondary.image.wsclean.no-update-model-required, recipe.crosscal.secondary.image.wsclean.no-update-model-required, true)
+                  weight:                   =IFSET(recipe.crosscal.secondary.image.wsclean.weight,                   recipe.crosscal.secondary.image.wsclean.weight,              'uniform')
+                  parallel-reordering:      =IFSET(recipe.crosscal.secondary.image.wsclean.parallel-reordering,      recipe.crosscal.secondary.image.wsclean.parallel-reordering,         8)
+                  parallel-gridding:        =IFSET(recipe.crosscal.secondary.image.wsclean.parallel-gridding,        recipe.crosscal.secondary.image.wsclean.parallel-gridding,           8)
+                  parallel-deconvolution:   =IFSET(recipe.crosscal.secondary.image.wsclean.parallel-deconvolution,   recipe.crosscal.secondary.image.wsclean.parallel-deconvolution,   2560)
+                  
+               image:
+                  i:
+                     pol: I
+                     nchan:                 =IFSET(recipe.crosscal.secondary.image.wsclean.nchan,                    recipe.crosscal.secondary.image.wsclean.nchan,                      8)
+                     mf-weighting:          =IFSET(recipe.crosscal.secondary.image.wsclean.mf-weighting,             recipe.crosscal.secondary.image.wsclean.mf-weighting,            true)
+                     _use: lib.params.imaging.wsclean.gcal.base
+                     
+                  iquv:
+                     pol: IQUV
+                     nchan:                 =IFSET(recipe.crosscal.secondary.image.wsclean.nchan,                    recipe.crosscal.secondary.image.wsclean.nchan,                     16)
+                     no-mf-weighting:       =IFSET(recipe.crosscal.secondary.image.wsclean.no-mf-weighting,          recipe.crosscal.secondary.image.wsclean.no-mf-weighting,         true)
+                     join-polarizations:    =IFSET(recipe.crosscal.secondary.image.wsclean.join-polarizations,       recipe.crosscal.secondary.image.wsclean.join-polarizations,      true)
+                     _use: lib.params.imaging.wsclean.gcal.base
+               
+            xcal:
+               base:
+                  niter:  500000 
+                  field:                    ='{recipe.obsconf.xcal}'
+                  ms:                       =steps.transform1-split_ms.outputvis
+                  temp-dir:                 =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/images/temp/xcal'
+                  wstack-nwlayers-factor:   =IFSET(recipe.polcal.image.wsclean.wstack-nwlayers-factor,               recipe.polcal.image.wsclean.wstack-nwlayers-factor,                3)
+                  mem:                      =IFSET(recipe.polcal.image.wsclean.mem,                                  recipe.polcal.image.wsclean.mem,                                  90)
+                  abs-mem:                  =IFSET(recipe.polcal.image.wsclean.abs-mem,                              recipe.polcal.image.wsclean.abs-mem,                             100)
+                  padding:                  =IFSET(recipe.polcal.image.wsclean.padding,                              recipe.polcal.image.wsclean.padding,                           UNSET)
+                  size:                     =IFSET(recipe.polcal.image.wsclean.size,                                 recipe.polcal.image.wsclean.size,                               2560)
+                  log-time:                 =IFSET(recipe.polcal.image.wsclean.log-time,                             recipe.polcal.image.wsclean.log-time,                           true)
+                  verbose:                  =IFSET(recipe.polcal.image.wsclean.verbose,                              recipe.polcal.image.wsclean.verbose,                            true)
+                  gridder:                  =IFSET(recipe.polcal.image.wsclean.gridder,                              recipe.polcal.image.wsclean.gridder,                      'wgridder')
+                  model-column:             =IFSET(recipe.polcal.image.wsclean.model-column,                         recipe.polcal.image.wsclean.model-column,               'MODEL_DATA')
+                  column:                   =IFSET(recipe.polcal.image.wsclean.column,                               recipe.polcal.image.wsclean.column,                 'CORRECTED_DATA')
+                  scale:                    =IFSET(recipe.polcal.image.wsclean.scale,                                recipe.polcal.image.wsclean.scale,                        '1.1 asec')
+                  fit-spectral-pol:         =IFSET(recipe.polcal.image.wsclean.fit-spectral-pol,                     recipe.polcal.image.wsclean.fit-spectral-pol,                      4)
+                  threads:                  =IFSET(recipe.polcal.image.wsclean.threads,                              recipe.polcal.image.wsclean.threads,                              64)
+                  gain:                     =IFSET(recipe.polcal.image.wsclean.gain,                                 recipe.polcal.image.wsclean.gain,                                0.1)
+                  auto-threshold:           =IFSET(recipe.polcal.image.wsclean.auto-threshold,                       recipe.polcal.image.wsclean.auto-threshold,                      1.0)
+                  mgain:                    =IFSET(recipe.polcal.image.wsclean.mgain,                                recipe.polcal.image.wsclean.mgain,                              0.90)
+                  multiscale:               =IFSET(recipe.polcal.image.wsclean.multiscale,                           recipe.polcal.image.wsclean.multiscale,                        false)
+                  abs-threshold:            =IFSET(recipe.polcal.image.wsclean.abs-threshold,                        recipe.polcal.image.wsclean.abs-threshold,                     UNSET) 
+                  save-source-list:         =IFSET(recipe.polcal.image.wsclean.save-source-list,                     recipe.polcal.image.wsclean.save-source-list,                  false)
+                  join-channels:            =IFSET(recipe.polcal.image.wsclean.join-channels,                        recipe.polcal.image.wsclean.join-channels,                      true)
+                  no-update-model-required: =IFSET(recipe.polcal.image.wsclean.no-update-model-required,             recipe.polcal.image.wsclean.no-update-model-required,           true)
+                  squared-channel-joining:  =IFSET(recipe.polcal.image.wsclean.squared-channel-joining,              recipe.polcal.image.wsclean.squared-channel-joining,            true) 
+                  weight:                   =IFSET(recipe.polcal.image.wsclean.weight,                               recipe.polcal.image.wsclean.weight,                        'uniform')
+                  parallel-reordering:       =IFSET(recipe.polcal.image.wsclean.parallel-reordering,                 recipe.polcal.image.wsclean.parallel-reordering,                   8)
+                  parallel-gridding:        =IFSET(recipe.polcal.image.wsclean.parallel-gridding,                    recipe.polcal.image.wsclean.parallel-gridding,                     8)
+                  parallel-deconvolution:   =IFSET(recipe.polcal.image.wsclean.parallel-deconvolution,               recipe.polcal.image.wsclean.parallel-deconvolution,             2560)
+                  
+               image:
+                  i:
+                     pol: I
+                     nchan:                 =IFSET(recipe.polcal.image.wsclean.nchan,                                recipe.polcal.image.wsclean.nchan,                                8)
+                     mf-weighting:          =IFSET(recipe.polcal.image.wsclean.mf-weighting,                         recipe.polcal.image.wsclean.mf-weighting,                      true)
+                     _use: lib.params.imaging.wsclean.xcal.base
+                  iquv:
+                     pol: IQUV
+                     nchan:                 =IFSET(recipe.polcal.image.wsclean.nchan,                                recipe.polcal.image.wsclean.nchan,                               16)
+                     no-mf-weighting:       =IFSET(recipe.polcal.image.wsclean.no-mf-weighting,                      recipe.polcal.image.wsclean.no-mf-weighting,                   true)
+                     join-polarizations:    =IFSET(recipe.polcal.image.wsclean.join-polarizations,                   recipe.polcal.image.wsclean.join-polarizations,                true)
+                     _use: lib.params.imaging.wsclean.xcal.base
+                 
+            target:
+               i:
+                  base:
+                     ms:                     ='{steps.transform2-split_ms.outputvis}'
+                     temp-dir:               =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/images/temp'
+                     wstack-nwlayers-factor: =IFSET(recipe.selfcal.image.wsclean.wstack-nwlayers-factor,             recipe.selfcal.image.wsclean.wstack-nwlayers-factor,             3)
+                     nchan:                  =IFSET(recipe.selfcal.image.wsclean.nchan,                              recipe.selfcal.image.wsclean.nchan,                              8)
+                     padding:                =IFSET(recipe.selfcal.image.wsclean.padding,                            recipe.selfcal.image.wsclean.padding,                        UNSET)
+                     mem:                    =IFSET(recipe.selfcal.image.wsclean.mem,                                recipe.selfcal.image.wsclean.mem,                               90)
+                     abs-mem:                =IFSET(recipe.selfcal.image.wsclean.abs-mem,                            recipe.selfcal.image.wsclean.abs-mem,                          100)
+                     size:                   =IFSET(recipe.selfcal.image.wsclean.size,                               recipe.selfcal.image.wsclean.size,                           10240)
+                     log-time:               =IFSET(recipe.selfcal.image.wsclean.log-time,                           recipe.selfcal.image.wsclean.log-time,                        true)
+                     verbose:                =IFSET(recipe.selfcal.image.wsclean.verbose,                            recipe.selfcal.image.wsclean.verbose,                         true)
+                     scale:                  =IFSET(recipe.selfcal.image.wsclean.scale,                              recipe.selfcal.image.wsclean.scale,                     '1.1 asec')
+                     model-column:           =IFSET(recipe.selfcal.image.wsclean.model-column,                       recipe.selfcal.image.wsclean.model-column,            'MODEL_DATA')
+                     gridder:                =IFSET(recipe.selfcal.image.wsclean.gridder,                            recipe.selfcal.image.wsclean.gridder,                   'wgridder')
+                     column:                 =IFSET(recipe.selfcal.image.wsclean.column,                             recipe.selfcal.image.wsclean.column,              'CORRECTED_DATA')
+                     mf-weighting:             =IFSET(recipe.selfcal.image.wsclean.mf-weighting,                     recipe.selfcal.image.wsclean.mf-weighting,                    true)
+                     no-mf-weighting:          =IFSET(recipe.selfcal.image.wsclean.no-mf-weighting,                  recipe.selfcal.image.wsclean.no-mf-weighting,                false)
+                     no-update-model-required: =IFSET(recipe.selfcal.image.wsclean.no-update-model-required,         recipe.selfcal.image.wsclean.no-update-model-required,        true)
+                  
+                  image:
+                     pol: I
+                     niter:  500000 
+                     join-channels: true
+                     save-source-list: true
+                     multiscale-scale-bias: 0.6
+                     multiscale-scales: [0,19,39,78] 
+                     auto-threshold:           =IFSET(recipe.selfcal.image.wsclean.auto-threshold,                   recipe.selfcal.image.wsclean.auto-threshold,                    1)
+                     gain:                     =IFSET(recipe.selfcal.image.wsclean.gain,                             recipe.selfcal.image.wsclean.gain,                            0.1)
+                     mgain:                    =IFSET(recipe.selfcal.image.wsclean.mgain,                            recipe.selfcal.image.wsclean.mgain,                           0.9)
+                     threads:                  =IFSET(recipe.selfcal.image.wsclean.threads,                          recipe.selfcal.image.wsclean.threads,                          64)
+                     multiscale:               =IFSET(recipe.selfcal.image.wsclean.multiscale,                       recipe.selfcal.image.wsclean.multiscale,                    false)
+                     weight:                   =IFSET(recipe.selfcal.image.wsclean.weight,                           recipe.selfcal.image.wsclean.weight,                 'briggs 0.0') 
+                     abs-threshold:            =IFSET(recipe.selfcal.image.wsclean.abs-threshold,                    recipe.selfcal.image.wsclean.abs-threshold,                 UNSET) 
+                     fit-spectral-pol:         =IFSET(recipe.selfcal.image.wsclean.fit-spectral-pol,                 recipe.selfcal.image.wsclean.fit-spectral-pol,                  4)
+                     parallel-reordering:      =IFSET(recipe.selfcal.image.wsclean.parallel-reordering,              recipe.selfcal.image.wsclean.parallel-reordering,               8)
+                     parallel-gridding:        =IFSET(recipe.selfcal.image.wsclean.parallel-gridding,                recipe.selfcal.image.wsclean.parallel-gridding,                 8)
+                     parallel-deconvolution:   =IFSET(recipe.selfcal.image.wsclean.parallel-deconvolution,           recipe.selfcal.image.wsclean.parallel-deconvolution,        UNSET)
+                     _use: lib.params.imaging.wsclean.target.i.base
+                     
+                  dirty:
+                     niter: 0
+                     column: CORRECTED_DATA
+                     weight:                   =IFSET(recipe.selfcal.image.wsclean.weight,                           recipe.selfcal.image.wsclean.weight,                 'briggs 0.0') 
+                     _use: lib.params.imaging.wsclean.target.i.base
+                  
+                  predict:
+                     pol: I
+                     predict: true
+                     no-mf-weighting:          =IFSET(recipe.selfcal.image.wsclean.no-mf-weighting,                  recipe.selfcal.image.wsclean.no-mf-weighting,                 true)
+                     _use: lib.params.imaging.wsclean.target.i.base
+                  
+               iquv:
+                  base:
+                     wstack-nwlayers-factor: 3
+                     ms:                      =root.steps.transform2-split_ms.outputvis
+                     temp-dir:                =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/images/temp'
+                     nchan:                   =IFSET(recipe.image-pol.image.wsclean.nchan,                           recipe.image-pol.image.wsclean.nchan,                        80) 
+                     mem:                     =IFSET(recipe.image-pol.image.wsclean.mem,                             recipe.image-pol.image.wsclean.mem,                          90)
+                     padding:                 =IFSET(recipe.image-pol.image.wsclean.padding,                         recipe.image-pol.image.wsclean.padding,                     1.5)
+                     abs-mem:                 =IFSET(recipe.image-pol.image.wsclean.abs-mem,                         recipe.image-pol.image.wsclean.abs-mem,                     100)
+                     size:                    =IFSET(recipe.image-pol.image.wsclean.size,                            recipe.image-pol.image.wsclean.size,                       1024)
+                     verbose:                 =IFSET(recipe.image-pol.image.wsclean.verbose,                         recipe.image-pol.image.wsclean.verbose,                    true)
+                     log-time:                =IFSET(recipe.image-pol.image.wsclean.log-time,                        recipe.image-pol.image.wsclean.log-time,                   true)
+                     scale:                   =IFSET(recipe.image-pol.image.wsclean.scale,                           recipe.image-pol.image.wsclean.scale,                '1.1 asec')
+                     gridder:                 =IFSET(recipe.image-pol.image.wsclean.gridder,                         recipe.image-pol.image.wsclean.gridder,              'wgridder')
+                     model-column:            =IFSET(recipe.image-pol.image.wsclean.model-column,                    recipe.image-pol.image.wsclean.model-column,       'MODEL_DATA')
+                     column:                  =IFSET(recipe.image-pol.image.wsclean.column,                          recipe.image-pol.image.wsclean.column,         'CORRECTED_DATA')
+                  
+                  image:
+                     niter: 200000  
+                     multiscale-scale-bias: 0.6
+                     multiscale-scales:    [0,19,39,78]
+                     auto-threshold:           =IFSET(recipe.image-pol.image.wsclean.auto-threshold,                 recipe.image-pol.image.wsclean.auto-threshold,                1) 
+                     fit-spectral-pol:         =IFSET(recipe.image-pol.image.wsclean.fit-spectral-pol,               recipe.image-pol.image.wsclean.fit-spectral-pol,              4) 
+                     threads:                  =IFSET(recipe.image-pol.image.wsclean.threads,                        recipe.image-pol.image.wsclean.threads,                      64)
+                     gain:                     =IFSET(recipe.image-pol.image.wsclean.gain,                           recipe.image-pol.image.wsclean.gain,                        0.1) 
+                     mgain:                    =IFSET(recipe.image-pol.image.wsclean.mgain,                          recipe.image-pol.image.wsclean.mgain,                       0.9)
+                     join-channels:            =IFSET(recipe.image-pol.image.wsclean.join-channels,                  recipe.image-pol.image.wsclean.join-channels,              true)
+                     join-polarizations:       =IFSET(recipe.image-pol.image.wsclean.join-polarizations,             recipe.image-pol.image.wsclean.join-polarizations,        UNSET)
+                     squared-channel-joining:  =IFSET(recipe.image-pol.image.wsclean.squared-channel-joining,        recipe.image-pol.image.wsclean.squared-channel-joining,   UNSET) 
+                     no-update-model-required: =IFSET(recipe.image-pol.image.wsclean.no-update-model-required,       recipe.image-pol.image.wsclean.no-update-model-required,   true)
+                     multiscale:               =IFSET(recipe.image-pol.image.wsclean.multiscale,                     recipe.image-pol.image.wsclean.multiscale,                false)
+                     no-mf-weighting:          =IFSET(recipe.image-pol.image.wsclean.no-mf-weighting,                recipe.image-pol.image.wsclean.no-mf-weighting,           UNSET)
+                     save-source-list:         =IFSET(recipe.image-pol.image.wsclean.save-source-list,               recipe.image-pol.image.wsclean.save-source-list,          false)
+                     pol:                      =IFSET(recipe.image-pol.image.wsclean.pol,                            recipe.image-pol.image.wsclean.pol,                      'IQUV')
+                     link-polarizations:       =IFSET(recipe.image-pol.image.wsclean.link-polarizations,             recipe.image-pol.image.wsclean.link-polarizations,        UNSET)
+                     weight:                   =IFSET(recipe.image-pol.image.wsclean.weight,                         recipe.image-pol.image.wsclean.weight,             'briggs 0.0')
+                     abs-threshold:            =IFSET(recipe.image-pol.image.wsclean.abs-threshold,                  recipe.image-pol.image.wsclean.abs-threshold,             UNSET)
+                     parallel-deconvolution:   =IFSET(recipe.image-pol.image.wsclean.parallel-deconvolution,         recipe.image-pol.image.wsclean.parallel-deconvolution,     1024)
+                     deconvolution-threads:    =IFSET(recipe.image-pol.image.wsclean.deconvolution-threads,          recipe.image-pol.image.wsclean.deconvolution-threads,     UNSET)
+                     channel-range:            =IFSET(recipe.image-pol.image.wsclean.channel-range,                  recipe.image-pol.wsclean.channel-range,                   UNSET)
+                     weighting-rank-filter:    =IFSET(recipe.image-pol.image.wsclean.weighting-rank-filter,          recipe.image-pol.image.wsclean.weighting-rank-filter,     UNSET)
+                     parallel-gridding:        =IFSET(recipe.image-pol.image.wsclean.parallel-gridding,              recipe.image-pol.image.wsclean.parallel-gridding,         UNSET)
+                     parallel-reordering:      =IFSET(recipe.image-pol.image.wsclean.parallel-reordering,            recipe.image-pol.image.wsclean.parallel-reordering,       UNSET)
+                     _use: lib.params.imaging.wsclean.target.iquv.base
+                     
+                  dirty:
+                     niter: 0
+                     column: CORRECTED_DATA
+                     weight:                   =IFSET(recipe.image-pol.image.wsclean.weight,                         recipe.image-pol.image.wsclean.weight,             'briggs 0.0') 
+                     _use: lib.params.imaging.wsclean.target.iquv.base
+                     
+                  predict:
+                     predict: true
+                     _use: lib.params.imaging.wsclean.target.iquv.base
+                     pol:  =IFSET(recipe.image-pol.image.wsclean.pol,  recipe.image-pol.image.wsclean.pol, 'IQUV')
+                 
+               
+               
+               
+          
+               
+     
+     
+   
+   
+   
+   

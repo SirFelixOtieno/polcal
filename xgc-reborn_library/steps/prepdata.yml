@@ -1,0 +1,294 @@
+lib:
+   steps:
+      prepdata:
+      
+         plotants:
+            cab: casa.plotants
+            params:
+               ms: '{root.ms-path}'
+               _use: lib.params.visualization.plotants
+               
+         elevation-time:
+            cab: casa.plotms
+            params:
+               ms: '{root.ms-path}'
+               _use: lib.params.visualization.plotms.elevation-tracks.elevation
+               field: '{root.obsconf.bpcal},{root.obsconf.gcal},{root.obsconf.xcal},{root.obsconf.target}' 
+               
+         elevation-hourangle:
+            cab: casa.plotms
+            params:
+               ms: '{root.ms-path}'
+               _use: lib.params.visualization.plotms.elevation-tracks.hour-angle
+               field: '{root.obsconf.bpcal},{root.obsconf.gcal},{root.obsconf.xcal},{root.obsconf.target}' 
+               
+         rmtables:
+            target-corr:
+               cab: casa.rmtables
+               params:
+                  tablenames: ['={steps.transform2-split_ms.outputvis}','={steps.transform2-split_ms.outputvis}.flagversions']   
+            
+         listobs:
+            ms:
+               cab: casa.listobs
+               params:
+                  ms: '{root.ms-path}'
+                  _use: lib.params.information.listobs
+               
+            calibrators:
+               cab: casa.listobs
+               params:
+                  _use: lib.params.information.listobs
+                  ms: =recipe.steps.transform1-split_ms.outputvis
+                  
+            target:
+               cab: casa.listobs
+               params:
+                  _use: lib.params.information.listobs
+                  ms: =recipe.steps.transform2-split_ms.outputvis
+                      
+            target-corr:
+               cab: casa.listobs
+               params:
+                  _use: lib.params.information.listobs
+                  ms: =recipe.steps.transform3-split_ms.outputvis
+                  
+         mstransform:
+      
+            calibrators:
+               cab: casa.mstransform
+               params:
+                  ms: =root.ms-path
+                  field: '{root.obsconf.bpcal},{root.obsconf.gcal},{root.obsconf.xcal}' 
+                  spw:          =IFSET(recipe.transform.calibrators.mstransform.spw,         recipe.transform.calibrators.mstransform.spw,            '')
+                  scan:         =IFSET(recipe.transform.calibrators.mstransform.scan,        recipe.transform.calibrators.mstransform.scan,           '')
+                  antenna:      =IFSET(recipe.transform.calibrators.mstransform.antenna,     recipe.transform.calibrators.mstransform.antenna,        '')
+                  correlation:  =IFSET(recipe.transform.calibrators.mstransform.correlation, recipe.transform.calibrators.mstransform.correlation,    '')
+                  chanbin:      =IFSET(recipe.transform.calibrators.mstransform.chanbin,     recipe.transform.calibrators.mstransform.chanbin,     UNSET)
+                  timebin:      =IFSET(recipe.transform.calibrators.mstransform.timebin,     recipe.transform.calibrators.mstransform.timebin,     UNSET)
+                  docallib:     =IFSET(recipe.transform.calibrators.mstransform.docallib,    recipe.transform.calibrators.mstransform.docallib,    false)
+                  timeaverage:  =IFSET(recipe.transform.calibrators.mstransform.timeaverage, recipe.transform.calibrators.mstransform.timeaverage, false)
+                  chanaverage:  =IFSET(recipe.transform.calibrators.mstransform.chanaverage, recipe.transform.calibrators.mstransform.chanaverage, false)
+                  datacolumn:   =IFSET(recipe.transform.calibrators.mstransform.datacolumn,  recipe.transform.calibrators.mstransform.datacolumn, 'data')
+                  _use: lib.params.manipulation.mstransform
+                  
+            target:
+               cab: casa.mstransform
+               params:
+                  ms: '{root.ms-path}'
+                  field: =root.obsconf.target
+                  spw:          =IFSET(recipe.transform.target.mstransform.spw,              recipe.transform.target.mstransform.spw,                 '')
+                  scan:         =IFSET(recipe.transform.target.mstransform.scan,             recipe.transform.target.mstransform.scan,                '')
+                  antenna:      =IFSET(recipe.transform.target.mstransform.antenna,          recipe.transform.target.mstransform.antenna,             '')
+                  correlation:  =IFSET(recipe.transform.target.mstransform.correlation,      recipe.transform.target.mstransform.correlation,         '')
+                  chanbin:      =IFSET(recipe.transform.target.mstransform.chanbin,          recipe.transform.target.mstransform.chanbin,          UNSET)
+                  timebin:      =IFSET(recipe.transform.target.mstransform.timebin,          recipe.transform.target.mstransform.timebin,          UNSET)
+                  docallib:     =IFSET(recipe.transform.target.mstransform.docallib,         recipe.transform.target.mstransform.docallib,         false)
+                  timeaverage:  =IFSET(recipe.transform.target.mstransform.timeaverage,      recipe.transform.target.mstransform.timeaverage,      false)
+                  chanaverage:  =IFSET(recipe.transform.target.mstransform.chanaverage,      recipe.transform.target.mstransform.chanaverage,      false)
+                  datacolumn:   =IFSET(recipe.transform.target.mstransform.datacolumn,       recipe.transform.target.mstransform.datacolumn,      'data')
+                  _use: lib.params.manipulation.mstransform
+    
+            target-corr:
+               cab: casa.mstransform
+               params:
+                  field: ''
+                  ms: ='{steps.transform2-split_ms.outputvis}'
+                  spw:          =IFSET(recipe.transform.target.mstransform.spw,              recipe.transform.target.mstransform.spw,                 '')
+                  scan:         =IFSET(recipe.transform.target.mstransform.scan,             recipe.transform.target.mstransform.scan,                '')
+                  antenna:      =IFSET(recipe.transform.target.mstransform.antenna,          recipe.transform.target.mstransform.antenna,             '')
+                  correlation:  =IFSET(recipe.transform.target.mstransform.correlation,      recipe.transform.target.mstransform.correlation,         '')
+                  chanbin:      =IFSET(recipe.transform.target.mstransform.chanbin,          recipe.transform.target.mstransform.chanbin,          UNSET)
+                  timebin:      =IFSET(recipe.transform.target.mstransform.timebin,          recipe.transform.target.mstransform.timebin,          UNSET)
+                  docallib:     =IFSET(recipe.transform.target.mstransform.docallib,         recipe.transform.target.mstransform.docallib,         false)
+                  timeaverage:  =IFSET(recipe.transform.target.mstransform.timeaverage,      recipe.transform.target.mstransform.timeaverage,      false)
+                  chanaverage:  =IFSET(recipe.transform.target.mstransform.chanaverage,      recipe.transform.target.mstransform.chanaverage,      false)
+                  datacolumn:   =IFSET(recipe.transform.target.mstransform.datacolumn,       recipe.transform.target.mstransform.datacolumn, 'corrected')
+                  _use: lib.params.manipulation.mstransform
+                  
+         swap-feeds:
+      
+            calibrators:
+               cab: prepkat
+               params:
+                  ms_path: =recipe.steps.transform1-split_ms.outputvis
+                  
+            target:
+               cab: prepkat
+               params:
+                  ms_path: =recipe.steps.transform2-split_ms.outputvis
+               
+            target-corr:
+               cab: prepkat
+               params:
+                  ms_path: =recipe.steps.transform3-split_ms.outputvis       
+                  
+         flagdata:
+         
+            summary:
+      
+               calibrators:
+                  cab: casa5.flagsummary 
+                  params:
+                     _use: lib.params.flagging.flagdata.summary 
+                     ms: =recipe.steps.transform1-split_ms.outputvis   
+                     
+               target:
+                  cab: casa5.flagsummary 
+                  params:
+                     _use: lib.params.flagging.flagdata.summary 
+                     ms: =recipe.steps.transform2-split_ms.outputvis  
+                
+               target-corr:
+                  cab: casa5.flagsummary 
+                  params:
+                     _use: lib.params.flagging.flagdata.summary 
+                     ms: =recipe.steps.transform3-split_ms.outputvis 
+                  
+         flagmanager:
+         
+            save:
+         
+               calibrators:
+                  cab: casa.flagman
+                  params: 
+                     _use: lib.params.flagging.flagmanager.save
+                     ms: =recipe.steps.transform1-split_ms.outputvis
+                     
+               target:
+                  cab: casa.flagman
+                  params:
+                     _use: lib.params.flagging.flagmanager.save 
+                     ms: =recipe.steps.transform2-split_ms.outputvis
+                     
+               target-corr:
+                  cab: casa.flagman
+                  params:
+                     _use: lib.params.flagging.flagmanager.save 
+                     ms: =recipe.steps.transform3-split_ms.outputvis      
+         
+            rename:
+         
+               calibrators:
+                  cab: casa.flagman
+                  params: 
+                     _use: lib.params.flagging.flagmanager.rename
+                     ms: =recipe.steps.transform1-split_ms.outputvis  
+                    
+               target:
+                  cab: casa.flagman
+                  params: 
+                     _use: lib.params.flagging.flagmanager.rename
+                     ms: =recipe.steps.transform2-split_ms.outputvis
+                  
+               target-corr:
+                  cab: casa.flagman
+                  params:
+                     _use: lib.params.flagging.flagmanager.rename 
+                     ms: =recipe.steps.transform3-split_ms.outputvis
+                     
+            list:
+         
+               calibrators:
+                  cab: casa.flagman
+                  params: 
+                     _use: lib.params.flagging.flagmanager.list
+                     ms: =recipe.steps.transform1-split_ms.outputvis   
+                  
+               target:
+                  cab: casa.flagman
+                  params: 
+                     _use: lib.params.flagging.flagmanager.list
+                     ms: =recipe.steps.transform2-split_ms.outputvis
+                     
+               target-corr:
+                  cab: casa.flagman
+                  params: 
+                     _use: lib.params.flagging.flagmanager.list
+                     ms: =recipe.steps.transform3-split_ms.outputvis     
+                     
+            delete:
+         
+               calibrators:
+                  cab: casa.flagman
+                  params:
+                     _use: lib.params.flagging.flagmanager.delete
+                     ms: =recipe.steps.transform1-split_ms.outputvis
+                  
+               target:
+                  cab: casa.flagman
+                  params: 
+                     _use: lib.params.flagging.flagmanager.delete
+                     ms: =recipe.steps.transform2-split_ms.outputvis
+                     
+               target-corr:
+                  cab: casa.flagman
+                  params: 
+                     _use: lib.params.flagging.flagmanager.delete
+                     ms: =recipe.steps.transform3-split_ms.outputvis
+                     
+            restore:
+         
+               calibrators:
+                  cab: casa.flagman
+                  params:
+                     _use: lib.params.flagging.flagmanager.restore
+                     ms: =recipe.steps.transform1-split_ms.outputvis
+                  
+               target:
+                  cab: casa.flagman
+                  params: 
+                     _use: lib.params.flagging.flagmanager.restore
+                     ms: =recipe.steps.transform2-split_ms.outputvis
+                     
+               target-corr:
+                  cab: casa.flagman
+                  params: 
+                     _use: lib.params.flagging.flagmanager.restore
+                     ms: =recipe.steps.transform3-split_ms.outputvis
+                  
+         clearcal:
+      
+            calibrators:
+               cab: casa.clearcal
+               params:
+                  field: '{root.obsconf.bpcal}'
+                  _use: lib.params.calibration.clearcal
+                  ms:       =recipe.steps.transform1-split_ms.outputvis
+                  addmodel: =IFSET(recipe.prepare.calibrators.clearcal.addmodel, recipe.prepare.calibrators.clearcal.addmodel, true)
+                    
+            target:
+               cab: casa.clearcal
+               params:
+                  _use: lib.params.calibration.clearcal
+                  field: '{root.obsconf.bpcal}'
+                  ms:       =recipe.steps.transform2-split_ms.outputvis
+                  addmodel: =IFSET(recipe.prepare.target.clearcal.addmodel,       recipe.prepare.target.clearcal.addmodel,     true)
+                  
+            target-corr:
+               cab: casa.clearcal
+               params:
+                  _use: lib.params.calibration.clearcal
+                  field: '{root.obsconf.bpcal}'
+                  ms:       =recipe.steps.transform3-split_ms.outputvis
+                  addmodel: =IFSET(recipe.prepare.target.clearcal.addmodel,       recipe.prepare.target.clearcal.addmodel,     true)
+                   
+            
+      
+       
+               
+      
+         
+      
+      
+      
+     
+    
+  
+  
+ 
+    
+    
+   
+   
+

@@ -1,0 +1,484 @@
+lib:
+   steps:
+      
+      flagmanager:
+      
+         save:
+         
+            calibrators:
+               cab: casa.flagman
+               params: 
+                  _use: lib.params.flagging.flagmanager.save
+                  ms: =root.steps.transform1-split_ms.outputvis
+                     
+            target:
+               cab: casa.flagman
+               params: 
+                  _use: lib.params.flagging.flagmanager.save
+                  ms: =root.steps.transform2-split_ms.outputvis
+                  
+            target-corr:
+               cab: casa.flagman
+               params: 
+                  _use: lib.params.flagging.flagmanager.save
+                  ms: =root.steps.transform3-split_ms.outputvis
+                  
+         rename:
+         
+            calibrators:
+               cab: casa.flagman
+               params: 
+                  ms: =root.steps.transform1-split_ms.outputvis
+                  _use: lib.params.flagging.flagmanager.rename
+                  
+            target:
+               cab: casa.flagman
+               params: 
+                  ms: =root.steps.transform2-split_ms.outputvis
+                  _use: lib.params.flagging.flagmanager.rename
+                  
+            target-corr:
+               cab: casa.flagman
+               params: 
+                  ms: =root.steps.transform3-split_ms.outputvis
+                  _use: lib.params.flagging.flagmanager.rename
+                  
+         list:
+         
+            calibrators:
+               cab: casa.flagman
+               params: 
+                  ms: =root.steps.transform1-split_ms.outputvis
+                  _use: lib.params.flagging.flagmanager.list
+                  
+            target:
+               cab: casa.flagman
+               params: 
+                  ms: =root.steps.transform2-split_ms.outputvis
+                  _use: lib.params.flagging.flagmanager.list
+                  
+            target-corr:
+               cab: casa.flagman
+               params: 
+                  ms: =root.steps.transform3-split_ms.outputvis
+                  _use: lib.params.flagging.flagmanager.list
+               
+         restore:
+         
+            calibrators:
+               cab: casa.flagman
+               params:
+                  ms: =root.steps.transform1-split_ms.outputvis
+                  _use: lib.params.flagging.flagmanager.restore
+                  
+            target:
+               cab: casa.flagman
+               params: 
+                  ms: =root.steps.transform2-split_ms.outputvis
+                  _use: lib.params.flagging.flagmanager.restore
+                  
+            target-corr:
+               cab: casa.flagman
+               params: 
+                  ms: =root.steps.transform3-split_ms.outputvis
+                  _use: lib.params.flagging.flagmanager.restore
+                  
+         delete:
+         
+            calibrators:
+               cab: casa.flagman
+               params: 
+                  ms: =root.steps.transform1-split_ms.outputvis
+                  _use: lib.params.flagging.flagmanager.delete
+                  
+            target:
+               cab: casa.flagman
+               params: 
+                  ms: =root.steps.transform2-split_ms.outputvis
+                  _use: lib.params.flagging.flagmanager.delete
+                  
+            target-corr:
+               cab: casa.flagman
+               params: 
+                  ms: =root.steps.transform3-split_ms.outputvis
+                  _use: lib.params.flagging.flagmanager.delete
+                  
+      flagdata:
+               
+         unflag:
+         
+            calibrators:
+               cab: casa.flagdata
+               params:
+                  ms: =root.steps.transform1-split_ms.outputvis
+                  _use: lib.params.flagging.flagdata.unflag
+                  
+            target:
+               cab: casa.flagdata
+               params: 
+                  ms: =root.steps.transform2-split_ms.outputvis
+                  _use: lib.params.flagging.flagdata.unflag
+                  
+            target-corr:
+               cab: casa.flagdata
+               params: 
+                  ms: =root.steps.transform3-split_ms.outputvis
+                  _use: lib.params.flagging.flagdata.unflag
+                  
+         summary:
+        
+            calibrators:
+               cab: casa5.flagsummary 
+               params: 
+                  field: =root.steps.transform1-split_ms.field
+                  ms:    =root.steps.transform1-split_ms.outputvis
+                  _use: lib.params.flagging.flagdata.summary
+                  
+            target:
+               cab: casa5.flagsummary 
+               params:
+                  field: =root.steps.transform2-split_ms.field 
+                  ms:    =root.steps.transform2-split_ms.outputvis
+                  _use: lib.params.flagging.flagdata.summary  
+                  
+            target-corr:
+               cab: casa5.flagsummary 
+               params:
+                  field: =root.steps.transform3-split_ms.field 
+                  ms:    =root.steps.transform3-split_ms.outputvis
+                  _use: lib.params.flagging.flagdata.summary  
+                  
+         manual:
+         
+            calibrators:
+               cab: casa.flagdata
+               params:
+                  field: =root.steps.transform1-split_ms.field 
+                  ms:    =root.steps.transform1-split_ms.outputvis
+                  _use: lib.params.flagging.flagdata.manual
+                  
+            target:
+               cab: casa.flagdata
+               params: 
+                  field: =root.steps.transform2-split_ms.field
+                  ms:    =root.steps.transform2-split_ms.outputvis
+                  _use: lib.params.flagging.flagdata.manual
+                     
+            target-corr:
+               cab: casa.flagdata
+               params: 
+                  field: =root.steps.transform3-split_ms.field
+                  ms:    =root.steps.transform3-split_ms.outputvis
+                  _use: lib.params.flagging.flagdata.manual
+                  
+         shadow:
+         
+            calibrators:
+               cab: casa.flagdata
+               params: 
+                  field: =root.steps.transform1-split_ms.field
+                  ms:    =root.steps.transform1-split_ms.outputvis
+                  tolerance: =IFSET(recipe.flag.calibrators.basic.shadow.tolerance,          recipe.flag.calibrators.basic.shadow.tolerance,          0.0)
+                  _use: lib.params.flagging.flagdata.shadow
+                  
+            target:
+               cab: casa.flagdata
+               params: 
+                  field: =root.steps.transform2-split_ms.field
+                  ms:    =root.steps.transform2-split_ms.outputvis
+                  tolerance: =IFSET(recipe.flag.target.basic.shadow.tolerance,                recipe.flag.target.basic.shadow.tolerance,              0.0)
+                  _use: lib.params.flagging.flagdata.shadow
+                    
+            target-corr:
+               cab: casa.flagdata
+               params: 
+                  field: =root.steps.transform3-split_ms.field
+                  ms:    =root.steps.transform3-split_ms.outputvis
+                  tolerance: =IFSET(recipe.flag.target.basic.shadow.tolerance,                recipe.flag.target.basic.shadow.tolerance,              0.0)
+                  _use: lib.params.flagging.flagdata.shadow
+                    
+         elevation:
+        
+            calibrators:
+               cab: casa.flagdata
+               params: 
+                  field: =root.steps.transform1-split_ms.field
+                  ms:    =root.steps.transform1-split_ms.outputvis
+                  lowerlimit: =IFSET(recipe.flag.calibrators.basic.elevation.lowerlimit,     recipe.flag.calibrators.basic.elevation.lowerlimit,      0.0)
+                  upperlimit: =IFSET(recipe.flag.calibrators.basic.elevation.upperlimit,     recipe.flag.calibrators.basic.elevation.upperlimit,     90.0)
+                  _use: lib.params.flagging.flagdata.elevation
+                  
+            target:
+               cab: casa.flagdata
+               params: 
+                  field: =root.steps.transform2-split_ms.field
+                  ms:    =root.steps.transform2-split_ms.outputvis
+                  lowerlimit: =IFSET(recipe.flag.target.basic.elevation.lowerlimit,          recipe.flag.target.basic.elevation.lowerlimit,           0.0)
+                  upperlimit: =IFSET(recipe.flag.target.basic.elevation.upperlimit,          recipe.flag.target.basic.elevation.upperlimit,          90.0)
+                  _use: lib.params.flagging.flagdata.elevation 
+                  
+            target-corr:
+               cab: casa.flagdata
+               params: 
+                  field: =root.steps.transform3-split_ms.field
+                  ms:    =root.steps.transform3-split_ms.outputvis
+                  lowerlimit: =IFSET(recipe.flag.target.basic.elevation.lowerlimit,          recipe.flag.target.basic.elevation.lowerlimit,           0.0)
+                  upperlimit: =IFSET(recipe.flag.target.basic.elevation.upperlimit,          recipe.flag.target.basic.elevation.upperlimit,          90.0)
+                  _use: lib.params.flagging.flagdata.elevation         
+               
+         clip:
+         
+            zeros:
+            
+               calibrators:
+                  cab: casa.flagdata
+                  params: 
+                     datacolumn: 'DATA'
+                     field: =root.steps.transform1-split_ms.field
+                     ms:    =root.steps.transform1-split_ms.outputvis
+                     clipzeros: =IFSET(recipe.flag.calibrators.basic.clip.zeros.clipzeros,   recipe.flag.calibrators.basic.clip.zeros.clipzeros,    true)
+                     _use: lib.params.flagging.flagdata.clip
+                  
+               target:
+                  cab: casa.flagdata
+                  params: 
+                     datacolumn: 'DATA'
+                     field: =root.steps.transform2-split_ms.field
+                     ms:    =root.steps.transform2-split_ms.outputvis
+                     clipzeros: =IFSET(recipe.flag.target.basic.clip.zeros.clipzeros,        recipe.flag.target.basic.clip.zeros.clipzeros,         true)
+                     _use: lib.params.flagging.flagdata.clip
+                        
+               target-corr:
+                  cab: casa.flagdata
+                  params: 
+                     datacolumn: 'DATA'
+                     field: =root.steps.transform3-split_ms.field
+                     ms:    =root.steps.transform3-split_ms.outputvis
+                     clipzeros: =IFSET(recipe.flag.target.basic.clip.zeros.clipzeros,        recipe.flag.target.basic.clip.zeros.clipzeros,         true)
+                     _use: lib.params.flagging.flagdata.clip
+                     
+            extremes:
+            
+               calibrators:
+                  cab: casa.flagdata
+                  params: 
+                     datacolumn: 'DATA'
+                     field: =root.steps.transform1-split_ms.field
+                     ms:    =root.steps.transform1-split_ms.outputvis
+                     clipoutside:         =IFSET(recipe.flag.calibrators.basic.clip.extremes.clipoutside,   recipe.flag.calibrators.basic.clip.extremes.clipoutside,               true)
+                     clipminmax:          =IFSET(recipe.flag.calibrators.basic.clip.extremes.clipminmax,    recipe.flag.calibrators.basic.clip.extremes.clipminmax,      '[0.00,200.0]')
+                     _use: lib.params.flagging.flagdata.clip
+                  
+               target:
+                  cab: casa.flagdata
+                  params: 
+                     datacolumn: 'DATA'
+                     field: =root.steps.transform2-split_ms.field
+                     ms:    =root.steps.transform2-split_ms.outputvis
+                     clipoutside:         =IFSET(recipe.flag.target.basic.clip.extremes.clipoutside,        recipe.flag.target.basic.clip.extremes.clipoutside,                    true)
+                     clipminmax:          =IFSET(recipe.flag.target.basic.clip.extremes.clipminmax,         recipe.flag.target.basic.clip.extremes.clipminmax,           '[0.00,200.0]')
+                     _use: lib.params.flagging.flagdata.clip
+                        
+               target-corr:
+                  cab: casa.flagdata
+                  params: 
+                     datacolumn: 'DATA'
+                     field: =root.steps.transform3-split_ms.field
+                     ms:    =root.steps.transform3-split_ms.outputvis
+                     clipoutside:         =IFSET(recipe.flag.target.basic.clip.extremes.clipoutside,        recipe.flag.target.basic.clip.extremes.clipoutside,                     true)
+                     clipminmax:          =IFSET(recipe.flag.target.basic.clip.extremes.clipminmax,         recipe.flag.target.basic.clip.extremes.clipminmax,            '[0.00,200.0]')
+                     _use: lib.params.flagging.flagdata.clip
+                  
+         quack:
+   
+            calibrators:
+               cab: casa.flagdata
+               params: 
+                  _use: lib.params.flagging.flagdata.quack
+                  field: =root.steps.transform1-split_ms.field
+                  ms:    =root.steps.transform1-split_ms.outputvis 
+                  quackmode:             =IFSET(recipe.flag.calibrators.basic.quack.quackmode,              recipe.flag.calibrators.basic.quack.quackmode,                        'beg')
+                  quackinterval:         =IFSET(recipe.flag.calibrators.basic.quack.quackinterval,          recipe.flag.calibrators.basic.quack.quackinterval,                      4.0)
+                  quackincrement:        =IFSET(recipe.flag.calibrators.basic.quack.quackincrement,         recipe.flag.calibrators.basic.quack.quackincrement,                   false)
+                  
+            target:
+               cab: casa.flagdata
+               params: 
+                  _use: lib.params.flagging.flagdata.quack
+                  field: =root.steps.transform2-split_ms.field
+                  ms:    =root.steps.transform2-split_ms.outputvis
+                  quackmode:             =IFSET(recipe.flag.target.basic.quack.quackmode,                   recipe.flag.target.basic.quack.quackmode,                             'beg')
+                  quackinterval:         =IFSET(recipe.flag.target.basic.quack.quackinterval,               recipe.flag.target.basic.quack.quackinterval,                           4.0) 
+                  quackincrement:        =IFSET(recipe.flag.target.basic.quack.quackincrement,              recipe.flag.target.basic.quack.quackincrement,                        false) 
+                  
+            target-corr:
+               cab: casa.flagdata
+               params: 
+                  _use: lib.params.flagging.flagdata.quack
+                  field: =root.steps.transform3-split_ms.field
+                  ms:    =root.steps.transform3-split_ms.outputvis
+                  quackmode:             =IFSET(recipe.flag.target.basic.quack.quackmode,                   recipe.flag.target.basic.quack.quackmode,                             'beg')
+                  quackinterval:         =IFSET(recipe.flag.target.basic.quack.quackinterval,               recipe.flag.target.basic.quack.quackinterval,                           4.0) 
+                  quackincrement:        =IFSET(recipe.flag.target.basic.quack.quackincrement,              recipe.flag.target.basic.quack.quackincrement,                        false)  
+               
+         tfcrop:
+            
+            calibrators:
+               cab: casa.flagdata
+               params: 
+                  ntime: 'scan'
+                  extendflags: true
+                  field: =root.steps.transform1-split_ms.field
+                  ms:    =root.steps.transform1-split_ms.outputvis
+                  freqcutoff:            =IFSET(recipe.flag.calibrators.rfi.tfcrop.freqcutoff,              recipe.flag.calibrators.rfi.tfcrop.freqcutoff,                         3.0)
+                  timecutoff:            =IFSET(recipe.flag.calibrators.rfi.tfcrop.timecutoff,              recipe.flag.calibrators.rfi.tfcrop.timecutoff,                         4.0)
+                  datacolumn:            =IFSET(recipe.flag.calibrators.rfi.tfcrop.datacolumn,              recipe.flag.calibrators.rfi.tfcrop.datacolumn,                      'DATA')
+                  combinescans:          =IFSET(recipe.flag.calibrators.rfi.tfcrop.combinescans,            recipe.flag.calibrators.rfi.tfcrop.combinescans,                     false)
+                  usewindowstats:        =IFSET(recipe.flag.calibrators.rfi.tfcrop.usewindowstats,          recipe.flag.calibrators.rfi.tfcrop.usewindowstats,                   'std')
+                  flagdimension:         =IFSET(recipe.flag.calibrators.rfi.tfcrop.flagdimension,           recipe.flag.calibrators.rfi.tfcrop.flagdimension,               'freqtime')
+                  _use: lib.params.flagging.flagdata.tfcrop
+                  
+            target:
+               cab: casa.flagdata
+               params: 
+                  ntime: 'scan'
+                  extendflags: true
+                  field: =root.steps.transform2-split_ms.field
+                  ms:    =root.steps.transform2-split_ms.outputvis 
+                  freqcutoff:            =IFSET(recipe.flag.target.rfi.tfcrop.freqcutoff,                   recipe.flag.target.rfi.tfcrop.freqcutoff,                              3.0)
+                  timecutoff:            =IFSET(recipe.flag.target.rfi.tfcrop.timecutoff,                   recipe.flag.target.rfi.tfcrop.timecutoff,                              4.0)
+                  datacolumn:            =IFSET(recipe.flag.target.rfi.tfcrop.datacolumn,                   recipe.flag.target.rfi.tfcrop.datacolumn,                           'DATA')
+                  combinescans:          =IFSET(recipe.flag.target.rfi.tfcrop.combinescans,                 recipe.flag.target.rfi.tfcrop.combinescans,                          false)
+                  usewindowstats:        =IFSET(recipe.flag.target.rfi.tfcrop.usewindowstats,               recipe.flag.target.rfi.tfcrop.usewindowstats,                        'std')
+                  flagdimension:         =IFSET(recipe.flag.target.rfi.tfcrop.flagdimension,                recipe.flag.target.rfi.tfcrop.flagdimension,                    'freqtime')
+                  _use: lib.params.flagging.flagdata.tfcrop
+                  
+            target-corr:
+               cab: casa.flagdata
+               params: 
+                  ntime: 'scan'
+                  extendflags: true
+                  field: =root.steps.transform3-split_ms.field
+                  ms:    =root.steps.transform3-split_ms.outputvis 
+                  freqcutoff:            =IFSET(recipe.flag.target.rfi.tfcrop.freqcutoff,                   recipe.flag.target.rfi.tfcrop.freqcutoff,                              3.0)
+                  timecutoff:            =IFSET(recipe.flag.target.rfi.tfcrop.timecutoff,                   recipe.flag.target.rfi.tfcrop.timecutoff,                              4.0)
+                  datacolumn:            =IFSET(recipe.flag.target.rfi.tfcrop.datacolumn,                   recipe.flag.target.rfi.tfcrop.datacolumn,                           'DATA')
+                  combinescans:          =IFSET(recipe.flag.target.rfi.tfcrop.combinescans,                 recipe.flag.target.rfi.tfcrop.combinescans,                          false)
+                  usewindowstats:        =IFSET(recipe.flag.target.rfi.tfcrop.usewindowstats,               recipe.flag.target.rfi.tfcrop.usewindowstats,                        'std')
+                  flagdimension:         =IFSET(recipe.flag.target.rfi.tfcrop.flagdimension,                recipe.flag.target.rfi.tfcrop.flagdimension,                    'freqtime')
+                  _use: lib.params.flagging.flagdata.tfcrop
+                  
+         tricolour:
+        
+            calibrators:
+               cab: tricolour 
+               params: 
+                  _use: lib.params.flagging.flagdata.tricolour 
+                  field-names: =root.steps.transform1-split_ms.field
+                  ms:          =root.steps.transform1-split_ms.outputvis
+                  data-column:           =IFSET(recipe.flag.calibrators.rfi.column,                          recipe.flag.calibrators.rfi.column,                                'DATA')
+                  window-backend:        =IFSET(recipe.flag.calibrators.rfi.tricolour.window-backend,        recipe.flag.calibrators.rfi.tricolour.window-backend,             'numpy')
+                  flagging-strategy:     =IFSET(recipe.flag.calibrators.rfi.tricolour.flagging-strategy,     recipe.flag.calibrators.rfi.tricolour.flagging-strategy,   'polarisation')
+                  temporary-directory:   =IFSET(recipe.flag.calibrators.rfi.tricolour.temporary-directory,   recipe.flag.calibrators.rfi.tricolour.temporary-directory,          UNSET)
+                  subtract-model-column: =IFSET(recipe.flag.calibrators.rfi.tricolour.subtract-model-column, recipe.flag.calibrators.rfi.tricolour.subtract-model-column,        UNSET)
+                  
+            target:
+               cab: tricolour 
+               params:
+                  _use: lib.params.flagging.flagdata.tricolour 
+                  field-names: =root.steps.transform2-split_ms.field 
+                  ms:          =root.steps.transform2-split_ms.outputvis
+                  data-column:           =IFSET(recipe.flag.target.rfi.column,                               recipe.flag.target.rfi.column,                                    'DATA')
+                  window-backend:        =IFSET(recipe.flag.target.rfi.tricolour.window-backend,             recipe.flag.target.rfi.tricolour.window-backend,                 'numpy')
+                  flagging-strategy:     =IFSET(recipe.flag.target.rfi.tricolour.flagging-strategy,          recipe.flag.target.rfi.tricolour.flagging-strategy,       'polarisation')
+                  temporary-directory:   =IFSET(recipe.flag.target.rfi.tricolour.temporary-directory,        recipe.flag.target.rfi.tricolour.temporary-directory,              UNSET)
+                  subtract-model-column: =IFSET(recipe.flag.target.rfi.tricolour.subtract-model-column,      recipe.flag.target.rfi.tricolour.subtract-model-column,            UNSET)
+                  
+            target-corr:
+               cab: tricolour 
+               params:
+                  _use: lib.params.flagging.flagdata.tricolour 
+                  ms: =root.steps.transform3-split_ms.outputvis
+                  field-names: =root.steps.transform3-split_ms.field 
+                  data-column:           =IFSET(recipe.flag.target.rfi.column,                               recipe.flag.target.rfi.column,                                   'DATA')
+                  window-backend:        =IFSET(recipe.flag.target.rfi.tricolour.window-backend,             recipe.flag.target.rfi.tricolour.window-backend,                'numpy')
+                  flagging-strategy:     =IFSET(recipe.flag.target.rfi.tricolour.flagging-strategy,          recipe.flag.target.rfi.tricolour.flagging-strategy,      'polarisation')
+                  temporary-directory:   =IFSET(recipe.flag.target.rfi.tricolour.temporary-directory,        recipe.flag.target.rfi.tricolour.temporary-directory,             UNSET)
+                  subtract-model-column: =IFSET(recipe.flag.target.rfi.tricolour.subtract-model-column,      recipe.flag.target.rfi.tricolour.subtract-model-column,           UNSET)
+                  
+         statistics:
+        
+            calibrators:
+               cab: rfinder
+               params:
+                  _use: lib.params.flagging.flagdata.rfinder 
+                  ms: =root.steps.transform1-split_ms.outputvis
+                  polarization:   =IFSET(recipe.flag.calibrators.inspect.rfinder.polarization,               recipe.flag.calibrators.inspect.rfinder.polarization,               'q')
+                  plot_summary:   =IFSET(recipe.flag.calibrators.inspect.rfinder.plot_summary,               recipe.flag.calibrators.inspect.rfinder.plot_summary,              true)
+                  plot_details:   =IFSET(recipe.flag.calibrators.inspect.rfinder.plot_details,               recipe.flag.calibrators.inspect.rfinder.plot_details,              true)
+                  rfimode:        =IFSET(recipe.flag.calibrators.inspect.rfinder.rfimode,                    recipe.flag.calibrators.inspect.rfinder.rfimode,            'use_flags')
+                  
+            target:
+               cab: rfinder
+               params: 
+                 _use: lib.params.flagging.flagdata.rfinder
+                 ms: =root.steps.transform2-split_ms.outputvis
+                 polarization:   =IFSET(recipe.flag.target.inspect.rfinder.polarization,                    recipe.flag.target.inspect.rfinder.polarization,                    'q')
+                 plot_summary:   =IFSET(recipe.flag.target.inspect.rfinder.plot_summary,                    recipe.flag.target.inspect.rfinder.plot_summary,                   true)
+                 plot_details:   =IFSET(recipe.flag.target.inspect.rfinder.plot_details,                    recipe.flag.target.inspect.rfinder.plot_details,                   true)
+                 rfimode:        =IFSET(recipe.flag.target.inspect.rfinder.rfimode,                         recipe.flag.target.inspect.rfinder.rfimode,                 'use_flags')
+                  
+            target-corr:
+               cab: rfinder
+               params: 
+                 _use: lib.params.flagging.flagdata.rfinder 
+                 ms: =root.steps.transform3-split_ms.outputvis 
+                 polarization:   =IFSET(recipe.flag.target.inspect.rfinder.polarization,                    recipe.flag.target.inspect.rfinder.polarization,                   'q')
+                 plot_summary:   =IFSET(recipe.flag.target.inspect.rfinder.plot_summary,                    recipe.flag.target.inspect.rfinder.plot_summary,                  true)
+                 plot_details:   =IFSET(recipe.flag.target.inspect.rfinder.plot_details,                    recipe.flag.target.inspect.rfinder.plot_details,                  true)
+                 rfimode:        =IFSET(recipe.flag.target.inspect.rfinder.rfimode,                         recipe.flag.target.inspect.rfinder.rfimode,                'use_flags')   
+                               
+         inspect:
+         
+            calibrators:
+               cab: shadems
+               params:
+                  iter-field: true 
+                  suffix: 'calibrators-{self.suffix}' 
+                  field: =root.steps.transform1-split_ms.field
+                  ms:    =root.steps.transform1-split_ms.outputvis
+                  _use: lib.params.visualization.shadems.ampfreq.data
+                  
+            target:
+               cab: shadems
+               params:
+                  suffix: 'target-{self.suffix}' 
+                  field: =root.steps.transform2-split_ms.field
+                  ms:    =root.steps.transform2-split_ms.outputvis
+                  _use: lib.params.visualization.shadems.ampfreq.data
+                     
+            target-corr:
+               cab: shadems
+               params:
+                  suffix: 'target-{self.suffix}' 
+                  field: =root.steps.transform3-split_ms.field
+                  ms:    =root.steps.transform3-split_ms.outputvis
+                  _use: lib.params.visualization.shadems.ampfreq.data
+               
+         
+                     
+         
+         
+         
+   
+   
+     
+ 
+   
+     
+  
+    
+    
+   
+   
+

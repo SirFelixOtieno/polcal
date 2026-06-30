@@ -1,0 +1,592 @@
+
+flag:
+  calibrators:
+    enable: 
+      dtype: bool
+      required: true
+    reset:
+      enable: 
+        dtype: bool
+        required: true
+      mode: 
+        dtype: str
+        required: false
+      version:
+        dtype: str
+        required: false
+    basic:
+      enable:
+        dtype: bool
+        required: true
+      restore:
+        enable:
+          dtype: bool
+          required: true
+      summary:
+        enable:
+          dtype: bool
+          required: true
+      autocorr:
+        enable:
+          dtype: bool
+          required: true
+      quack:
+        enable:
+          dtype: bool
+          required: true
+        quackmode:
+          dtype: str  
+          required: false
+        quackinterval:
+          dtype: float
+          required: false
+        quackincrement:
+          dtype: bool 
+          required: false
+      shadow:
+        enable: 
+          dtype: bool
+          required: false
+        tolerance:
+          dtype: float
+          required: false
+        addantenna:
+          dtype: File
+          required: false
+      elevation:
+        enable:
+          dtype: bool
+          required: false
+        upperlimit:
+          dtype: float
+          required: false
+        lowerlimit:
+          dtype: float
+          required: false
+      clip:
+        zeros:
+          enable: 
+            dtype: bool
+            required: false
+          clipzeros:
+            dtype: bool
+            required: false
+        extremes:
+          enable: 
+            dtype: bool 
+            required: false
+          clipminmax:
+            dtype: List[float]
+            required: false
+          clipoutside:
+            dtype: bool 
+            required: false     
+      edges:
+        enable:
+          dtype: bool 
+          required: false
+        spw:
+          dtype: str
+          required: false
+    rfimask:
+      enable:
+        dtype: bool
+        required: false
+      uvrange:
+        dtype: str
+        required: false
+      restore:
+        enable:
+          dtype: bool
+          required: false
+      summary:
+        enable:
+          dtype: bool
+          required: false
+    rfi:
+      enable:
+        dtype: bool
+        required: false
+      column:
+        dtype: str
+        required: false
+      restore:
+        enable:
+          dtype: bool
+          required: false
+      summary:
+        enable:
+          dtype: bool
+          required: false
+      inspect:
+        enable:
+          dtype: bool
+          required: false
+      flagger:
+        dtype: str
+        required: true
+      tfcrop:
+        timecutoff:
+          dtype: float
+          required: false
+        freqcutoff:
+          dtype: float
+          required: false
+        correlation:
+          dtype: str
+          required: false
+        usewindowstats:
+          dtype: str
+          required: false
+        combinescans:
+          dtype: bool
+          required: false
+        flagdimension:
+          dtype: str
+          required: false
+      tricolour:
+        window-backend:
+          dtype: str
+          required: false
+        temporary-directory:
+          dtype: str
+          required: false
+        subtract-model-column:
+          dtype: str
+          required: false
+        flagging-strategy:
+          dtype: str
+          required: false
+        ignore-flags:
+          dtype: bool
+          required: false
+        row-chunks:
+          dtype: int
+          required: false
+        dilate-masks:
+          dtype: Union[int,str]
+          required: false
+        config:
+          dtype: str
+          required: false
+    manual:
+      enable:
+          dtype: bool
+          required: false
+      restore:
+        enable:
+          dtype: bool
+          required: false
+      summary:
+        enable:
+          dtype: bool
+          required: false
+      spw:
+        enable:
+          dtype: bool
+          required: false
+        spw:
+          dtype: str
+          required: false
+      scan:
+        enable:
+          dtype: bool
+        scan:
+          dtype: str
+          required: false
+      field:
+        enable:
+          dtype: bool
+          required: false
+        field:
+          dtype: str
+          required: false
+      uvrange:
+        enable:
+          dtype: bool
+          required: false
+        uvrange: 
+          dtype: str
+          required: false
+      antenna:
+        enable:
+          dtype: bool
+          required: false
+        antenna: 
+          dtype: str
+          required: false
+        timerange:
+          dtype: str
+          required: false
+      timerange:
+        enable:
+          dtype: str
+          required: false
+        timerange:
+          dtype: str
+          required: false
+    unflag:
+      enable: 
+        dtype: bool
+        required: false
+      spw:
+        enable:
+          dtype: bool
+          required: false
+      scan:
+        enable:
+          dtype: bool
+          required: false
+      timerange:
+        enable:
+          dtype: bool
+          required: false
+      field:
+        enable:
+          dtype: bool
+          required: false
+      uvrange:
+        enable:
+          dtype: bool
+          required: false
+      antenna:
+        enable:
+          dtype: bool
+          required: false
+      observation:
+        enable:
+          dtype: bool 
+          required: false
+      restore:
+        enable:
+          dtype: bool
+          required: false
+    inspect:
+      enable:
+        dtype: bool
+        required: false
+      rfinder:
+        enable: 
+          dtype: bool
+          required: false
+        field: 
+          dtype: int
+          required: false
+        rfimode:
+          dtype: str
+          required: false
+        polarization:
+          dtype: str 
+          required: false
+        plot_summary:
+          dtype: bool 
+          required: false
+        plot_details:
+          dtype: bool
+          required: false
+  target:
+    enable: 
+      dtype: bool
+      required: false
+    reset:
+      enable: 
+        dtype: bool
+        required: false
+      mode: 
+        dtype: str
+        required: false
+      version:
+        dtype: str
+        required: false
+    basic:
+      enable:
+        dtype: bool
+        required: false
+      restore:
+        enable:
+          dtype: bool
+          required: false
+      summary:
+        enable:
+          dtype: bool
+          required: false
+      autocorr:
+        enable:
+          dtype: bool
+          required: false
+      quack:
+        enable:
+          dtype: bool
+          required: false
+        quackmode:
+          dtype: str  
+          required: false
+        quackinterval:
+          dtype: float
+          required: false
+        quackincrement:
+          dtype: bool 
+          required: false
+      shadow:
+        enable: 
+          dtype: bool
+          required: false
+        tolerance:
+          dtype: float
+          required: false
+        addantenna:
+          dtype: File
+          required: false
+      elevation:
+        enable:
+          dtype: bool
+          required: false
+        upperlimit:
+          dtype: float
+          required: false
+        lowerlimit:
+          dtype: float
+          required: false
+      clip:
+        zeros:
+          enable: 
+            dtype: bool
+            required: false
+          clipzeros:
+            dtype: bool
+            required: false
+        extremes:
+          enable: 
+            dtype: bool
+            required: false 
+          clipminmax:
+            dtype: List[float]
+            required: false
+          clipoutside:
+            dtype: bool 
+            required: false     
+      edges:
+        enable:
+          dtype: bool 
+          required: false 
+    rfimask:
+      enable:
+        dtype: bool
+        required: false
+      uvrange:
+        dtype: str
+        required: false
+      restore:
+        enable:
+          dtype: bool
+          required: false
+      summary:
+        enable:
+          dtype: bool
+          required: false
+    rfi:
+      enable:
+        dtype: bool
+        required: false
+      column:
+        dtype: str
+        required: false
+      restore:
+        enable:
+          dtype: bool
+          required: false
+      summary:
+        enable:
+          dtype: bool
+          required: false
+      inspect:
+        enable:
+          dtype: bool
+          required: false
+      flagger:
+        dtype: str
+        required: true
+      tfcrop:
+        timecutoff:
+          dtype: float
+          required: false
+        freqcutoff:
+          dtype: float
+          required: false
+        correlation:
+          dtype: str
+          required: false
+        usewindowstats:
+          dtype: str
+          required: false
+        combinescans:
+          dtype: bool
+          required: false
+        flagdimension:
+          dtype: str
+          required: false
+      tricolour:
+        window-backend:
+          dtype: str
+          required: false
+        temporary-directory:
+          dtype: str
+          required: false
+        subtract-model-column:
+          dtype: str
+          required: false
+        flagging-strategy:
+          dtype: str
+          required: false
+        ignore-flags:
+          dtype: bool
+          required: false
+        row-chunks:
+          dtype: int
+          required: false
+        dilate-masks:
+          dtype: Union[int,str]
+          required: false
+        config:
+          dtype: str
+          required: false
+    manual:
+      enable:
+          dtype: bool
+          required: false
+      restore:
+        enable:
+          dtype: bool
+          required: false
+      summary:
+        enable:
+          dtype: bool
+          required: false
+      spw:
+        enable:
+          dtype: bool
+          required: false
+        spw:
+          dtype: str
+          required: false
+      scan:
+        enable:
+          dtype: bool
+          required: false
+        scan:
+          dtype: str
+          required: false
+      field:
+        enable:
+          dtype: bool
+          required: false
+        field:
+          dtype: str
+          required: false
+      uvrange:
+        enable:
+          dtype: bool
+          required: false
+        uvrange: 
+          dtype: str
+          required: false
+      antenna:
+        enable:
+          dtype: bool
+          required: false
+        antenna: 
+          dtype: str
+          required: false
+        timerange:
+          dtype: str
+          required: false
+      timerange:
+        enable:
+          dtype: bool
+          required: false
+        timerange:
+          dtype: str
+          required: false
+    unflag:
+      enable: 
+        dtype: bool
+      spw:
+        enable:
+          dtype: bool
+          required: false
+      scan:
+        enable:
+          dtype: bool
+          required: false
+      timerange:
+        enable:
+          dtype: bool
+          required: false
+      field:
+        enable:
+          dtype: bool
+          required: false
+      uvrange:
+        enable:
+          dtype: bool
+          required: false
+      antenna:
+        enable:
+          dtype: bool
+          required: false
+      observation:
+        enable:
+          dtype: bool 
+          required: false
+      restore:
+        enable:
+          dtype: bool
+          required: false
+    inspect:
+      enable:
+        dtype: bool
+        required: false
+      rfinder:
+        enable: 
+          dtype: bool
+          required: false
+        field: 
+          dtype: int
+          required: false
+        rfimode:
+          dtype: str
+          required: false
+        polarization:
+          dtype: str 
+          required: false
+        plot_summary:
+          dtype: bool 
+          required: false
+        plot_details:
+          dtype: bool
+          required: false
+  
+
+  
+
+     
+         
+         
+            
+        
+        
+                  
+            
+           
+  
+
+            
+      
+               
+
+  
+     
+  
+   
+  
+  

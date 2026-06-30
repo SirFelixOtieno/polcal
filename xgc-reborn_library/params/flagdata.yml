@@ -1,0 +1,120 @@
+lib:
+   params:
+      flagging:
+      
+         flagmanager:
+            
+            list:
+               mode: 'list'
+               
+            save:
+               mode: 'save'
+               merge: 'replace'
+             
+            rename:
+               mode: 'rename'
+               
+            restore:
+               mode: 'restore'
+               
+            delete:
+               mode: 'delete'
+               
+         flagdata:
+         
+            base:
+               action: 'apply'
+               overwrite: true
+               flagbackup: false
+               
+            unflag:
+               mode: 'unflag'
+               action: 'apply'
+               
+            summary:
+               mode: 'summary'
+               
+            manual:
+               mode: 'manual'
+               autocorr: false
+               datacolumn: 'DATA'
+               _use: lib.params.flagging.flagdata.base
+               
+            shadow:
+               mode: 'shadow'
+               autocorr: false
+               datacolumn: 'DATA'
+               _use: lib.params.flagging.flagdata.base
+                  
+            elevation:
+               autocorr: false
+               mode: 'elevation'
+               datacolumn: 'DATA'
+               _use: lib.params.flagging.flagdata.base
+                          
+            quack:
+               mode: 'quack'
+               autocorr: false
+               datacolumn: 'DATA'
+               _use: lib.params.flagging.flagdata.base  
+     
+            clip:
+               mode: 'clip'
+               autocorr: false
+               _use: lib.params.flagging.flagdata.base
+     
+            rflag:
+               freqdev: ''
+               timedev: ''
+               winsize: 5
+               mode: 'rflag'
+               autocorr: false 
+               spectralmin: 0.0
+               freqdevscale: 6.0
+               timedevscale: 6.0
+               extendflags: true
+               spectralmax: 1000000.0
+               _use: lib.params.flagging.flagdata.base
+               
+            tfcrop:
+               halfwin: 1
+               mode: 'tfcrop'
+               maxnpieces: 7
+               timefit: 'line'
+               freqfit: 'poly'
+               autocorr: false 
+               timecutoff: 4.0       
+               freqcutoff: 3.0       
+               extendflags: true 
+               flagdimension: 'freqtime'  
+               _use: lib.params.flagging.flagdata.base
+     
+            extend:
+               mode: 'extend'
+               autocorr: false 
+               growaround: true
+               extendpols: true
+               flagneartime: =IFSET(recipe.polcal.flag.extend.flagneartime, recipe.polcal.flag.extend.flagneartime, true) 
+               flagnearfreq: =IFSET(recipe.polcal.flag.extend.flagnearfreq, recipe.polcal.flag.extend.flagnearfreq, true)
+               _use: lib.params.flagging.flagdata.base
+    
+            tricolour:
+               flagging-strategy: 'polarisation'
+   
+            rfinder:
+               input_dir: '/'
+               summary_options: [ant,scan]
+               output_dir: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/flagging'  
+               
+              
+               
+               
+              
+               
+   
+    
+   
+   
+ 
+   
+   

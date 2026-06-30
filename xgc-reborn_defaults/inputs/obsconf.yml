@@ -1,0 +1,88 @@
+obs:
+  info: Select parameters by label. these parameters are based on (obs.yml). 
+  dtype: str
+  required: true
+  
+band: 
+  info: Observation band
+  required: true
+  choices: [L,S0,S1,S2,S3,S4,UHF]
+        
+ms-path: 
+  info: Path to the measurement set.
+  dtype: MS
+  required: true
+  policies:
+    positional: true
+  must_exist: true
+  writable: false
+    
+#out-dir:
+  #info: Path to the output directory.
+  #dtype: Directory
+  #writable: true
+  #must_exist: false
+  #mkdir: true
+  #required: true
+  #path_policies:
+  #write_parent: true
+                       
+obsconf:
+  gcal:
+    dtype: str 
+    required: true
+  target:
+    dtype: str 
+    required: true 
+  fcal:
+    dtype: str
+    required: true
+    choices: [0408-65, J1939-6342]
+  bpcal:
+    dtype: str
+    required: true
+    choices: [0408-65, J1939-6342] 
+  xcal:
+    dtype: str
+    required: true
+    choices: [J1331+3030, J0521+1638] 
+  refant:
+    casa:
+      dtype: str
+      required: true
+    quartical:
+      dtype: int
+      required: true
+  obsinfo:
+    enable:
+      dtype: bool
+      required: true
+    listobs:
+      enable:
+        dtype: bool
+        required: true
+    plotants:
+      enable:
+        dtype: bool
+        required: true
+    plotelev:
+      enable:
+        dtype: bool
+        required: true
+
+      
+
+            
+           
+  
+
+            
+      
+               
+
+  
+     
+  
+   
+  
+  

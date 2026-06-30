@@ -1,0 +1,4 @@
+tablenames:
+ info: Name of input visibility file (MS)
+ dtype: List[str] 
+

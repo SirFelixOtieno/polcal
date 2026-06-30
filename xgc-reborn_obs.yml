@@ -1,0 +1,462 @@
+band:
+  L:
+    polcal.calibrate.casa.clean_spw: '0:1300~1400MHz'
+    ms-path: /net/sinatra/vault-ike/andati/pica_redux/msdir/1576687564_sdp_l0.ms
+    flag.target.manual.spw.spw: '*:1200MHz~1230MHz,*:1280MHz~1300MHz,*:1560MHz~1610MHz'
+    flag.calibrators.manual.spw.spw: '*:1200MHz~1230MHz,*:1280MHz~1300MHz,*:1560MHz~1610MHz'
+    
+  UHF:
+    #ms-path: /net/sinatra/vault-ike/andati/pica_redux/msdir/1576687564_sdp_l0.ms
+
+obs:  
+  user: 
+    band: L   # UHF
+    _use: vars.bands.L #UHF
+            
+    obsconf.fcal: '0408-65'
+    obsconf.bpcal: '0408-65'
+    obsconf.xcal: 'J0521+1638'
+    obsconf.gcal: 'J0538-4405'
+    obsconf.target: 'PictorA'
+    obsconf.refant.casa: 'm005'
+    obsconf.refant.quartical: 005
+    obsconf.obsinfo.enable: true
+    obsconf.obsinfo.listobs.enable: true
+    obsconf.obsinfo.plotants.enable: false
+    obsconf.obsinfo.plotelev.enable: false
+    
+    transform.calibrators.enable: true
+    #transform.calibrators.label: 'CASA' 
+    transform.calibrators.label: 'QuartiCal'
+    transform.calibrators.mstransform.enable: true
+    transform.calibrators.mstransform.scan: ''
+    transform.calibrators.mstransform.chanbin:  1
+    transform.calibrators.mstransform.nthreads: 1
+    transform.calibrators.mstransform.timebin: '0s'
+    transform.calibrators.mstransform.correlation: ''
+    transform.calibrators.mstransform.chanaverage:  false
+    transform.calibrators.mstransform.timeaverage:  false
+            
+    prepare.calibrators.enable: true
+    prepare.calibrators.flag.restore.enable: false
+    prepare.calibrators.flag.summary.enable: true
+    prepare.calibrators.swap_labels.enable: true
+    prepare.calibrators.clearcal.enable: true
+    prepare.calibrators.clearcal.addmodel: true 
+    
+    flag.calibrators.enable: true
+    flag.calibrators.reset.enable: false
+    flag.calibrators.basic.enable: true
+    flag.calibrators.basic.autocorr.enable: true
+    flag.calibrators.basic.quack.enable: false
+    flag.calibrators.basic.quack.quackmode: beg
+    flag.calibrators.basic.quack.quackinterval: 4.0
+    flag.calibrators.basic.quack.quackincrement: false
+    flag.calibrators.basic.shadow.enable: false
+    flag.calibrators.basic.shadow.tolerance: 0.0
+    flag.calibrators.basic.elevation.enable: false
+    flag.calibrators.basic.elevation.lowerlimit: 0.0 
+    flag.calibrators.basic.elevation.upperlimit: 90.0
+    flag.calibrators.basic.edges.enable: true
+    flag.calibrators.basic.clip.zeros.enable: false
+    flag.calibrators.basic.clip.zeros.clipzeros: true
+    flag.calibrators.basic.clip.extremes.enable: true
+    flag.calibrators.basic.clip.extremes.clipoutside: true
+    flag.calibrators.basic.clip.extremes.clipminmax: [0.0,200.0]
+    flag.calibrators.basic.summary.enable: true
+    flag.calibrators.basic.restore.enable: false
+    flag.calibrators.rfimask.enable: true
+    flag.calibrators.rfimask.uvrange: '0~1000'
+    flag.calibrators.rfimask.summary.enable: true
+    flag.calibrators.rfimask.restore.enable: false
+    flag.calibrators.rfi.enable: true
+    flag.calibrators.rfi.column: DATA 
+    flag.calibrators.rfi.flagger: tricolour 
+    flag.calibrators.rfi.tfcrop.timecutoff: 4.0
+    flag.calibrators.rfi.tfcrop.freqcutoff: 3.0
+    flag.calibrators.rfi.tfcrop.correlation: ''
+    flag.calibrators.rfi.tfcrop.combinescans: false
+    flag.calibrators.rfi.tfcrop.usewindowstats: std
+    flag.calibrators.rfi.tfcrop.flagdimension: freqtime
+    flag.calibrators.rfi.tricolour.window-backend: numpy
+    flag.calibrators.rfi.tricolour.flagging-strategy: polarisation
+    flag.calibrators.rfi.tricolour.config: mk_rfi_flagging_calibrator_fields_firstpass.yaml  
+    flag.calibrators.rfi.summary.enable: true
+    flag.calibrators.rfi.inspect.enable: false
+    flag.calibrators.rfi.restore.enable: false
+    flag.calibrators.manual.enable: true
+    flag.calibrators.manual.spw.enable: false
+    flag.calibrators.manual.scan.enable: true
+    flag.calibrators.manual.scan.scan: 22
+    flag.calibrators.manual.field.enable: false
+    flag.calibrators.manual.field.field: ''
+    flag.calibrators.manual.antenna.enable: true
+    flag.calibrators.manual.antenna.antenna: m003
+    flag.calibrators.manual.antenna.timerange: ''
+    flag.calibrators.manual.timerange.enable: false
+    flag.calibrators.manual.timerange.timerange: 'YYYY/MM/DD/HH:MM:SS~YYYY/MM/DD/HH:MM:SS'
+    flag.calibrators.manual.summary.enable: true
+    flag.calibrators.manual.inspect.enable: false
+    flag.calibrators.manual.restore.enable: false
+    flag.calibrators.inspect.enable: false
+    flag.calibrators.inspect.rfinder.field: 0 
+    flag.calibrators.inspect.rfinder.polarization: q
+    flag.calibrators.inspect.rfinder.rfimode: use_flags 
+    flag.calibrators.inspect.rfinder.plot_summary: true
+    flag.calibrators.inspect.rfinder.plot_details: false
+    flag.calibrators.unflag.enable: false
+    flag.calibrators.unflag.spw.enable: false
+    flag.calibrators.unflag.scan.enable: false
+    flag.calibrators.unflag.field.enable: false
+    flag.calibrators.unflag.antenna.enable: false
+    flag.calibrators.unflag.timerange.enable: false
+    flag.calibrators.unflag.restore.enable: true
+            
+    crosscal.enable: true
+    crosscal.uvrange: '>150'
+    #crosscal.calibrate-with: CASA
+    crosscal.calibrate-with: QuartiCal
+    crosscal.flag_reset.enable: false
+    crosscal.set_model.enable: true
+    crosscal.set_model.set-with: crystalball 
+    crosscal.set_model.meerkat-band: L  #UHF 
+    crosscal.set_model.crystalball.num-workers: 0
+    crosscal.set_model.crystalball.num-sources: 0
+    crosscal.set_model.crystalball.points-only: false
+    crosscal.set_model.crystalball.memory-fraction: 0.01
+    crosscal.primary.enable: true
+    crosscal.primary.casa.bandpass.fillgaps: 70
+    crosscal.primary.casa.flagdata.clip.leakages: [0.0,0.1]
+    crosscal.primary.quartical.input_ms.time_chunk: 0
+    crosscal.primary.quartical.input_ms.freq_chunk: 0
+    crosscal.primary.quartical.input_ms.select_fields: 0
+    crosscal.primary.quartical.dask.threads: 8
+    crosscal.primary.quartical.dask.scheduler: threads
+    crosscal.primary.quartical.solver.threads: 8
+    crosscal.primary.flag.tfcrop.enable: true
+    crosscal.primary.flag.tfcrop.timecutoff: 4.0
+    crosscal.primary.flag.tfcrop.freqcutoff: 3.0
+    crosscal.primary.flag.tfcrop.column: CORRECTED
+    crosscal.primary.flag.tfcrop.combinescans: false
+    crosscal.primary.flag.tfcrop.usewindowstats: std
+    crosscal.primary.flag.tfcrop.flagdimension: freqtime
+    crosscal.primary.flag.tfcrop.extendflags: true
+    crosscal.primary.flag.rflag.enable: false #true
+    crosscal.primary.flag.rflag.winsize: 6.5
+    crosscal.primary.flag.rflag.freqdevscale: 7.5
+    crosscal.primary.flag.rflag.timedevscale: 7.5
+    crosscal.primary.flag.rflag.extendflags: false
+    crosscal.primary.flag.rflag.column: CORRECTED
+    crosscal.primary.flag.restore.enable: false
+    crosscal.primary.flag.summary.enable: true
+    crosscal.primary.plotgains.enable: true
+    crosscal.primary.image.enable: false
+    crosscal.primary.image.image-with: wsclean
+    crosscal.primary.image.wsclean.mem: 90
+    crosscal.primary.image.wsclean.nchan: 8
+    crosscal.primary.image.wsclean.pol: IQUV 
+    crosscal.primary.image.wsclean.size: 4096
+    crosscal.primary.image.wsclean.threads: 64
+    crosscal.primary.image.wsclean.auto-mask: 6
+    crosscal.primary.image.wsclean.scale: 1.1 asec
+    crosscal.primary.image.wsclean.gridder: wgridder
+    crosscal.primary.image.wsclean.auto-threshold: 1.0
+    crosscal.primary.image.wsclean.weight: 'uniform'              
+    crosscal.secondary.enable: true
+    crosscal.secondary.set_model.enable: true
+    crosscal.secondary.quartical.input_ms.time_chunk: 0
+    crosscal.secondary.quartical.input_ms.freq_chunk: 0
+    crosscal.secondary.quartical.input_ms.select_fields: 1
+    crosscal.secondary.quartical.dask.threads: 2
+    crosscal.secondary.quartical.dask.scheduler: threads
+    crosscal.secondary.quartical.solver.threads: 32
+    crosscal.secondary.flag.tfcrop.enable: true
+    crosscal.secondary.flag.tfcrop.timecutoff: 4.0
+    crosscal.secondary.flag.tfcrop.freqcutoff: 3.0
+    crosscal.secondary.flag.tfcrop.column: CORRECTED
+    crosscal.secondary.flag.tfcrop.combinescans: false
+    crosscal.secondary.flag.tfcrop.usewindowstats: std
+    crosscal.secondary.flag.tfcrop.flagdimension: freqtime
+    crosscal.secondary.flag.tfcrop.extendflags: false
+    crosscal.secondary.flag.rflag.enable:  false #true
+    crosscal.secondary.flag.rflag.winsize: 6.5
+    crosscal.secondary.flag.rflag.freqdevscale: 7.5
+    crosscal.secondary.flag.rflag.timedevscale: 7.5
+    crosscal.secondary.flag.rflag.column: CORRECTED
+    crosscal.secondary.flag.rflag.extendflags: false
+    crosscal.secondary.flag.restore.enable: false
+    crosscal.secondary.flag.summary.enable: true
+    crosscal.secondary.plotgains.enable: true
+    crosscal.secondary.image.enable: false
+    crosscal.secondary.image.image-with: wsclean
+    crosscal.secondary.image.wsclean.mem: 70
+    crosscal.secondary.image.wsclean.nchan: 8
+    crosscal.secondary.image.wsclean.pol: IQUV 
+    crosscal.secondary.image.wsclean.size: 4096
+    crosscal.secondary.image.wsclean.threads: 48
+    crosscal.secondary.image.wsclean.auto-mask: 5
+    crosscal.secondary.image.wsclean.scale: 1.1 asec
+    crosscal.secondary.image.wsclean.auto-threshold: 1.0
+    crosscal.secondary.image.wsclean.weight: 'uniform'
+                   
+    polcal.enable: true
+    polcal.uvrange: '>150'
+    polcal.flag.reset.enable: false
+    polcal.flag.extend.enable: true
+    polcal.flag.extend.ntime: '60s'
+    polcal.flag.extend.growfreq: 80.0
+    polcal.flag.extend.growtime: 80.0
+    polcal.flag.restore.enable: false
+    polcal.flag.summary.enable: true
+    polcal.set_model.enable: true
+    polcal.calibrate.enable: true
+    polcal.calibrate.casa.gain-solint: 'inf'
+    polcal.calibrate.casa.time-solint: 'int'
+    polcal.calibrate.quartical.input_ms.time_chunk: 0
+    polcal.calibrate.quartical.input_ms.freq_chunk: 0
+    polcal.calibrate.quartical.input_ms.select_fields: 2
+    polcal.calibrate.quartical.dask.threads: 2
+    polcal.calibrate.quartical.dask.scheduler: threads
+    polcal.calibrate.quartical.solver.threads: 32
+    polcal.calibrate.quartical.gain.time_interval: 1
+    polcal.calibrate.quartical.gain.freq_interval: 0
+    polcal.calibrate.quartical.gain.type: crosshand_phase 
+    polcal.applycal_target.quartical.dask.threads: 2
+    polcal.applycal_target.quartical.dask.scheduler: threads
+    polcal.applycal_target.quartical.solver.threads: 32
+    polcal.applycal_target.quartical.input_ms.time_chunk: 15
+    polcal.applycal_target.quartical.input_ms.freq_chunk: 0
+    polcal.plotgains.enable: true 
+    polcal.image.enable: false
+    polcal.image.image-with: wsclean
+    polcal.image.wsclean.mem: 90
+    polcal.image.wsclean.nchan: 8
+    polcal.image.wsclean.pol: IQUV 
+    polcal.image.wsclean.size: 4096
+    polcal.image.wsclean.threads: 64
+    polcal.image.wsclean.auto-mask: 4
+    polcal.image.wsclean.scale: 1.1 asec
+    polcal.image.wsclean.auto-threshold: 1.0
+    polcal.image.wsclean.weight: 'uniform'
+    
+    inspect.enable: true
+    inspect.polcal.enable: true
+    inspect.crosscal.enable: true
+    inspect.shadems.enable: true
+    inspect.shadems.cnum: 64
+    inspect.shadems.column: 'CORRECTED_DATA'
+    inspect.shadems.xcanvas: 1280
+    inspect.shadems.ycanvas: 900
+    inspect.shadems.fontsize: 40.0
+    inspect.shadems.profile: false
+    inspect.shadems.iter-corr: false
+    inspect.shadems.iter-scan: false
+    inspect.shadems.iter-field: true
+    inspect.shadems.iter-antenna: false 
+            
+    transform.target.enable: true
+    transform.target.label: 'target'
+    transform.target.mstransform.enable: true
+    transform.target.mstransform.scan: '1~8'
+    transform.target.mstransform.chanbin:  1
+    transform.target.mstransform.nthreads: 1
+    transform.target.mstransform.timebin: '0s'
+    transform.target.mstransform.correlation: ''
+    transform.target.mstransform.chanaverage: false
+    transform.target.mstransform.timeaverage: false
+         
+    prepare.target.enable: true
+    prepare.target.flag.restore.enable: false
+    prepare.target.flag.summary.enable: true
+    prepare.target.swap_labels.enable: true
+    prepare.target.clearcal.enable: true
+    prepare.target.clearcal.addmodel: true 
+    
+    flag.target.enable: true
+    flag.target.reset.enable: false
+    flag.target.basic.enable: true
+    flag.target.basic.autocorr.enable: true
+    flag.target.basic.quack.enable: false
+    flag.target.basic.quack.quackmode: beg
+    flag.target.basic.quack.quackinterval: 4.0
+    flag.target.basic.quack.quackincrement: false
+    flag.target.basic.shadow.enable: false
+    flag.target.basic.shadow.tolerance: 0.0
+    flag.target.basic.elevation.enable: false
+    flag.target.basic.elevation.lowerlimit: 0.0 
+    flag.target.basic.elevation.upperlimit: 90.0
+    flag.target.basic.edges.enable: true
+    flag.target.basic.clip.zeros.enable: false
+    flag.target.basic.clip.zeros.clipzeros: true
+    flag.target.basic.clip.extremes.enable: true
+    flag.target.basic.clip.extremes.clipoutside: true
+    flag.target.basic.clip.extremes.clipminmax: [0.0,1000.0]
+    flag.target.basic.summary.enable: true
+    flag.target.basic.restore.enable: false
+    flag.target.rfimask.enable: true
+    flag.target.rfimask.uvrange: '0~1000'
+    flag.target.rfimask.summary.enable: true
+    flag.target.rfimask.restore.enable: false
+    flag.target.rfi.enable: true
+    flag.target.rfi.column: DATA 
+    flag.target.rfi.flagger: tricolour 
+    flag.target.rfi.tfcrop.timecutoff: 4.0
+    flag.target.rfi.tfcrop.freqcutoff: 3.0
+    flag.target.rfi.tfcrop.correlation: ''
+    flag.target.rfi.tfcrop.combinescans: false
+    flag.target.rfi.tfcrop.usewindowstats: std
+    flag.target.rfi.tfcrop.flagdimension: freqtime
+    flag.target.rfi.tricolour.window-backend: numpy
+    flag.target.rfi.tricolour.flagging-strategy: polarisation
+    flag.target.rfi.tricolour.config: gorbachev.yaml 
+    flag.target.rfi.summary.enable: true
+    flag.target.rfi.inspect.enable: false
+    flag.target.rfi.restore.enable: false
+    flag.target.manual.enable: true
+    flag.target.manual.spw.enable: true
+    flag.target.manual.scan.enable: false
+    flag.target.manual.scan.scan: 22
+    flag.target.manual.field.enable: false
+    flag.target.manual.field.field: ''
+    flag.target.manual.antenna.enable: false
+    flag.target.manual.antenna.antenna: m003
+    flag.target.manual.antenna.timerange: ''
+    flag.target.manual.timerange.enable: false
+    flag.target.manual.timerange.timerange: 'YYYY/MM/DD/HH:MM:SS~YYYY/MM/DD/HH:MM:SS'
+    flag.target.manual.summary.enable: true
+    flag.target.manual.inspect.enable: false
+    flag.target.manual.restore.enable: false
+    flag.target.inspect.enable: false
+    flag.target.inspect.rfinder.field: 0 
+    flag.target.inspect.rfinder.polarization: q
+    flag.target.inspect.rfinder.rfimode: use_flags 
+    flag.target.inspect.rfinder.plot_summary: true
+    flag.target.inspect.rfinder.plot_details: false
+    flag.target.unflag.enable: false
+    flag.target.unflag.spw.enable: false
+    flag.target.unflag.scan.enable: false
+    flag.target.unflag.field.enable: false
+    flag.target.unflag.antenna.enable: false
+    flag.target.unflag.timerange.enable: false
+    flag.target.unflag.restore.enable: true
+    
+    selfcal.enable: false
+    selfcal.flag.reset.enable: false
+    selfcal.flag.restore.enable: false
+    selfcal.flag.restore.version: 'pre-selfcal'
+    selfcal.flag.summary.enable: true
+    selfcal.calibrate.enable:   false #true
+    selfcal.calibrate.calibrate-with: QuartiCal
+    selfcal.calibrate.quartical.input_ms.freq_chunk: 0
+    selfcal.calibrate.quartical.input_ms.time_chunk: 0  #25 #0
+    selfcal.calibrate.quartical.input_ms.sigma_column: SIGMA_SPECTRUM
+    #selfcal.calibrate.quartical.input_ms.weight_column: WEIGHT_SPECTRUM
+    selfcal.calibrate.quartical.mad_flags.enable: true
+    selfcal.calibrate.quartical.mad_flags.max_deviation: 0
+    selfcal.calibrate.quartical.mad_flags.threshold_bl:  10
+    selfcal.calibrate.quartical.mad_flags.threshold_global: 12
+    selfcal.calibrate.quartical.dask.threads: 2
+    selfcal.calibrate.quartical.dask.scheduler: threads 
+    
+    selfcal.calibrate.quartical.solver.threads: 32
+    selfcal.calibrate.quartical.solver.iter_recipe: [150,50,25]  
+    selfcal.calibrate.quartical.gain.time_interval: 4
+    selfcal.calibrate.quartical.gain.freq_interval: 0
+    selfcal.calibrate.quartical.gain.type1: delay_and_offset  #phase
+    selfcal.calibrate.quartical.gain.type2: delay_and_offset  #diag_complex
+    selfcal.image.enable: true
+    selfcal.image.image-with: wsclean
+    selfcal.image.wsclean.mem: 90
+    selfcal.image.wsclean.nchan: 8  
+    selfcal.image.wsclean.size: 10240
+    selfcal.image.wsclean.padding: 1.2 
+    selfcal.image.wsclean.abs-mem: 100
+    selfcal.image.wsclean.threads: 64
+    selfcal.image.wsclean.auto-mask: 4
+    selfcal.image.wsclean.scale: 1.1 asec 
+    selfcal.image.wsclean.multiscale: false
+    selfcal.image.wsclean.gridder: wgridder
+    selfcal.image.wsclean.auto-threshold: 1.0
+    selfcal.image.wsclean.weight: 'briggs 0.0'
+    selfcal.mask.enable: true
+    selfcal.mask.mask-with: breizorro
+    selfcal.mask.breizorro.dilate: 5
+    selfcal.mask.breizorro.boxsize: 80
+    selfcal.mask.breizorro.threshold: 6.5
+    selfcal.mask.breizorro.savenoise: false
+    selfcal.mask.breizorro.fill-holes: true
+    selfcal.upsample.enable: true
+    selfcal.upsample.upsample-with: smops
+    selfcal.upsample.smops.num-threads: 64
+    selfcal.upsample.smops.channels-out: 8  
+    selfcal.upsample.smops.polynomial-order: 4
+    selfcal.assess.enable: true
+    selfcal.assess.assess-with: aimfast
+    selfcal.assess.aimfast.tolerance: 0.6
+    selfcal.assess.aimfast.all_source: false
+    
+    image-pol.enable: true
+    image-pol.flag.summary.enable: true
+    image-pol.flag.restore.enable: false
+    image-pol.image.enable: true
+    image-pol.image.image-with: wsclean
+    image-pol.image.wsclean.mem: 50  
+    image-pol.image.wsclean.nchan: 80 
+    image-pol.image.wsclean.pol: IQU 
+    #image-pol.image.wsclean.link-polarizations: QU
+    image-pol.image.wsclean.size: 1024 #2048 #4096
+    image-pol.image.wsclean.padding: 1.5
+    image-pol.image.wsclean.threads: 40
+    image-pol.image.wsclean.auto-mask: 5.0 
+    image-pol.image.wsclean.scale: 1.0 asec # 3.0 asec
+    image-pol.image.wsclean.auto-threshold:  1.0 
+    image-pol.image.wsclean.weight: 'briggs 0.0'
+    #image-pol.image.wsclean.parallel-gridding: 8
+    #image-pol.image.wsclean.parallel-reordering: 8
+    #image-pol.image.wsclean.fit-spectral-pol: 4
+    #image-pol.image.wsclean.no-mf-weighting: true 
+    #image-pol.image.wsclean.weighting-rank-filter: 3
+    image-pol.image.wsclean.join-polarizations: true
+    #image-pol.image.wsclean.squared-channel-joining: true
+    image-pol.image.wsclean.multiscale: false 
+    image-pol.mask.enable: true
+    image-pol.mask.mask-with: breizorro 
+    image-pol.mask.breizorro.dilate: 5
+    image-pol.mask.breizorro.boxsize: 80
+    image-pol.mask.breizorro.threshold: 6.5  
+    image-pol.mask.breizorro.savenoise: false
+    image-pol.mask.breizorro.fill-holes: true
+    image-pol.upsample.enable: false
+    image-pol.upsample.upsample-with: smops
+    image-pol.upsample.smops.num-threads: 64
+    image-pol.upsample.smops.channels-out: 80 
+    image-pol.upsample.smops.polynomial-order: 4
+    image-pol.assess.enable: true
+    image-pol.assess.assess-with: aimfast
+    image-pol.assess.aimfast.tolerance: 0.6
+    image-pol.assess.aimfast.all_source: false
+            
+    
+    
+            
+  
+            
+            
+            
+            
+            
+            
+            
+           
+      
+           
+            
+           
+            
+             
+            
+            
+           
+                               
+            
+

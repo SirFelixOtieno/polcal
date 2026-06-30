@@ -1,0 +1,290 @@
+lib:
+  params:
+    quartical:
+      
+      base:
+            
+        dask.address:
+        dask.workers: 1
+        dask.scheduler: threads 
+            
+        input_ms.data_column: DATA
+        input_ms.select_corr: [0,1,2,3] 
+            
+        input_model.beam:
+        input_model.beam_l_axis: X
+        input_model.beam_m_axis: Y
+        input_model.invert_uvw: true
+        input_model.recipe: MODEL_DATA
+        input_model.source_chunks: 500
+            
+        solver.convergence_fraction: 0.99
+        solver.convergence_criteria: 1e-06
+        solver.reference_antenna: '{recipe.obsconf.refant.quartical}'
+            
+        output.net_gains:
+        output.overwrite: true 
+        output.log_to_terminal: true
+        output.apply_baseline_corrections: false
+        output.compute_baseline_corrections: false
+            
+      primary:
+     
+        _use: lib.params.quartical.base
+        
+        input_model.apply_p_jones: false
+        
+        output.flags: false 
+        output.apply_p_jones_inv: false
+        #output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+        #output.products: [corrected_data, corrected_weight]
+        output.gain_directory:      =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains/{self.label}.qc' 
+        output.log_directory:       =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains/logs/{self.label}.qc'
+          
+        mad_flags.threshold_bl:     =IFSET(recipe.crosscal.primary.quartical.mad_flags.threshold_bl,        recipe.crosscal.primary.quartical.mad_flags.threshold_bl,               5)
+        mad_flags.max_deviation:    =IFSET(recipe.crosscal.primary.quartical.mad_flags.max_deviation,       recipe.crosscal.primary.quartical.mad_flags.max_deviation,              0)
+        mad_flags.threshold_global: =IFSET(recipe.crosscal.primary.quartical.mad_flags.threshold_global,    recipe.crosscal.primary.quartical.mad_flags.threshold_global,          10) 
+          
+        dask.threads:               =IFSET(recipe.crosscal.primary.quartical.dask.threads,                  recipe.crosscal.primary.quartical.dask.threads,                         2)
+            
+        solver.threads:             =IFSET(recipe.crosscal.primary.quartical.solver.threads,                recipe.crosscal.primary.quartical.solver.threads,            	   16)
+        solver.robust:              =IFSET(recipe.crosscal.primary.quartical.solver.robust,                 recipe.crosscal.primary.quartical.solver.robust,                     true)
+        solver.propagate_flags:     =IFSET(recipe.crosscal.primary.quartical.solver.propagate_flags,        recipe.crosscal.primary.quartical.solver.propagate_flags,           false)
+           
+        input_ms.select_uv_range: [0,0]
+        input_ms.path:              =recipe.steps.transform1-split_ms.outputvis
+        input_ms.select_fields:     =LIST('{recipe.crosscal.primary.quartical.input_ms.select_fields}')
+        input_ms.time_chunk:        =IFSET(recipe.crosscal.primary.quartical.input_ms.time_chunk,           recipe.crosscal.primary.quartical.input_ms.time_chunk,                  0)
+        input_ms.freq_chunk:        =IFSET(recipe.crosscal.primary.quartical.input_ms.freq_chunk,           recipe.crosscal.primary.quartical.input_ms.freq_chunk,                  0)
+        input_ms.weight_column:     =IFSET(recipe.crosscal.primary.quartical.input_ms.weight_column,        recipe.crosscal.primary.quartical.input_ms.weight_column,           UNSET)
+        input_ms.sigma_column:      =IFSET(recipe.crosscal.primary.quartical.input_ms.sigma_column,         recipe.crosscal.primary.quartical.input_ms.sigma_column, 'SIGMA_SPECTRUM')
+                                    
+      secondary:
+        _use: lib.params.quartical.base
+            
+        input_model.apply_p_jones: false 
+            
+        output.flags: false
+        output.apply_p_jones_inv: false
+        #output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+        #output.products: [corrected_data, corrected_weight]
+        output.log_directory:       =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains/logs/{self.label}.qc'
+        output.gain_directory:      =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains/{self.label}.qc' 
+             
+        dask.threads:               =IFSET(recipe.crosscal.secondary.quartical.dask.threads,               recipe.crosscal.secondary.quartical.dask.threads,               2)
+            
+        solver.threads:             =IFSET(recipe.crosscal.secondary.quartical.solver.threads,             recipe.crosscal.secondary.quartical.solver.threads,            32)
+        solver.robust:              =IFSET(recipe.crosscal.secondary.quartical.solver.robust,              recipe.crosscal.secondary.quartical.solver.robust,           true)
+        solver.propagate_flags:     =IFSET(recipe.crosscal.secondary.quartical.solver.propagate_flags,     recipe.crosscal.secondary.quartical.solver.propagate_flags,  true)
+            
+        input_ms.select_uv_range: [0,0] #[150,0]
+        input_ms.group_by: [SCAN_NUMBER, FIELD_ID, DATA_DESC_ID]
+        input_ms.path:              =recipe.steps.transform1-split_ms.outputvis
+        input_ms.select_fields:     =LIST('{recipe.crosscal.secondary.quartical.input_ms.select_fields}')
+        input_ms.time_chunk:        =IFSET(recipe.crosscal.secondary.quartical.input_ms.time_chunk,        recipe.crosscal.secondary.quartical.input_ms.time_chunk,        0)
+        input_ms.freq_chunk:        =IFSET(recipe.crosscal.secondary.quartical.input_ms.freq_chunk,        recipe.crosscal.secondary.quartical.input_ms.freq_chunk,        0) 
+        input_ms.weight_column:     =IFSET(recipe.crosscal.secondary.quartical.input_ms.weight_column,     recipe.crosscal.secondary.quartical.input_ms.weight_column, UNSET)
+        input_ms.sigma_column:      =IFSET(recipe.crosscal.secondary.quartical.input_ms.sigma_column,      recipe.crosscal.secondary.quartical.input_ms.sigma_column, 'SIGMA_SPECTRUM') 
+            
+        mad_flags.threshold_bl:     =IFSET(recipe.crosscal.secondary.quartical.mad_flags.threshold_bl,     recipe.crosscal.secondary.quartical.mad_flags.threshold_bl,     5)
+        mad_flags.max_deviation:    =IFSET(recipe.crosscal.secondary.quartical.mad_flags.max_deviation,    recipe.crosscal.secondary.quartical.mad_flags.max_deviation,    0)
+        mad_flags.threshold_global: =IFSET(recipe.crosscal.secondary.quartical.mad_flags.threshold_global, recipe.crosscal.secondary.quartical.mad_flags.threshold_global, 10)
+        
+      polarization: 
+        _use: lib.params.quartical.base
+            
+        input_model.apply_p_jones: true
+            
+        output.flags: false
+        output.apply_p_jones_inv: true
+        #output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+        #output.products: [corrected_data, corrected_weight]
+        output.log_directory:   =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains/logs/{self.label}.qc'
+        output.gain_directory:  =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains/{self.label}.qc' 
+             
+        dask.threads:           =IFSET(recipe.polcal.calibrate.quartical.dask.threads,                    recipe.polcal.calibrate.quartical.dask.threads,                 2)
+            
+        solver.threads:         =IFSET(recipe.polcal.calibrate.quartical.solver.threads,                  recipe.polcal.calibrate.quartical.solver.threads,              32)
+        solver.robust:          =IFSET(recipe.polcal.calibrate.quartical.solver.robust,                   recipe.polcal.calibrate.quartical.solver.robust,             true)
+        solver.propagate_flags: =IFSET(recipe.polcal.calibrate.quartical.solver.propagate_flags,          recipe.polcal.calibrate.quartical.solver.propagate_flags,    true)
+            
+        input_ms.select_uv_range:  [0,0] #[150,0]
+        input_ms.group_by: [FIELD_ID, DATA_DESC_ID]
+        input_ms.path:              =recipe.steps.transform1-split_ms.outputvis
+        input_ms.select_fields:     =LIST('{recipe.polcal.calibrate.quartical.input_ms.select_fields}')
+        input_ms.time_chunk:        =IFSET(recipe.polcal.calibrate.quartical.input_ms.time_chunk,         recipe.polcal.calibrate.quartical.input_ms.time_chunk,          0)
+        input_ms.freq_chunk:        =IFSET(recipe.polcal.calibrate.quartical.input_ms.freq_chunk,         recipe.polcal.calibrate.quartical.input_ms.freq_chunk,          0)
+        input_ms.sigma_column:      =IFSET(recipe.polcal.calibrate.quartical.input_ms.sigma_column,       recipe.polcal.calibrate.quartical.input_ms.sigma_column, 'SIGMA_SPECTRUM')
+            
+        mad_flags.threshold_bl:     =IFSET(recipe.polcal.calibrate.quartical.mad_flags.threshold_bl,      recipe.polcal.calibrate.quartical.mad_flags.threshold_bl,       5)
+        mad_flags.max_deviation:    =IFSET(recipe.polcal.calibrate.quartical.mad_flags.max_deviation,     recipe.polcal.calibrate.quartical.mad_flags.max_deviation,      0)
+        mad_flags.threshold_global: =IFSET(recipe.polcal.calibrate.quartical.mad_flags.threshold_global,  recipe.polcal.calibrate.quartical.mad_flags.threshold_global,  10)
+            
+      transfer:
+      
+        bpcal:
+          _use: lib.params.quartical.base
+            
+          input_model.recipe: MODEL_DATA
+          
+          output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+          output.products: [corrected_data, corrected_weight]
+          output.log_directory:   =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains/logs/{self.label}.qc'
+          output.gain_directory:  =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains/{self.label}.qc' 
+            
+          dask.threads:           =IFSET(recipe.crosscal.primary.quartical.dask.threads,                   recipe.crosscal.primary.quartical.dask.threads,                  8)
+            
+          solver.threads:         =IFSET(recipe.crosscal.primary.quartical.solver.threads,                 recipe.crosscal.primary.quartical.solver.threads,                8)
+          solver.robust:          =IFSET(recipe.crosscal.primary.quartical.solver.robust,                  recipe.crosscal.primary.quartical.solver.robust,              true)
+          solver.propagate_flags: =IFSET(recipe.crosscal.primary.quartical.solver.propagate_flags,         recipe.crosscal.primary.quartical.solver.propagate_flags,    false)
+            
+          input_ms.select_uv_range: [0,0]
+          input_ms.group_by: [SCAN_NUMBER, FIELD_ID, DATA_DESC_ID]
+          input_ms.path:          =recipe.steps.transform1-split_ms.outputvis
+          input_ms.select_fields: =LIST('{recipe.crosscal.primary.quartical.input_ms.select_fields}')
+          input_ms.time_chunk:    =IFSET(recipe.crosscal.primary.quartical.input_ms.time_chunk,             recipe.crosscal.primary.quartical.input_ms.time_chunk,          0)
+          input_ms.freq_chunk:    =IFSET(recipe.crosscal.primary.quartical.input_ms.freq_chunk,             recipe.crosscal.primary.quartical.input_ms.freq_chunk,          0)
+          input_ms.weight_column: =IFSET(recipe.crosscal.primary.quartical.input_ms.weight_column,        recipe.crosscal.primary.quartical.input_ms.weight_column,     UNSET)
+          input_ms.sigma_column:  =IFSET(recipe.crosscal.primary.quartical.input_ms.sigma_column,           recipe.crosscal.primary.quartical.input_ms.sigma_column, 'SIGMA_SPECTRUM')
+          
+          mad_flags.enable:           =IFSET(recipe.crosscal.primary.quartical.mad_flags.enable,              recipe.crosscal.primary.quartical.mad_flags.enable,       false)                
+          mad_flags.threshold_bl:     =IFSET(recipe.crosscal.primary.quartical.mad_flags.threshold_bl,        recipe.crosscal.primary.quartical.mad_flags.threshold_bl,    10)
+          mad_flags.max_deviation:    =IFSET(recipe.crosscal.primary.quartical.mad_flags.max_deviation,       recipe.crosscal.primary.quartical.mad_flags.max_deviation,    0)
+          mad_flags.threshold_global: =IFSET(recipe.crosscal.primary.quartical.mad_flags.threshold_global,    recipe.crosscal.primary.quartical.mad_flags.threshold_global, 0) 
+          
+        gcal:
+          _use: lib.params.quartical.base
+            
+          input_model.recipe: MODEL_DATA
+          input_model.apply_p_jones: true 
+            
+          output.flags: true
+          output.apply_p_jones_inv: true
+          output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+          output.products: [corrected_data, corrected_weight]
+          output.gain_directory:  =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains/{self.label}.qc'
+          output.log_directory:   =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains/logs/{self.label}.qc'
+             
+          dask.threads:           =IFSET(recipe.crosscal.secondary.quartical.dask.threads,                recipe.crosscal.secondary.quartical.dask.threads,                   8)
+            
+          solver.threads:         =IFSET(recipe.crosscal.secondary.quartical.solver.threads,              recipe.crosscal.secondary.quartical.solver.threads,                 8)
+          solver.robust:          =IFSET(recipe.crosscal.secondary.quartical.solver.robust,               recipe.crosscal.secondary.quartical.solver.robust,               true)
+          solver.propagate_flags: =IFSET(recipe.crosscal.secondary.quartical.solver.propagate_flags,      recipe.crosscal.secondary.quartical.solver.propagate_flags,      true)
+             
+          input_ms.select_uv_range: [0,0]
+          input_ms.group_by: [SCAN_NUMBER, FIELD_ID, DATA_DESC_ID]
+          input_ms.path:          =recipe.steps.transform1-split_ms.outputvis
+          input_ms.select_fields: =LIST('{recipe.crosscal.secondary.quartical.input_ms.select_fields}')
+          input_ms.time_chunk:    =IFSET(recipe.crosscal.secondary.quartical.input_ms.time_chunk,            recipe.crosscal.secondary.quartical.input_ms.time_chunk,            0)
+          input_ms.freq_chunk:    =IFSET(recipe.crosscal.secondary.quartical.input_ms.freq_chunk,            recipe.crosscal.secondary.quartical.input_ms.freq_chunk,            0) 
+          input_ms.weight_column: =IFSET(recipe.crosscal.secondary.quartical.input_ms.weight_column,         recipe.crosscal.secondary.quartical.input_ms.weight_column, UNSET)
+          input_ms.sigma_column:  =IFSET(recipe.crosscal.secondary.quartical.input_ms.sigma_column,          recipe.crosscal.secondary.quartical.input_ms.sigma_column, 'SIGMA_SPECTRUM')
+            
+          mad_flags.enable:           =IFSET(recipe.crosscal.secondary.quartical.mad_flags.enable,           recipe.crosscal.secondary.quartical.mad_flags.enable,        false)                  
+          mad_flags.threshold_bl:     =IFSET(recipe.crosscal.secondary.quartical.mad_flags.threshold_bl,     recipe.crosscal.secondary.quartical.mad_flags.threshold_bl,      5)
+          mad_flags.max_deviation:    =IFSET(recipe.crosscal.secondary.quartical.mad_flags.max_deviation,    recipe.crosscal.secondary.quartical.mad_flags.max_deviation,     0)
+          mad_flags.threshold_global: =IFSET(recipe.crosscal.secondary.quartical.mad_flags.threshold_global, recipe.crosscal.secondary.quartical.mad_flags.threshold_global, 10)
+          
+        xcal:
+          _use: lib.params.quartical.base
+         
+          input_model.recipe: MODEL_DATA
+          input_model.apply_p_jones: true
+      
+          output.flags: true
+          output.apply_p_jones_inv: true
+          output.columns: [CORRECTED_DATA,WEIGHT_SPECTRUM]
+          output.products: [corrected_data,corrected_weight]
+          output.gain_directory:  =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains/{self.label}.qc'
+          output.log_directory:   =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains/logs/{self.label}.qc'
+             
+          dask.threads:           =IFSET(recipe.polcal.calibrate.quartical.dask.threads,                   recipe.polcal.calibrate.quartical.dask.threads,                    8)
+            
+          solver.threads:         =IFSET(recipe.polcal.calibrate.quartical.solver.threads,                 recipe.polcal.calibrate.quartical.solver.threads,                  8)
+          solver.robust:          =IFSET(recipe.polcal.calibrate.quartical.solver.robust,                  recipe.polcal.calibrate.quartical.solver.robust,                true)
+          solver.propagate_flags: =IFSET(recipe.polcal.calibrate.quartical.solver.propagate_flags,         recipe.polcal.calibrate.quartical.solver.propagate_flags,       true)
+            
+          input_ms.select_uv_range: [0,0] 
+          input_ms.group_by: [SCAN_NUMBER, FIELD_ID, DATA_DESC_ID]
+          input_ms.path:              =recipe.steps.transform1-split_ms.outputvis
+          input_ms.select_fields:     =LIST('{recipe.polcal.calibrate.quartical.input_ms.select_fields}')
+          input_ms.time_chunk:        =IFSET(recipe.polcal.calibrate.quartical.input_ms.time_chunk,        recipe.polcal.calibrate.quartical.input_ms.time_chunk,             0)
+          input_ms.freq_chunk:        =IFSET(recipe.polcal.calibrate.quartical.input_ms.freq_chunk,        recipe.polcal.calibrate.quartical.input_ms.freq_chunk,             0)
+          input_ms.weight_column:     =IFSET(recipe.polcal.calibrate.quartical.input_ms.weight_column,     recipe.polcal.calibrate.quartical.input_ms.weight_column,      UNSET)
+          input_ms.sigma_column:      =IFSET(recipe.polcal.calibrate.quartical.input_ms.sigma_column,      recipe.polcal.calibrate.quartical.input_ms.sigma_column, 'SIGMA_SPECTRUM')
+            
+          mad_flags.enable:           =IFSET(recipe.polcal.calibrate.quartical.mad_flags.enable,           recipe.polcal.calibrate.quartical.mad_flags.enable,             false)
+          mad_flags.threshold_bl:     =IFSET(recipe.polcal.calibrate.quartical.mad_flags.threshold_bl,     recipe.polcal.calibrate.quartical.mad_flags.threshold_bl,           5)
+          mad_flags.max_deviation:    =IFSET(recipe.polcal.calibrate.quartical.mad_flags.max_deviation,    recipe.polcal.calibrate.quartical.mad_flags.max_deviation,          0)
+          mad_flags.threshold_global: =IFSET(recipe.polcal.calibrate.quartical.mad_flags.threshold_global, recipe.polcal.calibrate.quartical.mad_flags.threshold_global,      10)
+               
+        target:
+          _use: lib.params.quartical.base
+            
+          input_model.recipe: MODEL_DATA
+          input_model.apply_p_jones: true
+            
+          output.flags: true
+          output.apply_p_jones_inv: true
+          output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+          output.products: [corrected_data, corrected_weight]
+          output.gain_directory: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains/{self.label}.qc'
+          output.log_directory:  =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains/logs/{self.label}.qc'
+             
+          dask.threads:           =IFSET(recipe.polcal.calibrate.quartical.dask.threads,                  recipe.polcal.calibrate.quartical.dask.threads,                     2)
+            
+          solver.threads:         =IFSET(recipe.polcal.calibrate.quartical.target.solver.threads,         recipe.polcal.calibrate.quartical.target.solver.threads,           16)
+          solver.robust:          =IFSET(recipe.polcal.calibrate.quartical.target.solver.robust,          recipe.polcal.calibrate.quartical.target.solver.robust,          true)
+          solver.propagate_flags: =IFSET(recipe.polcal.calibrate.quartical.target.solver.propagate_flags, recipe.polcal.calibrate.quartical.target.solver.propagate_flags, true)
+            
+          input_ms.select_fields: [0]
+          input_ms.select_uv_range: [0,0] 
+          input_ms.group_by: [SCAN_NUMBER, FIELD_ID, DATA_DESC_ID]
+          input_ms.path:              =recipe.steps.transform2-split_ms.outputvis
+          input_ms.time_chunk:        =IFSET(recipe.polcal.calibrate.quartical.target.input_ms.time_chunk,        recipe.polcal.calibrate.quartical.target.input_ms.time_chunk,             0)
+          input_ms.freq_chunk:        =IFSET(recipe.polcal.calibrate.quartical.target.input_ms.freq_chunk,        recipe.polcal.calibrate.quartical.target.input_ms.freq_chunk,             0)
+          input_ms.weight_column:     =IFSET(recipe.polcal.calibrate.quartical.input_ms.weight_column,            recipe.polcal.calibrate.quartical.input_ms.weight_column,             UNSET)
+          input_ms.sigma_column:      =IFSET(recipe.polcal.calibrate.quartical.input_ms.sigma_column,             recipe.polcal.calibrate.quartical.input_ms.sigma_column,   'SIGMA_SPECTRUM')
+            
+          mad_flags.enable:           =IFSET(recipe.polcal.calibrate.quartical.target.mad_flags.enable,           recipe.polcal.calibrate.quartical.target.mad_flags.enable,            false)
+          mad_flags.threshold_bl:     =IFSET(recipe.polcal.calibrate.quartical.target.mad_flags.threshold_bl,     recipe.polcal.calibrate.quartical.target.mad_flags.threshold_bl,          5)
+          mad_flags.max_deviation:    =IFSET(recipe.polcal.calibrate.quartical.target.mad_flags.max_deviation,    recipe.polcal.calibrate.quartical.target.mad_flags.max_deviation,         0)
+          mad_flags.threshold_global: =IFSET(recipe.polcal.calibrate.quartical.target.mad_flags.threshold_global, recipe.polcal.calibrate.quartical.target.mad_flags.threshold_global,     10)
+            
+        
+           
+            
+      
+            
+            
+            
+            
+            
+      
+            
+            
+            
+         
+        
+         
+   
+
+  
+  
+  
+  
+  
+            
+            
+            
+           
+                 
+    
+    
+    
+  
+   
+    
+   
+   
+

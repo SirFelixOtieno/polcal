@@ -1,0 +1,88 @@
+       
+inspect:
+  enable:
+    dtype: bool
+    required: true  
+  polcal:
+    enable:
+      dtype: bool 
+      required: true 
+  crosscal:
+    enable:
+      dtype: bool 
+      required: true 
+  shadems:
+    enable:
+      dtype: bool
+      required: true 
+    cnum: 
+      dtype: int 
+      required: false 
+    col:
+      dtype: str 
+      required: false 
+    suffix:
+      dtype: str 
+      required: false 
+    noflags:
+      dtype: bool
+      required: false 
+    profile:
+      dtype: bool
+      required: false  
+    num-parallel:
+      dtype: int
+      required: false 
+    iter-scan:
+      dtype: bool
+      required: false 
+    iter-corr:
+      dtype: bool
+      required: false 
+    iter-spw:
+      dtype: bool
+      required: false 
+    iter-field:
+      dtype: bool
+      required: false 
+    iter-antenna:
+      dtype: bool
+      required: false 
+    xcanvas:
+      dtype: int
+      required: false 
+    ycanvas:
+      dtype: int
+      required: false 
+    fontsize:
+      dtype: float
+      required: false 
+    debug:
+      dtype: bool
+      required: false 
+    row-chunk-size:
+      dtype: int
+      required: false 
+      
+
+     
+         
+         
+            
+        
+        
+                  
+            
+           
+  
+
+            
+      
+               
+
+  
+     
+  
+   
+  
+  

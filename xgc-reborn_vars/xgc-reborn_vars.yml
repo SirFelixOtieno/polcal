@@ -1,0 +1,34 @@
+vars:
+   bands:
+      L:
+            polcal.calibrate.casa.clean_spw: '0:1.45~1.50GHz'  #'0:1300~1400MHz' 
+            flag.edges.spw: '*:856~903MHz,*:1658~1800MHz,*:1419.8~1421.3MHz'
+            rfimask.spw:  >-
+                                              *:900MHz~915MHz,
+                                              *:925MHz~960MHz,
+                                              *:1080MHz~1095MHz,
+                                              *:1565MHz~1585MHz,
+                                              *:1217MHz~1237MHz,
+                                              *:1375MHz~1387MHz,
+                                              *:1166MHz~1186MHz,
+                                              *:1592MHz~1610MHz,
+                                              *:1242MHz~1249MHz,
+                                              *:1191MHz~1217MHz,
+                                              *:1260MHz~1300MHz,
+                                              *:1453MHz~1490MHz,
+                                              *:1616MHz~1626MHz,
+                                              *:1526MHz~1554MHz,
+                                              *:1600MHz
+      UHF: 
+            polcal.calibrate.casa.clean_spw: '0:850~900MHz'
+            rfimask.spw: >-
+                                              *:544MHz~583MHz,
+                                              *:890MHz~915MHz, 
+                                              *:890MHz~915MHz, 
+                                              *:928MHz~935MHz,
+                                              *:1028.8MHz~1030.9MHz 
+            flag.edges.spw: '*:540~550MHz,*:1080~1088MHz'   
+           
+           
+           
+            

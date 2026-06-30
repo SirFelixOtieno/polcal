@@ -1,0 +1,612 @@
+
+crosscal:
+  enable:
+    dtype: bool
+    required: false
+  calibrate-with:
+    dtype: str
+    required: true
+  uvrange:
+    dtype: str
+    required: false
+  flagmanager:
+    enable: 
+      dtype: bool
+      required: false
+    mode: 
+      dtype: str
+      required: false
+    version:
+      dtype: str
+      required: false
+  set_model:
+    enable: 
+      dtype: bool
+      required: false
+    set-with:
+      dtype: str
+    meerkat-band:
+      dtype: str
+    crystalball:
+      sky-model: 
+        dtype: File
+        required: false
+      num-sources:
+        dtype: int
+        required: false
+      num-workers: 
+        dtype: int
+        required: false
+      points-only: 
+        dtype: bool
+        required: false
+      memory-fraction: 
+        dtype: float 
+        required: false 
+  primary:
+    enable:
+      dtype: bool
+    plotgains:
+      enable:
+        dtype: bool
+    flag:
+      restore:
+        enable:
+          dtype: bool
+        version:
+          dtype: str
+      summary:
+        enable:
+          dtype: bool
+      rflag:
+        enable:
+          dtype: bool
+        column:
+          dtype: str
+        winsize:
+          dtype: int
+        freqdevscale:
+          dtype: float
+        timedevscale:
+          dtype: float
+        spectralmin:
+          dtype: float
+        spectralmax:
+          dtype: float
+        extendflags:
+          dtype: bool
+      tfcrop:
+        enable:
+          dtype: bool
+        column:
+          dtype: str
+        freqcutoff:
+          dtype: float 
+        timecutoff:
+          dtype: float 
+        flagdimension:
+          dtype: str 
+        combinescans:
+          dtype: bool
+        usewindowstats:
+          dtype: str 
+        extendflags:
+          dtype: bool
+    casa:
+      bandpass:
+        fillgaps:
+          dtype: int
+          
+    upsample:
+      enable: 
+        dtype: bool
+        required: false
+      upsample-with: 
+        dtype: str
+        required: false
+      smops:
+        num-threads: 
+          dtype: int
+          required: false
+        channels-out: 
+          dtype: int
+          required: false
+        polynomial-order: 
+          dtype: int
+          required: false 
+    mask:
+      enable:
+        dtype: bool
+        required: false
+      mask-with:
+        dtype: str
+        required: false
+      breizorro:
+        enable:
+          dtype: bool
+          required: false
+        threshold:
+          dtype: float
+          required: false
+        boxsize:
+          dtype: int
+          required: false
+        dilate:
+          dtype: int
+          required: false
+        savenoise:
+          dtype: bool
+          required: false
+        fill-holes:
+          dtype: bool
+          required: false
+    assess:
+      enable:
+        dtype: bool
+        required: false
+      assess-with:
+        dtype: str
+        required: false
+      aimfast:
+        all_source:
+          dtype: bool
+          required: false
+        tolerance:
+          dtype: float
+          required: false     
+    image:
+      enable:
+        dtype: bool
+      image-with:
+        dtype: str
+        required: true
+      wsclean:
+        nchan: 
+          dtype: int
+          required: false
+        size: 
+          dtype: Union[int, Tuple[int, int]]
+          required: false
+        auto-threshold: 
+          dtype: float
+          required: false
+        weight: 
+          dtype: Union[str, Tuple[str, float]]
+          required: false
+        scale:
+          dtype: Union[str, float]
+          required: false
+        local-rms:
+          dtype: bool
+          required: false
+        local-rms-window:
+          dtype: int
+          required: false
+        niter:
+          dtype: int
+          required: false
+        pol:
+          dtype: str
+          required: false
+        threads:
+          dtype: int
+          required: false
+        mem:
+          dtype: int
+          required: false
+        abs-mem:
+          dtype: int
+          required: false
+        log-time:
+          dtype: bool
+          required: false
+        no-update-model-required:
+          dtype: bool
+          required: false
+        mf-weighting:
+          dtype: bool
+          required: false
+        taper-tukey:
+          dtype: float
+          required: false
+        taper-inner-tukey:
+          dtype: float
+          required: false
+        padding:
+          dtype: float
+          required: false
+        maxuvw-m:
+          dtype: float
+          required: false
+        minuvw-m:
+          dtype: float
+          required: false
+        maxuv-l:
+          dtype: float
+          required: false
+        minuv-l:
+          dtype: float
+          required: false
+        auto-mask: 
+          dtype: float
+          required: false
+        mgain:
+          dtype: float
+          required: false
+        multiscale:
+          dtype: bool
+          required: false
+        multiscale-scales:
+          dtype: List[float]
+          required: false
+        fit-spectral-pol:
+          dtype: int
+          required: false
+        temp-dir:
+          dtype: Directory
+          required: false
+        parallel-reordering:
+          dtype: int
+        parallel-gridding:
+          dtype: int
+    quartical:
+      input_ms:
+        time_chunk:
+          dtype: int
+        freq_chunk:
+          dtype: int
+        select_fields:
+          dtype: int
+        select_uv_range:
+          dtype: List[float]
+        data_column:
+          dtype: str
+          required: false
+        sigma_column:
+          dtype: str
+          required: false
+        weight_column:
+          dtype: str
+          required: false
+      solver:
+        threads:
+          dtype: int
+          required: false
+        robust:
+          dtype: bool
+          required: false
+        iter_recipe:
+          dtype: List[int]
+          required: false
+        propagate_flags:
+          dtype: bool
+          required: false
+        reference_antenna:
+          dtype: int
+          required: false
+      dask:
+        threads:
+          dtype: int
+          required: false
+        scheduler:
+          dtype: str
+          required: false  
+      mad_flags:
+        enable:
+          dtype: bool
+        threshold_bl:
+          dtype: float
+          required: false
+        threshold_global:
+          dtype: float
+          required: false
+        max_deviation:
+          dtype: float
+          required: false
+      gain:
+        time_interval:
+          dtype: int
+          required: false
+        freq_interval:
+          dtype: int
+          required: false
+        type:
+          dtype: str
+          required: false            
+  secondary:
+    enable:
+      dtype: bool
+    plotgains:
+      enable:
+        dtype: bool
+    flag:
+      restore:
+        enable:
+          dtype: bool
+        version:
+          dtype: str
+      summary:
+        enable:
+          dtype: bool
+      clip:
+        leakages:
+          dtype: List[float]
+      rflag:
+        enable:
+          dtype: bool
+        column:
+          dtype: str
+        winsize:
+          dtype: int
+        freqdevscale:
+          dtype: float
+        timedevscale:
+          dtype: float
+        spectralmin:
+          dtype: float
+        spectralmax:
+          dtype: float
+        extendflags:
+          dtype: bool
+      tfcrop:
+        enable:
+          dtype: bool
+        column:
+          dtype: str
+        freqcutoff:
+          dtype: float 
+        timecutoff:
+          dtype: float 
+        flagdimension:
+          dtype: str 
+        combinescans:
+          dtype: bool
+        usewindowstats:
+          dtype: str 
+        extendflags:
+          dtype: bool
+    upsample:
+      enable: 
+        dtype: bool
+        required: false
+      upsample-with: 
+        dtype: str
+        required: false
+      smops:
+        num-threads: 
+          dtype: int
+          required: false
+        channels-out: 
+          dtype: int
+          required: false
+        polynomial-order: 
+          dtype: int
+          required: false 
+    mask:
+      enable:
+        dtype: bool
+        required: false
+      mask-with:
+        dtype: str
+        required: false
+      breizorro:
+        enable:
+          dtype: bool
+          required: false
+        threshold:
+          dtype: float
+          required: false
+        boxsize:
+          dtype: int
+          required: false
+        dilate:
+          dtype: int
+          required: false
+        savenoise:
+          dtype: bool
+          required: false
+        fill-holes:
+          dtype: bool
+          required: false
+    assess:
+      enable:
+        dtype: bool
+        required: false
+      assess-with:
+        dtype: str
+        required: false
+      aimfast:
+        all_source:
+          dtype: bool
+          required: false
+        tolerance:
+          dtype: float
+          required: false     
+    image:
+      enable:
+        dtype: bool
+      image-with:
+        dtype: str
+        required: true
+      wsclean:
+        nchan: 
+          dtype: int
+          required: false
+        size: 
+          dtype: Union[int, Tuple[int, int]]
+          required: false
+        auto-threshold: 
+          dtype: float
+          required: false
+        weight: 
+          dtype: Union[str, Tuple[str, float]]
+          required: false
+        scale:
+          dtype: Union[str, float]
+          required: false
+        local-rms:
+          dtype: bool
+          required: false
+        local-rms-window:
+          dtype: int
+          required: false
+        niter:
+          dtype: int
+          required: false
+        pol:
+          dtype: str
+          required: false
+        threads:
+          dtype: int
+          required: false
+        mem:
+          dtype: int
+          required: false
+        abs-mem:
+          dtype: int
+          required: false
+        log-time:
+          dtype: bool
+          required: false
+        no-update-model-required:
+          dtype: bool
+          required: false
+        mf-weighting:
+          dtype: bool
+          required: false
+        taper-tukey:
+          dtype: float
+          required: false
+        taper-inner-tukey:
+          dtype: float
+          required: false
+        padding:
+          dtype: float
+          required: false
+        maxuvw-m:
+          dtype: float
+          required: false
+        minuvw-m:
+          dtype: float
+          required: false
+        maxuv-l:
+          dtype: float
+          required: false
+        minuv-l:
+          dtype: float
+          required: false
+        auto-mask: 
+          dtype: float
+          required: false
+        mgain:
+          dtype: float
+          required: false
+        multiscale:
+          dtype: bool
+          required: false
+        multiscale-scales:
+          dtype: List[float]
+          required: false
+        fit-spectral-pol:
+          dtype: int
+          required: false
+        temp-dir:
+          dtype: Directory
+          required: false
+        parallel-gridding:
+          dtype: int
+          required: false
+        parallel-reordering:
+          dtype: int
+          required: false
+    quartical:
+      input_ms:
+        time_chunk:
+          dtype: int
+        freq_chunk:
+          dtype: int
+        select_fields:
+          dtype: int
+        select_uv_range:
+          dtype: List[float]
+        data_column:
+          dtype: str
+          required: false
+        sigma_column:
+          dtype: str
+          required: false
+        weight_column:
+          dtype: str
+          required: false
+      solver:
+        threads:
+          dtype: int
+          required: false
+        robust:
+          dtype: bool
+          required: false
+        iter_recipe:
+          dtype: List[int]
+          required: false
+        propagate_flags:
+          dtype: bool
+          required: false
+        reference_antenna:
+          dtype: int
+          required: false
+      dask:
+        threads:
+          dtype: int
+          required: false
+        scheduler:
+          dtype: str
+          required: false  
+      mad_flags:
+        enable:
+          dtype: bool
+        threshold_bl:
+          dtype: float
+          required: false
+        threshold_global:
+          dtype: float
+          required: false
+        max_deviation:
+          dtype: float
+          required: false
+      gain:
+        time_interval:
+          dtype: int
+          required: false
+        freq_interval:
+          dtype: int
+          required: false
+        type1:
+          dtype: str
+          required: false
+        type2:
+          dtype: str
+          required: false
+                 
+
+
+     
+         
+         
+            
+        
+        
+                  
+            
+           
+  
+
+            
+      
+               
+
+  
+     
+  
+   
+  
+  

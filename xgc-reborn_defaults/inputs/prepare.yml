@@ -1,0 +1,77 @@
+prepare:
+  calibrators:
+    enable:
+      dtype: bool
+      required: true
+    flag:
+      restore:
+        enable: 
+          dtype: bool
+          required: true
+        mode: 
+          dtype: str
+          required: false
+        version:
+          dtype: str
+          required: false
+      summary:
+        enable:
+          dtype: bool
+          required: true
+    swap_labels:
+      enable: 
+        dtype: bool
+        required: true
+    clearcal:
+      enable: 
+        dtype: bool
+        required: true
+      addmodel:
+        dtype: bool
+        required: false
+  target:
+    enable:
+      dtype: bool
+      required: true
+    flag:
+      restore:
+        enable: 
+          dtype: bool
+          required: true
+        mode: 
+          dtype: str
+          required: false
+        version:
+          dtype: str
+          required: false
+      summary:
+        enable:
+          dtype: bool
+          required: true
+    swap_labels:
+      enable: 
+        dtype: bool
+        required: true
+    clearcal:
+      enable: 
+        dtype: bool
+        required: true
+      addmodel:
+        dtype: bool
+        required: false
+  
+                  
+            
+           
+  
+
+            
+      
+               
+
+  
+     
+  
+   
+  
+  

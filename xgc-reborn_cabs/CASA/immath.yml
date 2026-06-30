@@ -1,0 +1,43 @@
+vis:
+  info: A list of input images
+  dtype: List[str]
+  required: true 
+mode:
+  info: mode for math operation (evalexpr, spix, pola, poli, lpoli, tpoli)
+  dtype: str  
+outfile:
+  info: File where the output is saved
+  dtype: File
+region:
+  info: Region selection
+  dtype: str 
+box:
+  info: Rectangular region to select in direction plane. Default is to use the entire direction plane.
+  dtype: str  
+mask:
+  info: Mask to use. Default is none
+  dtype: str 
+chans:
+  info: Channels to use. Default is to use all channels.
+  dtype: str  
+stokes:
+  info: Stokes planes to use. Default is to use all Stokes planes.
+  dtype: str 
+imagemd:
+  info: An image name from which metadata should be copied. The input can be either an image listed under imagename or any other image on disk. 
+  dtype: str  
+polithresh:
+  info: Threshold in linear polarization intensity image below which to mask pixels
+  dtype: str 
+sigma:
+  info: standard deviation of noise for debiasing
+  dtype: str 
+expr:
+  info:  Mathematical expression using images
+  dtype: str 
+prec:
+  info:  Precision for the output image pixels if mode=”evalexpr” or “spix”. “float” or “double” (minimum match supported)
+  dtype: bool
+  
+  
+

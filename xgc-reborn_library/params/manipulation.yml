@@ -1,0 +1,42 @@
+lib:
+   params:
+      manipulation:
+      
+         mstransform:
+            start:          0
+            fitorder:       0
+            tileshape:      [0]
+            maxuvwdistance: 0.0
+            nspw:      1
+            width:     1
+            niter:     1
+            nthreads:  1
+            nchan:    -1
+            ddistart: -1
+            reindex:       true
+            keepflags:     true
+            usewtspectrum: true
+            denoising_lib: true
+            hanning:       false
+            regridms:       false
+            createmms:       false
+            want_cont:        false
+            realmodelcol:        false
+            disableparallel:      false
+            monolithic_processing: false
+            mode: 'channel'
+            numsubms:   'auto'
+            separationaxis: 'auto'
+            interpolation:   'linear'
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+   
+   

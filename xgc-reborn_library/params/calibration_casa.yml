@@ -1,0 +1,116 @@
+lib:
+   params:
+      calibration:
+         base:
+            selectdata: true
+            ms: =recipe.steps.transform1-split_ms.outputvis 
+            refant: '{recipe.obsconf.refant.casa}'
+             
+         clearcal:
+            spw: ''
+            
+         bandpass:
+            minsnr: 3
+            parang: false
+            bandtype: 'B'
+            append: false
+            solnorm: false
+            minblperant: 4
+            field: '{recipe.obsconf.bpcal}'
+            uvrange:  =IFSET(recipe.crosscal.uvrange, recipe.crosscal.uvrange, '>150')
+            fillgaps: =IFSET(recipe.crosscal.primary.casa.bandpass.fillgaps, recipe.crosscal.primary.casa.bandpass.fillgaps, 70)
+            _use: lib.params.calibration.base
+    
+         gaincal:
+         
+            base:
+               minsnr: 3
+               preavg: -1.0
+               minblperant: 4
+               _use: lib.params.calibration.base
+               
+            delay:
+               spwmap: []
+               uvrange: ''
+               calmode: 'ap'
+               gaintype: 'K'
+               parang: false
+               _use: lib.params.calibration.gaincal.base
+               
+            gain:
+               calmode: 'ap'
+               gaintype: 'G'
+               parang: false
+               uvrange: =IFSET(recipe.crosscal.uvrange, recipe.crosscal.uvrange, '>150')
+               _use: lib.params.calibration.gaincal.base
+               
+         polcal:
+         
+            base:
+               minsnr: 3
+               preavg: 300.0
+               minblperant: 4
+               _use: lib.params.calibration.base 
+               
+            phase:
+               calmode: 'p'
+               parang: true
+               gaintype: 'G'
+               field: '{recipe.obsconf.xcal}'
+               uvrange: =IFSET(recipe.polcal.uvrange, recipe.polcal.uvrange, '>150')
+               _use: lib.params.calibration.gaincal.base
+               
+            xdelay:
+               calmode: 'ap'
+               parang: true
+               gaintype: 'KCROSS'
+               field: '{recipe.obsconf.xcal}'
+               uvrange: =IFSET(recipe.polcal.uvrange, recipe.polcal.uvrange, '>150')
+               _use: lib.params.calibration.gaincal.base
+               
+            xphase:
+               poltype: 'Xf'
+               field: '{recipe.obsconf.xcal}'
+               uvrange: =IFSET(recipe.polcal.uvrange, recipe.polcal.uvrange, '>150')
+               _use: lib.params.calibration.polcal.base
+              
+            leakages:
+               _use: lib.params.calibration.polcal.base 
+               poltype: 'Df'
+               field: '{recipe.obsconf.bpcal}'
+               uvrange: =IFSET(recipe.polcal.uvrange, recipe.polcal.uvrange, '>150')    
+            
+         fluxscale:
+            append: false
+            display: true
+            incremental: false  
+            ms: =recipe.steps.transform1-split_ms.outputvis 
+    
+         applycal:
+         
+            base:
+               uvrange: ''
+               selectdata: true
+               applymode: 'calflag'
+               
+            prim:  
+               field: '{recipe.obsconf.bpcal}'
+               ms: =recipe.steps.transform1-split_ms.outputvis 
+               _use: lib.params.calibration.applycal.base
+               
+            sec:
+               field: '{recipe.obsconf.gcal}'
+               ms: =recipe.steps.transform1-split_ms.outputvis 
+               _use: lib.params.calibration.applycal.base
+               
+            pol:
+               field: '{recipe.obsconf.xcal}'
+               ms: =recipe.steps.transform1-split_ms.outputvis 
+               _use: lib.params.calibration.applycal.base
+               
+            target:
+               field: '{recipe.obsconf.target}'
+               ms: =recipe.steps.transform2-split_ms.outputvis 
+               _use: lib.params.calibration.applycal.base
+    
+   

@@ -1,0 +1,271 @@
+lib:
+  steps: 
+    imaging:
+      
+      source-finder:
+      
+        calibrators:
+        
+          gcal:
+            cab: bdsf.catalog
+            params:
+              _use: lib.params.imaging.source-finder.gcal
+              
+          xcal:
+            cab: bdsf.catalog
+            params:
+              _use: lib.params.imaging.source-finder.xcal
+              
+          bpcal:
+            cab: bdsf.catalog
+            params:
+              _use: lib.params.imaging.source-finder.bpcal
+        
+        target:
+          i:
+            cab: bdsf.catalog
+            params:
+              _use: lib.params.imaging.source-finder.target.i
+          
+          iquv:
+            cab: bdsf.catalog
+            params:
+              _use: lib.params.imaging.source-finder.target.iquv
+          
+      image:
+      
+        calibrators:
+        
+          gcal:
+            i:
+              cab: wsclean
+              params:
+                _use:  lib.params.imaging.wsclean.gcal.image.i
+                prefix: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/images'+'/' + '{self.label}/{recipe.obsconf.gcal}'
+                
+            iquv:
+              cab: wsclean
+              params:
+                _use:  lib.params.imaging.wsclean.gcal.image.iquv
+                prefix: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/images'+'/' + '{self.label}/{recipe.obsconf.gcal}'
+                
+          xcal:
+            i:
+              cab: wsclean
+              params:
+                _use:  lib.params.imaging.wsclean.xcal.image.i
+                prefix: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/images'+'/' + '{self.label}/{recipe.obsconf.xcal}'
+              
+            iquv:
+              cab: wsclean
+              params:
+                _use:  lib.params.imaging.wsclean.xcal.image.iquv
+                prefix: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/images'+'/' + '{self.label}/{recipe.obsconf.xcal}'
+              
+          bpcal:
+            i:
+              cab: wsclean
+              params:
+                _use:  lib.params.imaging.wsclean.bpcal.image.i
+                prefix: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/images'+'/' + '{self.label}/{recipe.obsconf.bpcal}'
+                
+            iquv:
+              cab: wsclean
+              params:
+                _use:  lib.params.imaging.wsclean.bpcal.image.iquv
+                prefix: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/images'+'/' + '{self.label}/{recipe.obsconf.bpcal}'
+                
+        target:
+          
+          i:
+            cab: wsclean
+            params:
+              _use:  lib.params.imaging.wsclean.target.i.image
+              prefix: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/images'+'/' + '{self.label}/{recipe.obsconf.target}' + '{steps.image.pol}'
+        
+          iquv:
+            cab: wsclean
+            params:
+              _use:  lib.params.imaging.wsclean.target.iquv.image
+              prefix: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/images'+'/' + '{self.label}/{recipe.obsconf.target}' + '{steps.image-pol.pol}'
+                
+      mask:
+        
+        calibrators:
+        
+          gcal:
+            cab: breizorro
+            params:
+              _use: lib.params.imaging.breizorro.gcal
+              restored-image: '{steps.image-gcal.restored.mfs}' 
+              outfile: '{steps.image-gcal.prefix}-MFS-mask.fits'
+            
+          xcal:
+            cab: breizorro
+            params:
+              _use: lib.params.imaging.breizorro.xcal
+              restored-image: '{steps.image-xcal.restored.mfs}'
+              outfile: '{steps.image-xcal.prefix}-MFS-mask.fits'
+              
+          bpcal:
+            cab: breizorro
+            params:
+              _use: lib.params.imaging.breizorro.bpcal
+              restored-image: '{steps.image-bpcal.restored.mfs}' 
+              outfile: '{steps.image-bpcal.prefix}-MFS-mask.fits'
+            
+        target:
+        
+          i:
+            cab: breizorro
+            params:
+              _use: lib.params.imaging.breizorro.target.i
+            
+          iquv:
+            cab: breizorro
+            params:
+              _use: lib.params.imaging.breizorro.target.iquv
+              
+      masked:
+        
+        calibrators:
+        
+          gcal:
+            cab: wsclean
+            params:
+              prefix: '{steps.image-gcal.prefix}-MASKED'
+              _use:  lib.params.imaging.wsclean.gcal.image.i 
+            
+          xcal:
+            cab: wsclean
+            params:
+              prefix: '{steps.image-xcal.prefix}-MASKED'
+              _use:  lib.params.imaging.wsclean.xcal.image.iquv
+              
+          bpcal:
+            cab: wsclean
+            params:
+              prefix: '{steps.image-gcal.prefix}-MASKED'
+              _use:  lib.params.imaging.wsclean.bpcal.image.iquv 
+               
+        target:
+      
+          i:
+            cab: wsclean
+            params:
+              _use:  lib.params.imaging.wsclean.target.i.image
+      
+          iquv:
+            cab: wsclean
+            params:
+              _use:  lib.params.imaging.wsclean.target.iquv.image
+            
+      predict:
+        
+        target:
+        
+          i:
+            cab: wsclean
+            params:
+              _use: lib.params.imaging.wsclean.target.i.predict
+                    
+          iquv:
+            cab: wsclean
+            params:
+              _use: lib.params.imaging.wsclean.target.iquv.predict 
+              
+      assess:
+      
+        calibrators:
+        
+          bpcal:
+            cab: aimfast
+            params:
+              _use: lib.params.imaging.aimfast.bpcal
+              
+          gcal:
+            cab: aimfast
+            params:
+              _use: lib.params.imaging.aimfast.gcal
+                
+          xcal:
+            cab: aimfast
+            params:
+              _use: lib.params.imaging.aimfast.xcal
+        
+        target:
+          
+          i:
+            cab: aimfast
+            params:
+              _use: lib.params.imaging.aimfast.target.i
+              
+          iquv:
+            cab: aimfast
+            params:
+              _use: lib.params.imaging.aimfast.target.iquv     
+            
+      upsample:
+            
+        calibrators:
+        
+          bpcal:
+            cab: smops
+            params:
+              _use:  lib.params.imaging.smops.bpcal
+        
+          gcal:
+            cab: smops
+            params:
+              _use:  lib.params.imaging.smops.gcal 
+            
+          xcal:
+            cab: smops
+            params:
+              _use:  lib.params.imaging.smops.xcal 
+              
+        target:
+        
+          i:
+            cab: smops
+            params:
+              _use:  lib.params.imaging.smops.target.i
+                
+          iquv:
+            cab: smops
+            params:
+              _use:  lib.params.imaging.smops.target.iquv         
+                
+                
+                
+          
+          
+                
+                 
+
+             
+         
+               
+         
+               
+         
+           
+         
+           
+         
+               
+         
+              
+         
+               
+         
+           
+         
+      
+           
+    
+    
+ 
+     
+  
+ 

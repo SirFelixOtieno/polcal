@@ -1,0 +1,245 @@
+lib:
+   params:
+   
+      visualization:
+      
+         plotants:
+            
+            showgui: false
+            title: 'Antenna Layout Plot'
+            logpos: =IFSET(recipe.obsconf.obsinfo.plotants.logpos, recipe.obsconf.obsinfo.plotants.logpos, true)
+            
+         plotms:
+         
+            base:
+            
+              showgui: false
+              overwrite: true
+              clearplots: true
+              selectdata: true
+              ms: =root.steps.transform1-split_ms.outputvis
+              
+            delay:
+               yaxis: 'delay'
+               coloraxis: 'antenna1'
+               _use: lib.params.visualization.plotms.base
+               
+            gain:
+               coloraxis: 'antenna1'
+               _use: lib.params.visualization.plotms.base
+               
+            phase:
+               yaxis: 'phase'
+               coloraxis: 'antenna1'
+               _use: lib.params.visualization.plotms.base
+               
+            amplitude:
+               yaxis: 'amp'
+               coloraxis: 'antenna1'
+               _use: lib.params.visualization.plotms.base
+               
+            bandpass:
+               xaxis: 'freq'
+               coloraxis: 'corr'
+               _use: lib.params.visualization.plotms.base
+               
+            leakages:
+               xaxis: 'freq'
+               coloraxis: 'corr'
+               _use: lib.params.visualization.plotms.base
+               
+            xdelay:
+               yaxis: 'delay'
+               coloraxis: 'corr'
+               _use: lib.params.visualization.plotms.base
+               
+            xphase:
+               xaxis: 'freq'
+               coloraxis: 'chan'
+               _use: lib.params.visualization.plotms.base
+               
+            elevation-tracks:
+               base:
+                  showgui: false
+                  overwrite: true
+                  clearplots: true
+                  selectdata: true
+                  ydatacolumn: 'data'
+                  xdatacolumn: 'data'
+               
+               hour-angle:
+                  xaxis: 'hourangle'
+                  yaxis: 'elevation'
+                  coloraxis: 'field'
+                  avgchannel: '4096'
+                  title: 'Elevation against Hour-angle'
+                  _use: lib.params.visualization.plotms.elevation-tracks.base
+               
+               elevation:
+                  xaxis: 'time'
+                  yaxis: 'elevation'
+                  coloraxis: 'field'
+                  avgchannel: '4096'
+                  title: 'Elevation against Time'
+                  _use: lib.params.visualization.plotms.elevation-tracks.base
+               
+         shadems:
+         
+            base:
+              ms:            =root.steps.transform1-split_ms.outputvis
+              cnum:          =IFSET(root.inspect.shadems.cnum,           root.inspect.shadems.cnum,                     100)
+              ycanvas:       =IFSET(root.inspect.shadems.ycanvas,        root.inspect.shadems.ycanvas,                  900)
+              xcanvas:       =IFSET(root.inspect.shadems.xcanvas,        root.inspect.shadems.xcanvas,                 1280)
+              fontsize:      =IFSET(root.inspect.shadems.fontsize,       root.inspect.shadems.fontsize,                40.0)
+              iter-field:    =IFSET(root.inspect.shadems.iter-field,     root.inspect.shadems.iter-field,              true)
+              profile:       =IFSET(root.inspect.shadems.profile,        root.inspect.shadems.profile,                false)
+              iter-corr:     =IFSET(root.inspect.shadems.iter-corr,      root.inspect.shadems.iter-corr,              false)
+              iter-scan:     =IFSET(root.inspect.shadems.iter-scan,      root.inspect.shadems.iter-scan,              false)
+              iter-antenna:  =IFSET(root.inspect.shadems.iter-antenna,   root.inspect.shadems.iter-antenna,           false)
+              col:           =IFSET(root.inspect.shadems.column,         root.inspect.shadems.column,      'CORRECTED_DATA')
+              
+            ampphase:
+               yaxis: 'amp'
+               xaxis: 'phase'
+               #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'spectra'
+               title: 'Amplitude against Phase'
+               _use: lib.params.visualization.shadems.base
+               
+            ampfreq:
+            
+               data:
+                  
+                  col: 'DATA'
+                  yaxis: 'amp'
+                  corr: 'XY,YX'
+                  xaxis: 'FREQ'
+                  title: 'Amplitude against Frequency'
+                  cnum: =IFSET(root.inspect.shadems.cnum, root.inspect.shadems.cnum, 100)
+                  
+               corrected:
+                  yaxis: 'amp'
+                  xaxis: 'FREQ'
+                  #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'spectra'
+                  title: 'Amplitude against Frequency'
+                  _use: lib.params.visualization.shadems.base
+               
+            amptime: 
+               yaxis: 'amp'
+               xaxis: 'TIME'
+               #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'spectra'
+               title: 'Amplitude against Time'
+               _use: lib.params.visualization.shadems.base
+               
+            phasetime: 
+               yaxis: 'phase'
+               xaxis: 'TIME'
+               #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'spectra'
+               title: 'Phase against Time'
+               _use: lib.params.visualization.shadems.base
+               
+            ampbaseline:
+               yaxis: 'amp'
+               xaxis: 'BASELINE_M'
+               #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'baseline'
+               title: 'Amplitude against Baseline'
+               _use: lib.params.visualization.shadems.base
+               
+            ampuvdist:
+               xaxis: 'UV'
+               yaxis: 'amp'
+               #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'uv-distance'
+               title: 'Amplitude against UV Distance'
+               _use: lib.params.visualization.shadems.base
+               
+            freqbaseline:
+               yaxis: 'FREQ'
+               xaxis: 'BASELINE_M'
+               #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'baseline'
+               title: 'Frequency against Baseline'
+               _use: lib.params.visualization.shadems.base
+               
+            phaseuvdist:
+               xaxis: 'UV'
+               yaxis: 'phase'
+               #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'uv-distance'
+               title: 'Phase against UV Distance'
+               _use: lib.params.visualization.shadems.base
+               
+            realfreq:
+               xaxis: 'FREQ'
+               yaxis: 'real'
+               #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'spectra'
+               title: 'Real against Frequency'
+               _use: lib.params.visualization.shadems.base
+               
+            phasefreq:
+               xaxis: 'FREQ'
+               yaxis: 'phase'
+               #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'spectra'
+               title: 'Phase against Frequency'
+               _use: lib.params.visualization.shadems.base
+               
+            ampchan:
+               xaxis: 'CHAN'
+               yaxis: 'amp'
+               #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'spectra'
+               title: 'Amplitude against Channel'
+               _use: lib.params.visualization.shadems.base
+               
+            phasechan:
+               xaxis: 'CHAN'
+               yaxis: 'phase'
+               #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'spectra'
+               title: 'Phase against Channel'
+               _use: lib.params.visualization.shadems.base
+               
+            ampscan:
+               xaxis: 'SCAN'
+               yaxis: 'amp'
+               #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'spectra'
+               title: 'Amplitude against Scan'
+               _use: lib.params.visualization.shadems.base
+               
+            phasescan:
+               xaxis: 'SCAN'
+               yaxis: 'phase'
+               #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'spectra'
+               title: 'Phase against Scan'
+               _use: lib.params.visualization.shadems.base
+               
+            phaseballs:
+               yaxis: 'imag'
+               xaxis: 'real'
+               #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'phaseballs'
+               title: 'Real against Imaginary (CORRECTED_DATA)'
+               _use: lib.params.visualization.shadems.base
+               
+            normballs:
+               yaxis: 'imag'
+               xaxis: 'real'
+               #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'normballs'
+               col: 'CORRECTED_DATA/MODEL_DATA'
+               ms: =root.steps.transform1-split_ms.outputvis
+               title: 'Real against Imaginary (CORRECTED_DATA/MODEL_DATA)'
+               cnum: =IFSET(root.inspect.shadems.cnum, root.inspect.shadems.cnum, 64)
+               ycanvas:       =IFSET(root.inspect.shadems.ycanvas,        root.inspect.shadems.ycanvas,                  900)
+               xcanvas:       =IFSET(root.inspect.shadems.xcanvas,        root.inspect.shadems.xcanvas,                 1280)
+               fontsize:      =IFSET(root.inspect.shadems.fontsize,       root.inspect.shadems.fontsize,                40.0)
+               iter-field:    =IFSET(root.inspect.shadems.iter-field,     root.inspect.shadems.iter-field,              true)
+               profile:       =IFSET(root.inspect.shadems.profile,        root.inspect.shadems.profile,                false)
+               iter-corr:     =IFSET(root.inspect.shadems.iter-corr,      root.inspect.shadems.iter-corr,              false)
+               iter-scan:     =IFSET(root.inspect.shadems.iter-scan,      root.inspect.shadems.iter-scan,              false)
+               iter-antenna:  =IFSET(root.inspect.shadems.iter-antenna,   root.inspect.shadems.iter-antenna,           false)
+              
+            uv:
+               xaxis: 'U'
+               yaxis: 'V' 
+               title: 'V against U' 
+               col: 'CORRECTED_DATA'
+               #dir:    =STRIPEXT(BASENAME(root.ms-path)) + '/' + '{root.crosscal.calibrate-with}/output' + '/' + 'diagnostic-plots' + '/' + 'uv-distance'
+               _use: lib.params.visualization.shadems.base
+  
+   
+    
+   
+   

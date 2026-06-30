@@ -1,0 +1,2479 @@
+#!/usr/bin/env -S stimela run -l
+_include:
+          
+   xgc-reborn_cabs:
+      - xgc-reborn_cabs.yml
+      
+   xgc-reborn_vars:
+      - xgc-reborn_vars.yml
+        
+opts:
+
+   backend:
+    
+      select:
+         - singularity
+         - native
+         
+      rlimits:
+         NOFILE: 100000 
+     
+   log:
+    
+      nest: 2
+      level: INFO
+      enable: true
+      symlink: log
+      name: log-{info.fqname}
+      dir: 'logs/log-{config.run.datetime}'
+        
+xgc-reborn:
+
+   name: xgc-reborn
+   info: |
+       A System-agnostic Pipeline for Polarization Calibration and Imaging for the MeerKAT Telescope
+   assign:
+      dirs.base: 
+      dirs.temp: '{config.run.env.HOME}/temp'
+      log.dir: '{recipe.logdir}/log-{config.run.datetime}'
+                      
+   assign_based_on:
+      _include: 
+         - xgc-reborn_obs.yml
+            
+   inputs:
+      _include:
+       
+         - xgc-reborn_defaults/inputs/flag.yml
+         - xgc-reborn_defaults/inputs/polcal.yml
+         - xgc-reborn_defaults/inputs/selfcal.yml
+         - xgc-reborn_defaults/inputs/prepare.yml
+         - xgc-reborn_defaults/inputs/inspect.yml
+         - xgc-reborn_defaults/inputs/obsconf.yml
+         - xgc-reborn_defaults/inputs/crosscal.yml
+         - xgc-reborn_defaults/inputs/image-pol.yml
+         - xgc-reborn_defaults/inputs/transform.yml 
+             
+   outputs:
+      _include: 
+      
+         - xgc-reborn_defaults/outputs/outputs.yml
+        
+   steps:
+   
+      obsinfo-listobs:
+         _use: lib.steps.prepdata.listobs.ms
+         info: |
+             Generates a summary of the observation information in the Measurement Set, including fields, spectral windows, antennas, and scan details.
+         params:
+            listfile: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/obsinfo' + '/' + STRIPEXT(BASENAME(recipe.ms-path)) + '-obsinfo_ms.txt'
+         skip: =IF(recipe.obsconf.obsinfo.enable, IF(recipe.obsconf.obsinfo.listobs.enable, false, true),true)
+         
+      obsinfo-plotants:
+         _use: lib.steps.prepdata.plotants
+         info: |
+             Plot the antenna distribution in the local reference frame, showing the positions of antennas in the array layout to help visualize the telescope configuration. 
+         params:
+            figfile: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/obsinfo' + '/' + STRIPEXT(BASENAME(recipe.ms-path)) + '-plotants.png'
+         skip: =IF(recipe.obsconf.obsinfo.enable, IF(recipe.obsconf.obsinfo.plotants.enable, false, true),true)
+                        
+      obsinfo-elevation1:
+         _use: lib.steps.prepdata.elevation-time
+         info: |
+             Plot the elevation tracks of observed sources by displaying elevation versus time, allowing users to see how each source moves across the sky during the observation.
+         params:
+            plotfile: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/obsinfo' + '/' + STRIPEXT(BASENAME(recipe.ms-path)) + '-elevation1.png'
+         skip: =IF(recipe.obsconf.obsinfo.enable, IF(recipe.obsconf.obsinfo.plotelev.enable, false, true),true)
+         
+      obsinfo-elevation2:
+         _use: lib.steps.prepdata.elevation-hourangle
+         info: |
+             Plot elevation versus hour angle by selecting elevation for the y-axis and hour angle for the x-axis, allowing one to visualize how each source’s elevation changes with 
+             its position relative  to the local meridian during the observation.
+         params:
+            plotfile: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/obsinfo' + '/' + STRIPEXT(BASENAME(recipe.ms-path)) + '-elevation2.png'
+         skip: =IF(recipe.obsconf.obsinfo.enable, IF(recipe.obsconf.obsinfo.plotelev.enable, false, true),true)
+                        
+      transform1-split_ms:
+         _use: lib.steps.prepdata.mstransform.calibrators
+         info: |
+             Create a new Measurement Set containing only the calibrator fields by selecting the desired field IDs or names, allowing one to isolate calibrator data from the original 
+             dataset for calibration purposes.
+         params:
+            outputvis: =STRIPEXT(BASENAME(recipe.ms-path))+'/'+'{recipe.crosscal.calibrate-with}/msdir'+'/'+STRIPEXT(BASENAME(recipe.ms-path))+'-{recipe.transform.calibrators.label}.ms'
+         skip: =IF(recipe.transform.calibrators.enable, IF(recipe.transform.calibrators.mstransform.enable, IF(recipe.transform.calibrators.field=="calibrators", false, true),true),true)
+                        
+      transform1-save-flags:
+         _use: lib.steps.prepdata.flagmanager.save.calibrators
+         info: |
+             Back up the original flag information from the observatory using CASA flagmanager by saving the initial flag state of the Measurement Set before any processing 
+             so it can be restored if needed later. 
+         params:
+            versionname:  'observatory-calflags'
+            comment: 'original calibrator flags from the observatory'
+         skip: =IF(recipe.transform.calibrators.enable, false, true)
+         
+      transform1-restore_flags:
+         _use: lib.steps.prepdata.flagmanager.restore.calibrators
+         info: |
+             Restore the backed-up flags in CASA using the flagmanager task by loading the previously saved flag version of the Measurement Set, 
+             returning the data to its original flag state from before processing.
+         params:
+            versionname: 'observatory-calflags'
+         skip: =IF(recipe.transform.calibrators.enable, false, true)
+             
+      transform1-listobs:
+         _use: lib.steps.prepdata.listobs.calibrators
+         info: |
+             Generates a summary of the observation information in the Measurement Set (calibrators-only), including fields, spectral windows, antennas, and scan details.
+         params:
+            listfile: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/obsinfo' + '/' + STRIPEXT(BASENAME(recipe.ms-path)) + '-obsinfo_cals.txt'
+         skip: =IF(recipe.transform.calibrators.enable, IF(recipe.transform.calibrators.mstransform.enable, IF(recipe.transform.calibrators.obsinfo.enable, false,true),true),true)  
+            
+      prepare-summary_flags:
+         _use: lib.steps.prepdata.flagdata.summary.calibrators
+         info: |
+             Produce a summary of the flagged data from the observatory by inspecting the Measurement Set flags to quantify how much data has been flagged and identify
+              affected antennas, times, or channels.
+         params: 
+            mode: 'summary' 
+         skip: =IF(recipe.prepare.calibrators.enable, IF(recipe.prepare.calibrators.flag.summary.enable, false, true),true) 
+         
+      prepare-delete1_flags:
+         _use: lib.steps.prepdata.flagmanager.delete.calibrators
+         info: |
+             Delete the backed up flags
+         params:
+            versionname: 'unswapped-calflags'
+         skip: =IF(recipe.prepare.calibrators.enable, false,true) 
+         
+      prepare-save_flags:
+         _use: lib.steps.prepdata.flagmanager.save.calibrators
+         info: |
+             Back up the original flag information from the observatory using CASA flagmanager by saving the initial flag state of the Measurement Set (after restoring observatory flags) 
+             before any processing so it can be restored if needed later. 
+         params:
+            versionname: 'unswapped-calflags'
+         skip: =IF(recipe.prepare.calibrators.enable, false,true) 
+                              
+      prepare-swap_labels:
+         _use: lib.steps.prepdata.swap-feeds.calibrators
+         info: |
+             Swap H and V polarization labels and set the feed offset angle to zero for the calibrators-only measurement set
+         params:
+            ms_path: =recipe.steps.transform1-split_ms.outputvis 
+         skip: =IF(recipe.prepare.calibrators.enable, IF(recipe.prepare.calibrators.swap_labels.enable, false, true),true) 
+                  
+      prepare-clearcal:
+         _use: lib.steps.prepdata.clearcal.calibrators
+         info: |
+             Re-initialize calibrated visibility data in the calibrator-only ms
+         params:
+            spw: ''
+         skip: =IF(recipe.prepare.calibrators.enable, IF(recipe.prepare.calibrators.clearcal.enable, false, true),true)
+         
+      prepare-delete2_flags:
+         _use: lib.steps.prepdata.flagmanager.delete.calibrators
+         info: |
+             Delete the backed up flags
+         params:
+            versionname: 'swapped-calflags'
+         skip: =IF(recipe.prepare.calibrators.enable,false,true)          
+           
+      prepare-save_flags2:
+         _use: lib.steps.prepdata.flagmanager.save.calibrators
+         info: |
+             Backed up flags
+         params:
+            versionname: 'swapped-calflags'
+         skip: =IF(recipe.prepare.calibrators.enable,false,true) 
+         
+      prepare-restore_flags:
+         _use: lib.steps.prepdata.flagmanager.restore.calibrators
+         info: |
+             Delete the backed up flags
+         params:
+            versionname: 'unswapped-calflags'
+         skip: =IF(recipe.prepare.calibrators.enable, IF(recipe.prepare.calibrators.flag.restore.enable, false, true),true) 
+         
+      delete-preflags:
+         _use: lib.steps.flagmanager.delete.calibrators
+         info: |
+             Delete existing pre-calflags before running flagdata 
+         params:
+            versionname: 'pre-calflags'
+         skip: =IF(recipe.flag.calibrators.enable, false,true)          
+                    
+      save-preflags:
+         _use: lib.steps.flagmanager.save.calibrators
+         info: |
+             Back up existing flags before running flagdata on the calibrator fields
+         params:
+            versionname: 'pre-calflags'
+            comment: 'calibrator-fields flags before flagdata'
+         skip: =IF(recipe.flag.calibrators.enable, false,true)
+         
+      flag-autocorr: 
+         _use: lib.steps.flagdata.manual.calibrators
+         info: |
+             Flag only the auto correlations. When set to True, it will only flag data from a processor of type CORRELATOR.
+         params: 
+            autocorr: true
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.basic.enable, IF(recipe.flag.calibrators.basic.autocorr.enable, false, true),true),true)
+                  
+      flag-shadow:
+         _use: lib.steps.flagdata.shadow.calibrators
+         info: |
+             Remove antenna-shadowed data
+         params:
+            spw: ''
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.basic.enable, IF(recipe.flag.calibrators.basic.shadow.enable, false, true),true),true)
+                  
+      flag-elevation:
+         _use: lib.steps.flagdata.elevation.calibrators
+         info: |
+             Flag antenna with pointing elevation outside the selected range
+         params:
+            spw: ''
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.basic.enable, IF(recipe.flag.calibrators.basic.elevation.enable, false, true),true),true)
+                        
+      flag-quack:
+         _use: lib.steps.flagdata.quack.calibrators
+         info:  |
+             Flag data at the start and end of the scans.
+         params: 
+            spw: '' 
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.basic.enable, IF(recipe.flag.calibrators.basic.quack.enable, false, true),true),true)
+                  
+      flag-zeros:
+         _use: lib.steps.flagdata.clip.zeros.calibrators
+         info: |
+             Flag zero valued data. 
+         params: 
+            spw: ''
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.basic.enable, IF(recipe.flag.calibrators.basic.clip.zeros.enable, false,true),true),true)
+                  
+      flag-extremes:
+         _use: lib.steps.flagdata.clip.extremes.calibrators
+         info: |
+              Flag very extreme outliers
+         params:
+            spw: ''
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.basic.enable, IF(recipe.flag.calibrators.basic.clip.extremes.enable, false,true),true),true)
+                  
+      flag-edges:
+         _use: lib.steps.flagdata.manual.calibrators
+         info: |
+             Flag bandpass edges and galactic plane
+         params: 
+            spw:  =recipe.flag.edges.spw      
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.basic.enable, IF(recipe.flag.calibrators.basic.edges.enable, false, true),true),true)
+         
+      summary-basicflags:
+         _use: lib.steps.flagdata.summary.calibrators
+         info: |
+             Generate a summary of flagged data after basic flagging
+         params: 
+            mode: 'summary'
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.basic.enable, IF(recipe.flag.calibrators.basic.summary.enable, false, true),true),true) 
+         
+      delete-basicflags:
+         _use: lib.steps.flagmanager.delete.calibrators
+         info: |
+             Completely delete basicflags flag version
+         params:
+            versionname: 'basic-calflags'
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.basic.enable, false,true),true) 
+        
+      save-basicflags:
+         _use: lib.steps.flagmanager.save.calibrators
+         info: |
+             Back up the basic flags before running RFI mask
+         params:
+            versionname: 'basic-calflags'
+            comment: 'calibrator flags after basic flagging'
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.basic.enable, false,true),true)
+         
+      restore-basicflags:
+         _use: lib.steps.flagmanager.restore.calibrators
+         info: |
+             Restore the previous version prior to basic flagging
+         params:
+            versionname: =recipe.steps.save-preflags.versionname
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.basic.enable, IF(recipe.flag.calibrators.basic.restore.enable, false,true),true),true)  
+         
+      rfimask:
+         _use: lib.steps.flagdata.manual.calibrators
+         info: |
+             Mask known RFI regions (GSM and aviation,GPS,Galilleo,Irridium,Inmarsat,Afristar etc)
+         params:
+            spw: =recipe.rfimask.spw
+            uvrange: =IFSET(recipe.flag.calibrators.rfimask.uvrange ,recipe.flag.calibrators.rfimask.uvrange, '0~1000')
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.rfimask.enable, false, true),true)  
+         
+      summary-rfimask:
+         _use: lib.steps.flagdata.summary.calibrators
+         info: |
+             Generate a summary of flagged data after rfi-masking
+         params: 
+            mode: 'summary' 
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.rfimask.enable, IF(recipe.flag.calibrators.rfimask.summary.enable, false, true),true),true) 
+         
+      delete-rfimask:
+         _use: lib.steps.flagmanager.delete.calibrators
+         info: |
+             Completely delete rfimask flags
+         params:
+            versionname: 'rfimask-calflags'
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.rfimask.enable, false,true),true)
+         
+      save-rfimask:
+         _use: lib.steps.flagmanager.save.calibrators
+         info: |
+             Back up flags before running RFI flagging
+         params:
+            versionname: 'rfimask-calflags'
+            comment: 'calibrator flags after masking rfi'
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.rfimask.enable, false,true),true)
+         
+      restore-rfimask:
+         _use: lib.steps.flagmanager.restore.calibrators
+         info: |
+             Restore the previous version prior to rfimask flagging
+         params:
+            versionname: =recipe.steps.save-basicflags.versionname
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.rfimask.enable, IF(recipe.flag.calibrators.rfimask.restore.enable, false,true),true),true) 
+         
+      rfiflags-1:
+         _use: lib.steps.flagdata.tricolour.calibrators
+         info: |
+             Auto flag RFI using tricolour
+         params:
+            config: xgc-reborn_data/tricolour/{recipe.band}/{recipe.flag.calibrators.rfi.tricolour.config} 
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.rfi.enable, IF(recipe.flag.calibrators.rfi.flagger=="tricolour",false,true),true),true) 
+         
+      rfiflags-2:
+         _use: lib.steps.flagdata.tfcrop.calibrators
+         info: |
+             Auto flag RFI using tfcrop
+         params: 
+            spw: ''
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.rfi.enable, IF(recipe.flag.calibrators.rfi.flagger=="tfcrop",false,true),true),true) 
+         
+      summary-rfiflags:
+         _use: lib.steps.flagdata.summary.calibrators
+         info: |
+             Generate a summary of flagged data after auto-flag
+         params: 
+            mode: 'summary' 
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.rfi.enable, IF(recipe.flag.calibrators.rfi.summary.enable, false, true),true),true)
+         
+      inspect-rfiflags:
+         _use: lib.steps.flagdata.inspect.calibrators
+         info: |
+             Plotting Amplitude against Frequency  for inspection for rfi peaks
+         params:
+            dir: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/flagging' 
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.rfi.enable, IF(recipe.flag.calibrators.rfi.inspect.enable, false, true),true),true)
+         
+      delete-rfiflags:
+         _use: lib.steps.flagmanager.delete.calibrators
+         info: | 
+             Completely delete rfi flags
+         params:
+            versionname: 'rfiflags-calflags' 
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.rfi.enable, false,true),true)
+         
+      save-rfiflags:
+         _use: lib.steps.flagmanager.save.calibrators
+         info: |
+             Back up any flags after running rfi flagging
+         params:
+            versionname: 'rfiflags-calflags' 
+            comment: 'calibrator flags after rfi flagging'
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.rfi.enable, false, true),true)
+         
+      restore-rfiflags:
+         _use: lib.steps.flagmanager.restore.calibrators
+         info: |
+             Restore the previous flag version
+         params:
+            versionname: =recipe.steps.save-rfimask.versionname
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.rfi.enable, IF(recipe.flag.calibrators.rfi.restore.enable, false,true),true),true)
+         
+      flag-spw: 
+         _use: lib.steps.flagdata.manual.calibrators
+         info: |
+             Manually flag bad spw
+         params: 
+            spw: =recipe.flag.calibrators.manual.spw.spw
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.manual.enable, IF(recipe.flag.calibrators.manual.spw.enable, false, true),true),true)
+         
+      flag-scan: 
+         _use: lib.steps.flagdata.manual.calibrators
+         info: |
+             Manually flag bad scans
+         params: 
+            scan: =recipe.flag.calibrators.manual.scan.scan
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.manual.enable, IF(recipe.flag.calibrators.manual.scan.enable, false, true),true),true)
+         
+      flag-field: 
+         _use: lib.steps.flagdata.manual.calibrators
+         info: |
+             Manually flag field(s)
+         params: 
+            field: =IFSET(recipe.flag.calibrators.manual.field.field, recipe.flag.calibrators.manual.field.field, '{recipe.steps.=recipe.steps.transform-split_ms.field.field}') 
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.manual.enable, IF(recipe.flag.calibrators.manual.field.enable, false, true),true),true)
+         
+      flag-timerange: 
+         _use: lib.steps.flagdata.manual.calibrators
+         info: |
+             Manually flag bad timeranges
+         params: 
+            timerange: =recipe.flag.calibrators.manual.timerange.timerange
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.manual.enable, IF(recipe.flag.calibrators.manual.timerange.enable, false, true),true),true)
+       
+      flag-antenna: 
+         _use: lib.steps.flagdata.manual.calibrators
+         info: |
+             Manually flag bad antenna
+         params: 
+            antenna: =recipe.flag.calibrators.manual.antenna.antenna
+            timerange: =recipe.flag.calibrators.manual.antenna.timerange
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.manual.enable, IF(recipe.flag.calibrators.manual.antenna.enable, false, true),true),true) 
+         
+      summary-manualflags:
+         _use: lib.steps.flagdata.summary.calibrators
+         info: |
+             Generate a summary of flagged data after manually flagging other bad data
+         params: 
+            mode: 'summary' 
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.manual.enable, IF(recipe.flag.calibrators.manual.summary.enable, false, true),true),true)   
+      
+      inspect-manualflags:
+         _use: lib.steps.flagdata.inspect.calibrators
+         info: |
+             Plotting Amplitude against Frequency  for inspection for rfi peaks
+         params:
+            dir: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/flagging' 
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.manual.enable, IF(recipe.flag.calibrators.manual.inspect.enable, false, true),true),true)
+         
+      delete-manualflags:
+         _use: lib.steps.flagmanager.delete.calibrators
+         info: |
+             Completely delete manual flags
+         params:
+            versionname: 'manual-calflags'
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.manual.enable, false,true),true)
+         
+      save-manualflags:
+         _use: lib.steps.flagmanager.save.calibrators
+         info: |
+             Back up any flags after manually flagging data
+         params:
+            versionname:  'manual-calflags'
+            comment: 'calibrator flags after manual flagging'
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.manual.enable, false, true),true)
+         
+      restore-manualflags:
+         _use: lib.steps.flagmanager.restore.calibrators
+         info: |
+            Restore the manual flags
+         params:
+            versionname: =recipe.steps.save-rfiflags.versionname
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.manual.enable, IF(recipe.flag.calibrators.manual.restore.enable, false,true),true),true)
+         
+      unflag-spw:
+         _use: lib.steps.flagdata.unflag.calibrators 
+         info: |
+             Unflag data based on selected spw
+         params:
+            spw: =recipe.steps.flag-spw.spw 
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.unflag.enable, IF(recipe.flag.calibrators.unflag.spw.enable, false, true),true),true)
+                 
+      unflag-scan:
+         _use: lib.steps.flagdata.unflag.calibrators 
+         info: |
+             Unflag data based on selected parameters, field,spw,antenna etc
+         params:
+            scan: =recipe.steps.flag-scan.scan
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.unflag.enable, IF(recipe.flag.calibrators.unflag.scan.enable, false, true),true),true)
+                  
+      unflag-timerange:
+         _use: lib.steps.flagdata.unflag.calibrators 
+         info: |
+             Unflag data based on selected parameters, field,spw,antenna etc
+         params:
+            timerange: =recipe.steps.flag-timerange.timerange
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.unflag.enable, IF(recipe.flag.calibrators.unflag.timerange.enable, false, true),true),true)
+                
+      unflag-antenna:
+         _use: lib.steps.flagdata.unflag.calibrators 
+         info: |
+             Unflag data based on selected parameters, field,spw,antenna etc
+         params:
+            antenna: =recipe.steps.flag-antenna.antenna
+            timerange: =recipe.steps.flag-antenna.timerange
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.unflag.enable, IF(recipe.flag.calibrators.unflag.antenna.enable, false, true),true),true)
+         
+      unflag-field:
+         _use: lib.steps.flagdata.unflag.calibrators 
+         info: | 
+             Unflag data based on selected parameters, field,spw,antenna etc
+         params:
+            field: =recipe.steps.transform1-split_ms.field  
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.unflag.enable, IF(recipe.flag.calibrators.unflag.field.enable, false, true),true),true)
+         
+      delete-postflags:
+         _use: lib.steps.flagmanager.delete.calibrators
+         info: |
+             Completely delete unflags
+         params:
+            versionname: 'post-calflags'
+         skip: =IF(recipe.flag.calibrators.enable, false,true)
+                  
+      save-postflags:
+         _use: lib.steps.flagmanager.save.calibrators
+         info: |
+             Back up any flags after running flagdata
+         params:
+            versionname: 'post-calflags'
+         skip: =IF(recipe.flag.calibrators.enable, false,true)
+         
+      restore-postflags:
+         _use: lib.steps.flagmanager.restore.calibrators
+         info: |
+             Restore the flags to the original version before un-flagging
+         params:
+            versionname: =recipe.steps.save-manualflags.versionname
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.unflag.enable, IF(recipe.flag.calibrators.unflag.restore.enable, false,true),true),true)
+         
+      inspect-postflags:
+         _use: lib.steps.flagdata.statistics.calibrators
+         info: |
+             Statistics of flagged data using Rfinder
+         params: 
+            label: '{self.suffix}-{recipe.steps.inspect-postflags.field}'
+            field: =IFSET(recipe.flag.calibrators.inspect.rfinder.field, recipe.flag.calibrators.inspect.rfinder.field, 0)
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.inspect.enable, false, true),true)
+         
+      list-postflags:
+         _use: lib.steps.flagmanager.list.calibrators
+         info: |
+             List running flag-versions after flagging 
+         params:
+            mode: 'list'
+         skip: =IF(recipe.flag.calibrators.enable, false,true)
+         
+      reset-postflags:
+         _use: lib.steps.flagmanager.restore.calibrators
+         info: |
+             Restore the flags to the original version before flagging
+         params:
+            versionname: =recipe.steps.save-preflags.versionname
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.calibrators.reset.enable, false,true),true) 
+         
+      prim-delete1_flags:
+         _use: lib.steps.flagmanager.delete.calibrators
+         info: |
+            Delete existing flags before performing calibration on bandpass calibrator. 
+         params:
+            versionname: 'pre-bpcal'
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, false,true),true)
+       
+      prim-save_flags:
+         _use: lib.steps.flagmanager.save.calibrators
+         info: |
+             Back up flags before performing calibration on bandpass calibrator. 
+         params:
+            versionname: 'pre-bpcal'
+            comment: 'calibrator flags before calibration on the primary'
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, false,true),true)
+          
+      prim-set_model1:
+         _use: lib.steps.calibration.primary.model.crystalball
+         info: |
+             Populate MODEL_DATA column-applicable for L band and UHF band
+         params:
+            sky-model: 'xgc-reborn_data/crystallball/{recipe.band}/{recipe.obsconf.bpcal}/{recipe.crosscal.set_model.meerkat-band}.{recipe.obsconf.bpcal}.wsclean.cat.txt'
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.set_model.enable, IF(recipe.crosscal.set_model.set-with=="crystalball", false, true),true),true)
+         
+      prim-set_model2:
+         _use: lib.steps.calibration.primary.model.setjy
+         info: |
+             Populate MODEL_DATA column- applicable to S band
+         params:    
+            spw: ''
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.set_model.enable, IF(recipe.crosscal.set_model.set-with=="setjy", false, true),true),true)
+              
+      prim-K0:
+         _use: lib.steps.calibration.primary.prim-K0
+         info: |
+            Antenna based delay calibration on bandpass calibrator
+         params:
+            combine: '' 
+            solint: 'inf'
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+                   
+      prim-G0: 
+         _use: lib.steps.calibration.primary.prim-G0
+         info: |
+            Complex Gain calibration on bandpass calibrator (bpcal-field)
+         params:
+            combine: ''
+            solint: 'inf'
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+        
+      prim-B0:
+         _use: lib.steps.calibration.primary.prim-B0
+         info: |
+             Solve for Frequency-dependent Bandpass variations on bandpass calibrator (bpcal-field)
+         params:
+            combine: ''
+            solint: 'inf'
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+         
+      bpcal-kgb:
+         _use: lib.steps.calibration.quartical.crosscal.bpcal.kgb
+         info: |
+             Primary calibration on bandpass calibrator
+         params:  
+            solver.terms: [Gp,Ga,K,B]
+            solver.iter_recipe: [50,50,50,50, 25,25,25,25, 15,15,15,15, 5,5,5,5]
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.calibrate-with=="QuartiCal", false,true),true),true)
+         
+      apply1-prim:
+         _use: lib.steps.calibration.primary.apply-prim0
+         info: |
+             Apply the calibration solution  to the primary calibrator 
+         params:
+            parang: false
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+                 
+      flag1-prim:
+         _use: lib.steps.calibration.primary.flag-prim.tfcrop
+         info: |
+             Flagging corrected data using tfcrop
+         params: 
+            datacolumn: =IFSET(recipe.crosscal.primary.flag.tfcrop.column, recipe.crosscal.primary.flag.tfcrop.column, 'residual')
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.primary.flag.tfcrop.enable, false,true),true),true)
+         
+      flag2-prim:
+         _use: lib.steps.calibration.primary.flag-prim.rflag
+         info: |
+             Flagging corrected data using rflag
+         params: 
+            datacolumn: =IFSET(recipe.crosscal.primary.flag.rflag.column, recipe.crosscal.primary.flag.rflag.column, 'residual')
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.primary.flag.rflag.enable, false,true),true),true)
+         
+      bpcal1-kgb:
+         _use: lib.steps.calibration.quartical.crosscal.bpcal1.kgb
+         info: |
+             Primary calibration on bandpass calibrator
+         params:  
+            solver.terms: [Gp,Ga,K,B]
+            solver.iter_recipe: [50,50,50,50, 25,25,25,25, 15,15,15,15, 5,5,5,5]
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.calibrate-with=="QuartiCal", false,true),true),true)     
+           
+      prim-K1:
+         _use: lib.steps.calibration.primary.prim-K1
+         info: |
+             Antenna based delay calibration on bandpass calibrator (bpcal-field)
+         params:
+            combine: ''
+            solint: '60s'
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+                  
+      prim-G1: 
+         _use: lib.steps.calibration.primary.prim-G1
+         info: |
+             Complex gain calibration on bandpass calibrator (bpcal-field)
+         params:
+            combine: ''
+            solint: '60s'
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+             
+      prim-B1:
+         _use: lib.steps.calibration.primary.prim-B1
+         info: |
+             Solve for frequency dependent bandpass variations on bandpass calibrator (bpcal-field)
+         params:
+            solint: 'inf'
+            combine: 'scan'
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+            
+      prim1-plot_gains:
+         info: |
+            'Generate plots for primary calibration gain solutions'
+         recipe: inspect-prim2
+         params:
+            field: '{recipe.obsconf.bpcal}' 
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.plotgains.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+         
+      #prim2-plot_gains:
+         #info: 'Generate plots primary calibration gain solutions'
+         #recipe: inspect-prim1
+         #params:
+           # plot-var: gains 
+        # skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.plotgains.enable, IF(recipe.crosscal.calibrate-with=="QuartiCAL", false,true),true),true)               
+         
+      apply1-prim1:
+         _use: lib.steps.calibration.primary.apply-prim1
+         info: |
+             Apply the calibration solution  on bandpass calibrator
+         params: 
+            parang: false
+         skip: =IF(recipe.crosscal.enable ,IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+         
+      prim-summary_flags:
+         _use: lib.steps.prepdata.flagdata.summary.calibrators
+         info: |
+             Produce a summary of flagged data after primary calibration
+         params: 
+            field: '{recipe.obsconf.bpcal}' 
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.primary.flag.summary.enable, false, true),true),true)   
+       
+      prim-delete2_flags:
+         _use: lib.steps.flagmanager.delete.calibrators
+         info: |
+             Delete the flags after calibration on bandpass calibrator
+         params:
+            versionname: 'post-bpcalflags'
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, false,true),true)
+         
+      prim-save2_flags:
+         _use: lib.steps.flagmanager.save.calibrators
+         info: |
+             Back up flags after performing calibration on bandpass calibrator. 
+         params:
+            versionname: 'post-bpcal'
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, false,true),true)
+         
+      prim-restore_flags:
+         _use: lib.steps.flagmanager.restore.calibrators
+         info: |
+             Restore the flags before callibration on bandpass calibrator
+         params:
+            versionname: =recipe.steps.prim-save_flags.versionname
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.primary.flag.restore.enable, false,true),true),true)
+            
+      prim-list_flags:
+         _use: lib.steps.flagmanager.list.calibrators
+         info: |
+             List running flag-versions after calibration on the bandpass calibrator
+         params:
+            mode: 'list'
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, false,true),true)
+         
+      sec-delete_flags:
+         _use: lib.steps.flagmanager.delete.calibrators
+         info: |
+             Delete flags before performing calibration on secondary calibrator. 
+         params:
+            versionname: 'gcal-before' 
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, false, true),true) 
+           
+      sec-save_flags:
+         _use: lib.steps.flagmanager.save.calibrators
+         info: |
+             Back up flags before performing calibration on secondary calibrator. 
+         params:
+            versionname: 'gcal-before' 
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, false, true),true) 
+          
+      sec-model:
+         _use: lib.steps.calibration.secondary.model
+         info: |
+             Fill the model column with the visibilities of a calibrator (Applicable to both CASA and QuartiCal)
+         params: 
+            fluxdensity:  [1,0,0,0]
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, IF(recipe.crosscal.secondary.set_model.enable, false, true),true),true)
+               
+      sec-K0: 
+         _use: lib.steps.calibration.secondary.sec-K0
+         info: |
+             Antenna based delay calibration on secondary calibrator (gcal-field)
+         params:  
+            combine: ''
+            solint: 'inf'
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+             
+      sec-G0:
+         _use: lib.steps.calibration.secondary.sec-G0    
+         info: |
+             Complex gain calibration on secondary calibrator (gcal-field)
+         params:
+            combine: ''
+            solint: 'inf'
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+         
+      g_to_ABS:
+         _use: lib.steps.calibration.quartical.crosscal.phasecal.g_to_ABS
+         info: |
+             Replace G with abs(G) since we won't need the phase again (applicable to Quartical)
+         params: 
+            source: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb1.qc/G'    
+         skip: true #=IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, IF(recipe.crosscal.calibrate-with=="QuartiCal", false,true),true),true)     
+         
+      g_to_abs:
+         _use: lib.steps.calibration.quartical.crosscal.phasecal.g_to_abs
+         info: |
+             Replace G with abs(G) since we won't need the phase again (applicable to Quartical)
+         params:
+            sourceK: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb1.qc/K' 
+            sourceG: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kg1b.qc/G'    
+         skip: true #=IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, IF(recipe.crosscal.calibrate-with=="QuartiCal", false,true),true),true)
+          
+      phasecal:
+         _use: lib.steps.calibration.quartical.crosscal.phasecal.d
+         info: |
+             Delay and Phase offset refinement on the secondary
+         params: 
+            solver.terms: [Gp,Ga,K,B] 
+            solver.iter_recipe: [50,0,50,0, 25,0,25,0, 15,0,15,0, 5,0,5,0] 
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, IF(recipe.crosscal.calibrate-with=="QuartiCal", false,true),true),true)
+                   
+      apply1-sec:
+         _use: lib.steps.calibration.secondary.apply-sec0
+         info: |
+             Apply the Secondary calibration solution 
+         params: 
+            parang: false
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+                 
+      flag1-sec:
+         _use: lib.steps.calibration.secondary.flag-sec.tfcrop
+         info: |
+             Flagging corrected data using tfcrop
+         params: 
+            datacolumn: =IFSET(recipe.crosscal.secondary.flag.tfcrop.column, recipe.crosscal.secondary.flag.tfcrop.column, 'CORRECTED')
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, IF(recipe.crosscal.secondary.flag.tfcrop.enable, false,true),true),true)
+         
+      flag2-sec:
+         _use: lib.steps.calibration.secondary.flag-sec.rflag
+         info: |
+             Flagging corrected data using rflag
+         params: 
+            datacolumn: =IFSET(recipe.crosscal.secondary.flag.rflag.column, recipe.crosscal.secondary.flag.rflag.column, 'CORRECTED')
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, IF(recipe.crosscal.secondary.flag.rflag.enable, false,true),true),true)
+         
+      phasecal1:
+         _use: lib.steps.calibration.quartical.crosscal.phasecal.d1
+         info: |
+             Delay and Phase offset refinement on the secondary
+         params: 
+            solver.terms: [Gp,Ga,K,B] 
+            solver.iter_recipe: [50,0,50,0, 25,0,25,0, 15,0,15,0, 5,0,5,0] 
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, IF(recipe.crosscal.calibrate-with=="QuartiCal", false,true),true),true)
+          
+      image-gcal:
+         _use: lib.steps.imaging.image.calibrators.gcal.i
+         info: |
+             Auto-masked deep I clean
+         params:
+            auto-mask: =IFSET(recipe.crosscal.secondary.image.wsclean.auto-mask, recipe.crosscal.secondary.image.wsclean.auto-mask, 5.0)
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.image.enable, IF(recipe.crosscal.secondary.image.image-with=="wsclean", false,true),true),true) 
+                                    
+      mask-gcal:
+         _use: lib.steps.imaging.mask.calibrators.gcal
+         info: |
+             'Creating a fits mask with breizorro'
+         params:
+            threshold: =IFSET(recipe.crosscal.secondary.mask.breizorro.threshold, recipe.crosscal.secondary.mask.breizorro.threshold, 6.0)
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.image.enable, IF(recipe.crosscal.secondary.image.image-with=="wsclean", false,true),true),true) 
+         
+      masked-gcal:
+         _use: lib.steps.imaging.masked.calibrators.gcal
+         info: |
+             Breizorro-masked deep I clean
+         params:
+            fits-mask: =steps.mask-gcal.outfile
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.image.enable, IF(recipe.crosscal.secondary.image.image-with=="wsclean", false,true),true),true)    
+                                         
+      sec-K1:
+         _use: lib.steps.calibration.secondary.sec-K1 
+         info: |
+             Delay calibration on secondary calibrator
+         params:
+            combine: ''
+            solint: 'inf'
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+             
+      sec-G1:
+         _use:  lib.steps.calibration.secondary.sec-G1  
+         info: |
+             Complex Gain calibration on secondary calibrator
+         params:
+            combine: ''
+            solint: 'inf' 
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+                  
+      sec-F0:
+         _use: lib.steps.calibration.secondary.sec-F0
+         info: |
+             fluxscale
+         params:
+            transfer: ['']
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+         
+      sec-plot_gains:
+         info: |
+             'Generate plots of secondary calibration gain solutions'
+         recipe: inspect-sec2
+         params:
+            field: '{recipe.obsconf.gcal}' 
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.plotgains.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true) 
+         
+      #sec1-plot1_gains:
+         #info: 'Generate plots of secondary calibration gain solutions'
+         #recipe: inspect-sec1
+         #params:
+            #plot-var: gains 
+         #skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.plotgains.enable, IF(recipe.crosscal.calibrate-with=="QuartiCAL", false,true),true),true)                  
+         
+      apply1-sec1:
+         _use: lib.steps.calibration.secondary.apply-sec1
+         info: |
+             Apply the calibration solutions to the Secondary
+         params: 
+            parang: false
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+              
+      sec-summary_flags:
+         _use: lib.steps.prepdata.flagdata.summary.calibrators
+         info: |
+             Produce a summary of flagged data after secondary calibration
+         params: 
+            field: '{recipe.obsconf.gcal}' 
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, IF(recipe.crosscal.secondary.flag.summary.enable, false, true),true),true) 
+         
+      sec-delete2_flags:
+         _use: lib.steps.flagmanager.delete.calibrators
+         info: |
+             delete existing  post-gcal flags 
+         params:
+            versionname: 'post-gcal'
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable,false, true),true) 
+        
+      sec-save2_flags:
+         _use: lib.steps.flagmanager.save.calibrators
+         info: |
+             Back up flags after performing calibration on secondary calibrator. 
+         params:
+            versionname: 'post-gcal' 
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable,false, true),true)
+         
+      sec-list_flags:
+         _use: lib.steps.flagmanager.list.calibrators
+         info: |
+             List running flag-versions after calibration on the secondary calibrator
+         params:
+            ms: =steps.transform1-split_ms.outputvis
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable,false, true),true)
+         
+      sec-restore_flags:
+         _use: lib.steps.flagmanager.restore.calibrators
+         info: |
+             Restore the flags after callibration on secondary calibrator
+         params:
+            versionname: =steps.sec-save_flags.versionname
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.secondary.enable, IF(recipe.crosscal.secondary.flag.restore.enable, false,true),true),true)
+         
+      inspect-crosscal:
+         info: |
+             'Inspect full cross calibration solutions'
+         recipe: inspect-crosscal
+         params:
+            field: '{recipe.obsconf.bpcal},{recipe.obsconf.gcal}' 
+         skip: =IF(recipe.inspect.enable, IF(recipe.inspect.polcal.enable, IF(recipe.inspect.shadems.enable, false, true),true),true)
+         
+      pol-delete_flags:
+         _use: lib.steps.flagmanager.delete.calibrators
+         info: |
+             Delete existing flags before performing calibration on polarization calibrator. 
+         params:
+            versionname:  'pre-polcal'
+         skip: =IF(recipe.polcal.enable, false, true)
+               
+      pol-save_flags:
+         _use: lib.steps.flagmanager.save.calibrators
+         info: |
+             Back up flags before performing calibration on polarization calibrator. 
+         params:
+            versionname:  'pre-polcal'
+         skip: =IF(recipe.polcal.enable, false, true)
+         
+      apply2pol-1:
+         _use: lib.steps.calibration.polarization.apply2pol
+         info: |
+             Apply the calibration solution to Polarization calibrator
+         params:
+            parang: false
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="CASA",false,true),true),true)
+            
+      pol-extend_flags:
+         _use: lib.steps.calibration.polarization.flag-extend
+         info: |
+             'Extend flags' 
+         params:
+            action: 'apply' 
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.flag.extend.enable, false,true),true) 
+            
+      pol-set_model:
+         _use: lib.steps.calibration.polarization.model
+         info: |
+             Fill the model column with the visibilities of a calibrator
+         params:    
+            field: '{recipe.obsconf.xcal}'
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.set_model.enable, false,true),true)
+                
+      pol-Gp0:
+         _use:  lib.steps.calibration.polarization.pol-Gp0 
+         info: |
+             Complex gain phase calibration on polarization calibrator field (xcal-field)
+         params:
+            combine: '' 
+            solint: =IFSET(recipe.polcal.calibrate.casa.time-solint, recipe.polcal.calibrate.casa.time-solint, 'int')
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+         
+      pol-KCROSS: 
+         _use: lib.steps.calibration.polarization.pol-KCROSS  
+         info: |
+             Cross-hand delay calibration polarization calibrator (xcal-field)
+         params:
+            combine: '' 
+            solint: 'inf'
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+                
+      pol-Xf:
+         _use: lib.steps.calibration.polarization.pol-Xf 
+         info: |
+             Cross-hand phase calibration on polarization calibrator  (xcal-field)
+         params:
+            combine: '' 
+            solint: =IFSET(recipe.polcal.calibrate.casa.gain-solint, recipe.polcal.calibrate.casa.gain-solint, 'inf')
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+                
+      pol-Xf1:
+         _use: lib.steps.calibration.polarization.pol-Xf1 
+         info: |
+             Cross-hand phase calibration on polarization calibrator  (xcal-field)
+         params:
+            combine: 'scan'
+            solint: =IFSET(recipe.polcal.calibrate.casa.gain-solint, recipe.polcal.calibrate.casa.gain-solint, 'inf')
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+                   
+      flag1-Xf1:
+         _use: lib.steps.calibration.polarization.flag-Xf1.tfcrop
+         info: |
+             Flag corrected data on CPARAM using tfcrop
+         params: 
+            ntime: '60s'
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+         
+      prim-Df0:
+         _use: lib.steps.calibration.polarization.prim-Df0
+         info: |
+             Polarization leakage calibration using unpolarized calibrator
+         params: 
+            solint: 'inf'
+            combine: 'scan' 
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+         
+      flag-Df0:
+         _use: lib.steps.calibration.polarization.flag-Df0
+         info: |
+             Flag leakage solutions. 
+         params:  
+            clipminmax: =IFSET(recipe.crosscal.primary.casa.flagdata.clip.leakages, recipe.crosscal.primary.casa.flagdata.clip.leakages, '[0.0,0.1]')
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+              
+      prim-Df1:
+         _use: lib.steps.calibration.polarization.prim-Df1
+         info: |
+             Polarization leakage calibration using unpolarized calibrator
+         params: 
+            solint: 'inf'
+            combine: 'scan' 
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+             
+      flag-Df1:
+         _use: lib.steps.calibration.polarization.flag-Df1
+         info: |
+             Flag leakage solutions. 
+         params:  
+            clipminmax: =IFSET(recipe.crosscal.primary.casa.flagdata.clip.leakages, recipe.crosscal.primary.casa.flagdata.clip.leakages, '[0.0,0.1]')
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+         
+      polcal:
+         _use: lib.steps.calibration.quartical.polcal.Xf
+         info: |
+             Perform polarization calibration on the polarization calibrator usin QuartiCal
+         params: 
+            solver.terms: [Gp,Ga,K,B,D,Xf]
+            solver.iter_recipe: [0,0,0,0,50,150, 0,0,0,0,25,25]
+         skip: =IF(recipe.polcal.enable,IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="QuartiCal",false,true),true),true)
+         
+      polcal1:
+         _use: lib.steps.calibration.quartical.polcal.Xf1
+         info: |
+             Perform polarization calibration on the polarization calibrator usin QuartiCal
+         params: 
+            solver.terms: [Gp,Ga,K,B,D,Xf]
+            solver.iter_recipe: [0,0,0,0,50,150, 0,0,0,0,25,25]
+            #solver.iter_recipe: [0,0,0,0,150,0, 0,0,0,0,25,0, 0,0,0,0,15,0, 0,0,0,0,5,0, 0,0,0,0,5,0]
+         skip: =IF(recipe.polcal.enable,IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="QuartiCal",false,true),true),true)
+         
+         
+      polcal2:
+         _use: lib.steps.calibration.quartical.polcal.Df
+         info: |
+             Perform polarization calibration on the polarization calibrator usin QuartiCal
+         params: 
+            solver.terms: [Gp,Ga,K,B,D,Xf,Df]
+            solver.iter_recipe: [0,0,0,0,0,0,50, 0,0,0,0,0,0,25, 0,0,0,0,0,0,15, 0,0,0,0,0,0,5, 0,0,0,0,0,0,5]
+            #solver.iter_recipe: [0,0,0,0,150,0, 0,0,0,0,25,0, 0,0,0,0,15,0, 0,0,0,0,5,0, 0,0,0,0,5,0]
+         skip: =IF(recipe.polcal.enable,IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="QuartiCal",false,true),true),true)
+         
+      pol-plot1_gains:
+         info: |
+             'Generate plots for polarization calibration gain solutions'
+         recipe: inspect-pol2
+         params:
+            field: '{recipe.obsconf.xcal}' 
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.plotgains.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true) 
+         
+      #pol-plot2_gains:
+         #info: 'Generate plots for polarization calibration gain solutions'
+         #recipe: inspect-pol1
+         #params:
+            #plot-var: gains  
+         #skip: =IF(recipe.polcal.enable, IF(recipe.polcal.plotgains.enable, IF(recipe.crosscal.calibrate-with=="QuartiCal", false,true),true),true)
+         
+      applycal-prim:
+         _use: lib.steps.calibration.applycal.applycal2prim
+         info: |
+             Apply the  calibration solution to Primary field calibrator
+         params: 
+            parang: true
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+         
+      transfer-bpcal:
+         _use: lib.steps.calibration.quartical.transfer.bpcal
+         info: |
+            Transfer quartical polarization calibration solutions to the bpcal fields
+         params: 
+            solver.terms: [Gp,Ga,K,B,Xf,Df]
+            solver.iter_recipe: [0,0,0,0,0,0]
+         skip: =IF(recipe.polcal.enable,IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="QuartiCal", false,true),true),true)
+          
+      applycal-sec:
+         _use: lib.steps.calibration.applycal.applycal2sec
+         info: |
+             Apply the calibration solution to Secondary field calibrator
+         params: 
+            parang: true
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+         
+      transfer-gcal:
+         _use: lib.steps.calibration.quartical.transfer.gcal
+         info: |
+             Transfer quartical polarization calibration solutions to the gcal fields
+         params: 
+            solver.terms: [Gp,Ga,K,B,Xf,Df]
+            solver.iter_recipe: [0,0,0,0,0,0,0]
+         skip: =IF(recipe.polcal.enable,IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="QuartiCal", false,true),true),true) 
+               
+      applycal-pol:
+         _use: lib.steps.calibration.applycal.applycal2pol
+         info: |
+             Apply the calibration solution to Polarization calibrator
+         params: 
+            parang: true
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="CASA", false,true),true),true)
+         
+      transfer-xcal:
+         _use: lib.steps.calibration.quartical.transfer.xcal
+         info: |
+             Transfer quartical polarization calibration solutions to the xcal fields
+         params: 
+            solver.terms: [Gp,Ga,K,B,D,Xf,Df]
+            solver.iter_recipe: [0,0,0,0,0,0,0]
+         skip: =IF(recipe.polcal.enable,IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="QuartiCal", false,true),true),true)
+         
+      pol-summary_flags:
+         _use: lib.steps.prepdata.flagdata.summary.calibrators
+         info: |
+             Produce a summary of flagged data after polarization calibration
+         params: 
+            field: '{recipe.obsconf.xcal}' 
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.flag.summary.enable, false, true),true) 
+         
+      pol-delete2_flags:
+         _use: lib.steps.flagmanager.delete.calibrators
+         info: |
+             Restore the flags before callibration on polarization calibrator
+         params:
+            versionname: 'post-polcal' 
+         skip: =IF(recipe.polcal.enable, false, true)
+         
+      pol-save2_flags:
+         _use: lib.steps.flagmanager.save.calibrators
+         info: |
+            Back up flags after performing calibration on polarization calibrator. 
+         params:
+            versionname: 'post-polcal' 
+         skip: =IF(recipe.polcal.enable, false, true)
+         
+      pol-restore_flags:
+         _use: lib.steps.flagmanager.restore.calibrators
+         info: |
+            Restore the flags after callibration on polarization calibrator
+         params:
+            versionname: =recipe.steps.pol-save_flags.versionname
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.flag.restore.enable,false, true),true)
+            
+      inspect-pol:
+         info: |
+             'Inspect full polarization calibration solutions-applicable to CASA and QuartiCal corrected visibilities
+         recipe: inspect-polcal
+         params:
+            field: '{recipe.obsconf.bpcal},{recipe.obsconf.gcal},{recipe.obsconf.xcal}' 
+         skip: =IF(recipe.inspect.enable, IF(recipe.inspect.polcal.enable, IF(recipe.inspect.shadems.enable, false, true),true),true)
+         
+      image-bpcal:
+         _use: lib.steps.imaging.image.calibrators.bpcal.i
+         info: |
+             Auto-masked deep I clean
+         params:
+            auto-mask: 5.0
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.image.enable, IF(recipe.crosscal.primary.image.image-with=="wsclean", false,true),true),true) 
+                                    
+      mask-bpcal:
+         _use: lib.steps.imaging.mask.calibrators.bpcal
+         info: |
+             'Creating a fits mask with breizorro'
+         params:
+            threshold: 6.5
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.image.enable, IF(recipe.crosscal.primary.image.image-with=="wsclean", false,true),true),true) 
+          
+      masked-bpcal:
+         _use: lib.steps.imaging.masked.calibrators.bpcal
+         info: |
+             Breizorro-masked deep IQUV clean
+         params:
+            fits-mask: =steps.mask-bpcal.outfile
+         skip: =IF(recipe.crosscal.enable, IF(recipe.crosscal.primary.image.enable, IF(recipe.crosscal.primary.image.image-with=="wsclean", false,true),true),true) 
+         
+      image-xcal:
+         _use: lib.steps.imaging.image.calibrators.xcal.i
+         info: |
+             Auto-masked deep I clean
+         params:
+            auto-mask: 5.0
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.image.enable, IF(recipe.polcal.image.image-with=="wsclean", false,true),true),true) 
+                                    
+      mask-xcal:
+         _use: lib.steps.imaging.mask.calibrators.xcal
+         info: |
+             'Creating a fits mask with breizorro'
+         params:
+            threshold: 6.5
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.image.enable, IF(recipe.polcal.image.image-with=="wsclean", false,true),true),true) 
+           
+      masked-xcal:
+         _use: lib.steps.imaging.masked.calibrators.xcal
+         info: |
+            Breizorro-masked deep IQUV clean
+         params:
+            fits-mask: =steps.mask-xcal.outfile
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.image.enable, IF(recipe.polcal.image.image-with=="wsclean", false,true),true),true) 
+                    
+      transform2-split_ms:
+         _use: lib.steps.prepdata.mstransform.target
+         info: |
+             Create a new Measurement Set containing only the target fields by selecting the desired field IDs or names, allowing one to isolate calibrator data from the original 
+             dataset for calibration purposes.
+         params:
+            outputvis: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/msdir' + '/' + STRIPEXT(BASENAME(recipe.ms-path)) +'-{recipe.transform.target.label}.ms'
+         skip: =IF(recipe.transform.target.enable, IF(recipe.transform.target.mstransform.enable, IF(recipe.transform.target.field=="target", false, true),true),true)                 
+                       
+      transform2-save_flags:
+         _use: lib.steps.prepdata.flagmanager.save.target
+         info: |
+             Back up the original flag information from the observatory using CASA flagmanager by saving the initial flag state of the Measurement Set before any processing 
+             so it can be restored if needed later.  
+         params:
+            versionname: 'observatory-targetflags'
+            comment: 'target flags from the observatory'
+         skip: =IF(recipe.transform.target.enable, false, true)
+         
+      transform2-restore_flags:
+         _use: lib.steps.prepdata.flagmanager.restore.target
+         info: |
+             Restore the backed-up flags in CASA using the flagmanager task by loading the previously saved flag version of the Measurement Set, 
+             returning the data to its original flag state from before processing.
+         params:
+            versionname: 'observatory-targetflags'
+         skip: =IF(recipe.transform.target.enable,false,true)
+             
+      transform2-listobs:
+         _use: lib.steps.prepdata.listobs.target
+         info: |
+            Generates a summary of the observation information in the Measurement Set (target-only), including fields, spectral windows, antennas, and scan details.
+         params:
+            listfile: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/obsinfo' + '/' + STRIPEXT(BASENAME(recipe.ms-path)) + '-obsinfo_target.txt'
+         skip: =IF(recipe.transform.target.enable, IF(recipe.transform.target.mstransform.enable, IF(recipe.transform.target.obsinfo.enable, false,true),true),true)  
+         
+      prepare2-summary_flags:
+         _use: lib.steps.prepdata.flagdata.summary.target
+         info: |
+              Generate a summary of the flagged data from the observatory by inspecting the Measurement Set flags to quantify how much data has been flagged and identify
+              affected antennas, times, or channels.
+         params: 
+            field: =recipe.steps.transform2-split_ms.field 
+         skip: =IF(recipe.prepare.target.enable, IF(recipe.prepare.target.flag.summary.enable, false, true),true) 
+         
+      prepare2-delete_flags:
+         _use: lib.steps.prepdata.flagmanager.delete.target
+         info: |
+              Delete existing flag version
+         params:
+            versionname: 'unswapped-targetflags'
+         skip: =IF(recipe.prepare.target.enable,false,true)            
+                   
+      prepare2-save_flags:
+         _use: lib.steps.prepdata.flagmanager.save.target
+         info: |
+             Back up the original flag information from the observatory using CASA flagmanager by saving the after-restoring-observatory flag state of the Measurement Set before any processing 
+             so it can be restored if needed later. 
+         params:
+            versionname: 'unswapped-targetflags'
+         skip: =IF(recipe.prepare.target.enable,false,true)       
+         
+      prepare2-swap_labels:
+         _use: lib.steps.prepdata.swap-feeds.target
+         info: |
+             Swap H and V polarization labels and set the feed offset angle to zero for the targets-only measurement set
+         params:
+            ms_path: =recipe.steps.transform2-split_ms.outputvis 
+         skip: =IF(recipe.prepare.target.enable, IF(recipe.prepare.target.swap_labels.enable, false, true),true) 
+                  
+      prepare2-clearcal:
+         _use: lib.steps.prepdata.clearcal.target
+         info: |
+             Re-initialize calibrated visibility data in the target-only ms
+         params:
+            spw: ''
+         skip: =IF(recipe.prepare.target.enable, IF(recipe.prepare.target.clearcal.enable, false, true),true)
+         
+      prepare2-delete2_flags:
+         _use: lib.steps.prepdata.flagmanager.delete.target
+         info: |
+             Delete the backed up flags
+         params:
+            versionname: 'swapped-targetflags'
+         skip: =IF(recipe.prepare.target.enable, IF(recipe.prepare.target.flag.restore.enable, false, true),true)           
+           
+      prepare2-save_flags2:
+         _use: lib.steps.prepdata.flagmanager.save.target
+         info: |
+             Backed up flags
+         params:
+            versionname: 'swapped-targetflags'
+         skip: =IF(recipe.prepare.target.enable,false,true) 
+         
+      prepare2-restore_flags:
+         _use: lib.steps.prepdata.flagmanager.restore.target
+         info: |
+             Restore the previously backed up flags
+         params:
+            versionname: 'unswapped-targetflags'
+         skip: =IF(recipe.prepare.target.enable, IF(recipe.prepare.target.flag.restore.enable, false, true),true)           
+                  
+      save2-preflags:
+         _use: lib.steps.flagmanager.save.target
+         info: |
+             Back up any flags before running flagdata
+         params:
+            versionname: 'pre-targetflags'
+         skip: =IF(recipe.flag.target.enable, false,true)
+         
+      flag2-autocorr: 
+         _use: lib.steps.flagdata.manual.target
+         info: |
+              Flag only the auto correlations. When set to True, it will only flag data from a processor of type CORRELATOR.
+         params: 
+            autocorr: true
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.basic.enable, IF(recipe.flag.target.basic.autocorr.enable, false, true),true),true)
+                  
+      flag2-shadow:
+         _use: lib.steps.flagdata.shadow.target
+         info: |
+             Flag shadowed antenna
+         params:
+            spw: ''
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.basic.enable, IF(recipe.flag.target.basic.shadow.enable, false, true),true),true)
+                  
+      flag2-elevation:
+         _use: lib.steps.flagdata.elevation.target
+         info: |
+             Flag antenna with pointing elevation outside the selected range
+         params:
+            spw: ''
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.basic.enable, IF(recipe.flag.target.basic.elevation.enable, false, true),true),true)
+                        
+      flag2-quack:
+         _use: lib.steps.flagdata.quack.target
+         info:  |
+            Flag data at the start and end of the scans (remove/keep specific time range at scan beginning/end)
+         params: 
+            spw: ''
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.basic.enable, IF(recipe.flag.target.basic.quack.enable, false, true),true),true)
+                  
+      flag2-zeros:
+         _use: lib.steps.flagdata.clip.zeros.target
+         info: |
+             Flag zero valued data (clip data according to values specified by the user/default)
+         params: 
+            spw: ''
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.basic.enable, IF(recipe.flag.target.basic.clip.zeros.enable, false,true),true),true)
+                  
+      flag2-extremes:
+         _use: lib.steps.flagdata.clip.extremes.target
+         info: |
+             Flag very extreme outliers (clip data according to values specified by the user/default)
+         params:
+            spw: ''
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.basic.enable, IF(recipe.flag.target.basic.clip.extremes.enable, false,true),true),true)
+                  
+      flag2-edges:
+         _use: lib.steps.flagdata.manual.target
+         info: |
+            Flag bandpass edges and galactic plane
+         params: 
+            spw: =recipe.flag.edges.spw
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.basic.enable, IF(recipe.flag.target.basic.edges.enable, false, true),true),true) 
+         
+      summary2-basicflags:
+         _use: lib.steps.flagdata.summary.target
+         info: |
+             Generate a summary of flagged data after basic flagging
+         params: 
+            field: =recipe.steps.transform2-split_ms.field 
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.basic.enable, IF(recipe.flag.target.basic.summary.enable, false, true),true),true) 
+         
+      delete2-basicflags:
+         _use: lib.steps.flagmanager.delete.target
+         info: |
+             Completely delete basic flags version
+         params:
+            versionname: 'basic-targetflags'
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.basic.enable, false,true),true)
+         
+      save2-basicflags:
+         _use: lib.steps.flagmanager.save.target
+         info: |
+             Back up the basic flags before running RFI mask
+         params:
+            versionname: 'basic-targetflags'
+            comment: 'target flags after basic flagging'
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.basic.enable, false,true),true)
+         
+      restore2-basicflags:
+         _use: lib.steps.flagmanager.restore.target
+         info: |
+             Restore the previous version prior to basic flagging
+         params:
+            versionname: =recipe.steps.save2-preflags.versionname
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.basic.enable, IF(recipe.flag.target.basic.restore.enable, false,true),true),true)  
+         
+      rfimask2:
+         _use: lib.steps.flagdata.manual.target
+         info: |
+            Mask known RFI regions (GSM and aviation,GPS,Galilleo,Irridium,Inmarsat,Afristar etc)
+         params:
+            spw: =recipe.rfimask.spw
+            uvrange: =IFSET(recipe.flag.target.rfimask.uvrange ,recipe.flag.target.rfimask.uvrange, '0~1000')
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.rfimask.enable, false, true),true) 
+         
+      summary2-rfimask:
+         _use: lib.steps.flagdata.summary.target
+         info: |
+            Generate a summary of flagged data after rfimasking
+         params: 
+            field: =recipe.steps.transform2-split_ms.field 
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.rfimask.enable, IF(recipe.flag.target.rfimask.summary.enable, false, true),true),true) 
+         
+      delete2-rfimask:
+         _use: lib.steps.flagmanager.delete.target
+         info: |
+             Completely delete rfimask flags
+         params:
+            versionname: 'rfimask-targetflags'
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.rfimask.enable, false,true),true)
+         
+      save2-rfimask:
+         _use: lib.steps.flagmanager.save.target
+         info: |
+             Back up flags before running RFI flagging
+         params:
+            versionname: 'rfimask-targetflags'
+            comment: 'target flags after masking rfi'
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.rfimask.enable, false,true),true)
+         
+      restore2-rfimask:
+         _use: lib.steps.flagmanager.restore.target
+         info: |
+             Restore the previous version prior to rfimask flagging
+         params:
+            versionname: =recipe.steps.save2-basicflags.versionname
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.rfimask.enable, IF(recipe.flag.target.rfimask.restore.enable, false,true),true),true) 
+         
+      rfiflags2-1:
+         _use: lib.steps.flagdata.tricolour.target
+         info: |
+             Auto flag RFI using tricolour
+         params:
+            config: xgc-reborn_data/tricolour/{recipe.band}/{recipe.flag.target.rfi.tricolour.config} 
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.rfi.enable, IF(recipe.flag.target.rfi.flagger=="tricolour",false,true),true),true) 
+         
+      rfiflags2-2:
+         _use: lib.steps.flagdata.tfcrop.target
+         info: |
+             Auto flag RFI using tfcrop
+         params: 
+            datacolumn: =IFSET(recipe.flag.target.rfi.column, recipe.flag.target.rfi.column, 'DATA')
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.rfi.enable, IF(recipe.flag.target.rfi.flagger=="tfcrop",false,true),true),true) 
+         
+      summary2-rfiflags:
+         _use: lib.steps.flagdata.summary.target
+         info: |
+            Generate a summary of flagged data after auto-flag
+         params: 
+            field: =recipe.steps.transform2-split_ms.field 
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.rfi.enable, IF(recipe.flag.target.rfi.summary.enable, false, true),true),true)
+         
+      inspect2-rfiflags:
+         _use: lib.steps.flagdata.inspect.target
+         info: |
+             Plotting Amplitude against Frequency  for inspection for rfi peaks
+         params:
+            dir: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/flagging' 
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.rfi.enable, IF(recipe.flag.target.rfi.inspect.enable, false, true),true),true)
+         
+      delete2-rfiflags:
+         _use: lib.steps.flagmanager.delete.target
+         info: |
+            Completely delete rfi flags version
+         params:
+            versionname: 'targetflags-rfi' 
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.rfi.enable, false,true),true)
+          
+      save2-rfiflags:
+         _use: lib.steps.flagmanager.save.target
+         info: |
+             Back up any flags after running rfi flagging
+         params:
+            versionname: 'rfi-targetflags' 
+            comment: 'target flags after rfi flagging'
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.rfi.enable, false, true),true)
+         
+      restore2-rfiflags:
+         _use: lib.steps.flagmanager.restore.target
+         info: |
+             Restore the previous flag version
+         params:
+            versionname: =recipe.steps.save2-rfimask.versionname
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.rfi.enable, IF(recipe.flag.target.rfi.restore.enable, false,true),true),true)
+         
+      flag2-spw:  
+         _use: lib.steps.flagdata.manual.target
+         info: |
+            'Manually flag bad spw'
+         params: 
+            spw: =recipe.flag.target.manual.spw.spw
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.manual.enable, IF(recipe.flag.target.manual.spw.enable, false, true),true),true)
+         
+      flag2-scan: 
+         _use: lib.steps.flagdata.manual.target
+         info: |
+            'Manually flag bad scans'
+         params: 
+            scan: =recipe.flag.target.manual.scan.scan
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.manual.enable, IF(recipe.flag.target.manual.scan.enable, false, true),true),true)
+         
+      flag2-field: 
+         _use: lib.steps.flagdata.manual.target
+         info: |
+            'Manually flag field(s)'
+         params: 
+            field: =IFSET(recipe.flag.target.manual.field.field, recipe.flag.target.manual.field.field, '{recipe.steps.preptarget-mstransform.field}') 
+         skip: =IF(recipe.flag.calibrators.enable, IF(recipe.flag.target.manual.enable, IF(recipe.flag.target.manual.field.enable, false, true),true),true)
+         
+      flag2-timerange: 
+         _use: lib.steps.flagdata.manual.target
+         info: |
+            'Manually flag bad timeranges'
+         params: 
+            timerange: =recipe.flag.target.manual.timerange.timerange
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.manual.enable, IF(recipe.flag.target.manual.timerange.enable, false, true),true),true)
+       
+      flag2-antenna: 
+         _use: lib.steps.flagdata.manual.target
+         info: |
+            'Manually flag bad antenna'
+         params: 
+            antenna: =recipe.flag.target.manual.antenna.antenna
+            timerange: =recipe.flag.target.manual.antenna.timerange
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.manual.enable, IF(recipe.flag.target.manual.antenna.enable, false, true),true),true) 
+         
+      summary2-manualflags:
+         _use: lib.steps.flagdata.summary.target
+         info: |
+            Generate a summary of flagged data after manually flagging other bad data
+         params: 
+            field:  =recipe.steps.transform2-split_ms.field 
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.manual.enable, IF(recipe.flag.target.manual.summary.enable, false, true),true),true)   
+      
+      inspect2-manualflags:
+         _use: lib.steps.flagdata.inspect.target
+         info: |
+            Plotting Amplitude against Frequency  for inspection for rfi peaks
+         params:
+            dir: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/flagging' 
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.manual.enable, IF(recipe.flag.target.manual.inspect.enable, false, true),true),true)
+         
+      delete2-manualflags:
+         _use: lib.steps.flagmanager.delete.target
+         info: |
+            Completely delete manual flags
+         params:
+            versionname: 'manual-targetflags'
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.manual.enable, false,true),true)
+         
+      save2-manualflags:
+         _use: lib.steps.flagmanager.save.target
+         info: |
+             Back up any flags after manually flagging data
+         params:
+            versionname:  'manual-targetflags'
+            comment: 'target flags after manual flagging'
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.manual.enable, false, true),true)
+         
+      restore2-manualflags:
+         _use: lib.steps.flagmanager.restore.target
+         info: |
+             Restore the manual flags
+         params:
+            versionname: =recipe.steps.save2-rfiflags.versionname
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.manual.enable, IF(recipe.flag.target.manual.restore.enable, false,true),true),true)
+         
+      unflag2-spw:
+         _use: lib.steps.flagdata.unflag.target 
+         info: |
+            'Unflag data based on selected spw'
+         params:
+            spw: =recipe.steps.flag2-spw.spw 
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.unflag.enable, IF(recipe.flag.target.unflag.spw.enable, false, true),true),true)
+                 
+      unflag2-scan:
+         _use: lib.steps.flagdata.unflag.target 
+         info: |
+            'Unflag data based on selected parameters, field,spw,antenna etc'
+         params:
+            scan: =recipe.steps.flag2-scan.scan
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.unflag.enable, IF(recipe.flag.target.unflag.scan.enable, false, true),true),true)
+                  
+      unflag2-timerange:
+         _use: lib.steps.flagdata.unflag.target 
+         info: |
+            'Unflag data based on selected parameters, field,spw,antenna etc'
+         params:
+            timerange: =recipe.steps.flag2-timerange.timerange
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.unflag.enable, IF(recipe.flag.target.unflag.timerange.enable, false, true),true),true)
+                
+      unflag2-antenna:
+         _use: lib.steps.flagdata.unflag.target 
+         info: |
+            'Unflag data based on selected parameters, field,spw,antenna etc'
+         params:
+            antenna:   =recipe.steps.flag2-antenna.antenna
+            timerange: =recipe.steps.flag2-antenna.timerange
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.unflag.enable, IF(recipe.flag.target.unflag.antenna.enable, false, true),true),true)
+         
+      unflag2-field:
+         _use: lib.steps.flagdata.unflag.target 
+         info: |
+            'Unflag data based on selected parameters, field,spw,antenna etc'
+         params:
+            field: =recipe.steps.transform2-split_ms.field  
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.unflag.enable, IF(recipe.flag.target.unflag.field.enable, false, true),true),true)
+         
+      inspect2-postflags:
+         _use: lib.steps.flagdata.statistics.target
+         info: |
+             Statistics of flagged data using Rfinder
+         params: 
+            label: '{self.suffix}-{recipe.steps.inspect2-postflags.field}'
+            field: =IFSET(recipe.flag.target.inspect.rfinder.field, recipe.flag.target.inspect.rfinder.field, 0)
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.inspect.enable, false, true),true)
+         
+      delete2-postflags:
+         _use: lib.steps.flagmanager.delete.target
+         info: |
+             Completely delete post flags
+         params:
+            versionname: 'post-targetflags'
+         skip: =IF(recipe.flag.target.enable, false,true)
+          
+      save2-postflags:
+         _use: lib.steps.flagmanager.save.target
+         info: |
+             Back up any flags after running flagdata
+         params:
+            versionname: 'post-targetflags'
+         skip: =IF(recipe.flag.target.enable, false,true)
+         
+      list2-postflags:
+         _use: lib.steps.flagmanager.list.target
+         info: |
+             List running flag-versions after flagging 
+         params:
+            ms: =recipe.steps.transform2-split_ms.outputvis
+         skip: =IF(recipe.flag.target.enable, false,true)
+         
+      restore2-postflags:
+         _use: lib.steps.flagmanager.restore.target
+         info: |
+             Restore the flags to the original version before un-flagging
+         params:
+            versionname: =recipe.steps.save-manualflags2.versionname
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.unflag.enable, IF(recipe.flag.target.unflag.restore.enable, false,true),true),true)
+          
+      reset2-postflags:
+         _use: lib.steps.flagmanager.restore.target
+         info: |
+            Restore the flags to the original version before flagging on the target
+         params:
+            versionname: =recipe.steps.save-preflags2.versionname
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.reset.enable, false,true),true)
+          
+      applycal-target:
+         _use: lib.steps.calibration.applycal.applycal2target
+         info: |
+             Apply the CASA calibration solution to target field 
+         params: 
+            parang: true 
+         skip: =IF(recipe.polcal.enable, IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="CASA",false,true),true),true)
+         
+      transfer-target:
+         _use: lib.steps.calibration.quartical.transfer.target
+         info: |
+             Transfer quartical gain solutions to the target fields
+         params: 
+            solver.terms: [Gp,Ga,K,B,Xf,Df]
+            solver.iter_recipe: [0,0,0,0,0,0]
+         skip: =IF(recipe.polcal.enable,IF(recipe.polcal.calibrate.enable, IF(recipe.crosscal.calibrate-with=="QuartiCal",false,true),true),true)
+         
+      applycal-inspect:
+         _use: lib.steps.flagdata.inspect.target
+         info: |
+             Plotting Amplitude against Frequency  for inspection for rfi peaks
+         params:
+            dir: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output/flagging' 
+         skip: =IF(recipe.flag.target.enable, IF(recipe.flag.target.manual.enable, IF(recipe.flag.target.manual.inspect.enable, false, true),true),true)
+         
+      image:
+         _use: lib.steps.imaging.image.target.i
+         info: |
+             Auto-masked deep Stokes I cleaning of calibrated data using wsclean. This initial round of deconvolution is only used for generating a mask.
+         params:
+            auto-mask:  10.0
+            auto-threshold: 2.0
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.image.enable, IF(recipe.selfcal.image.image-with=="wsclean", false,true),true),true)
+                                    
+      mask:
+         _use: lib.steps.imaging.mask.target.i
+         info: |
+             Creating a fits mask with breizorro
+         params:
+            restored-image: =steps.image.restored.mfs
+            outfile:        '{steps.image.prefix}-MFS-mask.fits' 
+            threshold: =IFSET(recipe.selfcal.mask.breizorro.threshold, recipe.selfcal.mask.breizorro.threshold, 6.0) 
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.mask.enable, IF(recipe.selfcal.mask.mask-with=="breizorro", false,true),true),true)
+         
+      masked:
+         _use: lib.steps.imaging.masked.target.i
+         info: |
+             Breizorro-masked deep I clean. 
+         params:
+            fits-mask: =steps.mask.outfile
+            prefix:    '{steps.image.prefix}-1GC'
+            auto-mask:      =IFSET(recipe.selfcal.image.wsclean.auto-mask,          recipe.selfcal.image.wsclean.auto-mask,          4.0)
+            auto-threshold: =IFSET(recipe.selfcal.image.wsclean.auto-threshold,     recipe.selfcal.image.wsclean.auto-threshold,     1.0)
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.image.enable, IF(recipe.selfcal.image.image-with=="wsclean", false,true),true),true)
+         
+      assess:
+         _use: lib.steps.imaging.assess.target.i
+         info: |
+             Assess image quality
+         params:
+            residual_image: '{steps.masked.residual.mfs}'
+            outfile:        '{steps.masked.prefix}-image-{self.suffix}.json'  
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.assess.enable, IF(recipe.selfcal.assess.assess-with=="aimfast", false,true),true),true)
+         
+      upsample:
+         _use: lib.steps.imaging.upsample.target.i
+         info: |
+             #Upsample model to a higher frequency
+         params:
+            input-prefix:  '{steps.masked.prefix}'
+            output-prefix: '{steps.masked.prefix}-upsampled'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.upsample.enable, IF(recipe.selfcal.upsample.upsample-with=="smops", false,true),true),true) 
+         
+      predict:
+         _use: lib.steps.imaging.predict.target.i
+         info: |
+            Predict model
+         params:
+            nchan:  =IFSET(recipe.selfcal.upsample.smops.channels-out,  steps.upsample.channels-out,  steps.masked.nchan)
+            prefix: =IFSET(recipe.selfcal.upsample.smops.channels-out,  steps.upsample.output-prefix, steps.masked.prefix)
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.image.enable, IF(recipe.selfcal.image.image-with=="wsclean", false,true),true),true)
+         
+      flag-delete:
+         _use: lib.steps.flagmanager.delete.target
+         info: |
+             Delete existing pre-selfcal flags before performing self calibration
+         params: 
+            versionname: 'pre-selfcal'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, false,true),true) 
+                   
+      flag-save:
+         _use: lib.steps.flagmanager.save.target
+         info: |
+             Back up original flags prior to self calibration
+         params: 
+            versionname: 'pre-selfcal'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, false,true),true)
+         
+      selfcal1-phase:
+         _use: lib.steps.selfcal.quartical.phase-1
+         info: |
+             Solve for a phase term by performing selfcal on the target using QuartiCAL
+         params:
+            solver.terms: [Gp]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type1=="phase", false,true),true),true)
+         
+      selfcal1-delay:
+         _use: lib.steps.selfcal.quartical.delay_and_offset-1
+         info: |
+             Solve for a delay and offset term by performing selfcal on the target using QuartiCAL
+         params:
+            solver.terms: [K]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type1=="delay_and_offset", false,true),true),true)
+         
+      selfcal1-complex:
+         _use: lib.steps.selfcal.quartical.complex-1
+         info: |
+            Solve for a complex term by performing selfcal on the target using QuartiCal
+         params:
+            solver.terms: [G]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type1=="complex", false,true),true),true) 
+         
+      selfcal1-diag_complex:
+         _use: lib.steps.selfcal.quartical.diag_complex-1
+         info: |
+            Solve for a diag_complex term by performing selfcal on the target using QuartiCal
+         params:
+            solver.terms: [G]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type1=="diag_complex", false,true),true),true)
+         
+      masked-1:
+         _use: lib.steps.imaging.masked.target.i
+         info: |
+             Breizorro-masked deep I clean
+         params:
+            fits-mask: =steps.mask.outfile
+            prefix:    '{steps.image.prefix}-selfcal-1' 
+            auto-mask:      =IFSET(recipe.selfcal.image.wsclean.auto-mask,          recipe.selfcal.image.wsclean.auto-mask,          4.0)
+            auto-threshold: =IFSET(recipe.selfcal.image.wsclean.auto-threshold,     recipe.selfcal.image.wsclean.auto-threshold,     1.0)
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.image.enable, IF(recipe.selfcal.image.image-with=="wsclean", false,true),true),true)
+         
+      assess-1:
+         _use: lib.steps.imaging.assess.target.i
+         info: |
+             Assess image quality
+         params:
+            residual_image: '{steps.masked-1.residual.mfs}'
+            outfile:        '{steps.masked-1.prefix}-image-{self.suffix}.json'  
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.assess.enable, IF(recipe.selfcal.assess.assess-with=="aimfast", false,true),true),true)
+         
+      upsample-1:
+         _use: lib.steps.imaging.upsample.target.i
+         info: |
+             Upsample model to a higher frequency
+         params:
+            input-prefix:  '{steps.masked-1.prefix}'
+            output-prefix: '{steps.masked-1.prefix}-upsampled'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.upsample.enable, IF(recipe.selfcal.upsample.upsample-with=="smops", false,true),true),true) 
+                 
+      predict-1:
+         _use: lib.steps.imaging.predict.target.i
+         info: |
+             Predict model
+         params:
+            nchan:  =IFSET(recipe.selfcal.upsample.smops.channels-out,  steps.upsample-1.channels-out,  steps.masked-1.nchan)
+            prefix: =IFSET(recipe.selfcal.upsample.smops.output-prefix, steps.upsample-1.output-prefix, steps.masked-1.prefix)
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.image.enable, IF(recipe.selfcal.image.image-with=="wsclean", false,true),true),true)
+         
+      flag1-delete:
+         _use: lib.steps.flagmanager.delete.target
+         info: |
+             Delete selfcal-1 flags
+         params:
+            versionname: 'selfcal-1'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, false,true),true)
+       
+      flag1-save:
+         _use: lib.steps.flagmanager.save.target
+         info: |
+             Back up flags after selfcal-1
+         params: 
+            versionname: 'selfcal-1'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, false,true),true)
+       
+      flag1-restore:
+         _use: lib.steps.flagmanager.restore.target
+         info: |
+             Restore the flags to the previous version
+         params:
+            versionname: 'pre-selfcal'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.flag.restore.enable, IF(recipe.selfcal.flag.restore.version=="pre-selfcal", false,true),true),true)
+       
+      flag1-summary:
+         _use: lib.steps.flagdata.summary.target
+         info: |
+             Generate a summary of flagged data after selfcal-1
+         params:
+            mode: 'summary' 
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.flag.summary.enable, false, true),true),true)  
+                         
+      selfcal2-phase:
+         _use: lib.steps.selfcal.quartical.phase-2
+         info: |
+             Solve for a phase term by performing selfcal on the target using QuartiCAL
+         params:
+            solver.terms: [Gp]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type1=="phase", false,true),true),true)
+         
+      selfcal2-delay:
+         _use: lib.steps.selfcal.quartical.delay_and_offset-2
+         info: |
+             Solve for a delay and offset term by performing selfcal on the target using QuartiCAL
+         params:
+            solver.terms: [K]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type1=="delay_and_offset", false,true),true),true)
+         
+      selfcal2-complex:
+         _use: lib.steps.selfcal.quartical.complex-2
+         info: |
+            Solve for a complex term by performing selfcal on the target using QuartiCal
+         params:
+            solver.terms: [G]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type1=="complex", false,true),true),true) 
+         
+      selfcal2-diag_complex:
+         _use: lib.steps.selfcal.quartical.diag_complex-2
+         info: |
+            Solve for a diag_complex term by performing selfcal on the target using QuartiCal
+         params:
+            solver.terms: [G]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type1=="diag_complex", false,true),true),true)
+         
+      masked-2:
+         _use: lib.steps.imaging.masked.target.i
+         info: |
+             Breizorro-masked deep I clean
+         params:
+            fits-mask: =steps.mask.outfile
+            prefix:    '{steps.image.prefix}-selfcal-2'
+            auto-mask:      =IFSET(recipe.selfcal.image.wsclean.auto-mask,          recipe.selfcal.image.wsclean.auto-mask,          4.0)
+            auto-threshold: =IFSET(recipe.selfcal.image.wsclean.auto-threshold,     recipe.selfcal.image.wsclean.auto-threshold,     1.0)
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.image.enable, IF(recipe.selfcal.image.image-with=="wsclean", false,true), true),true)
+         
+      assess-2:
+         _use: lib.steps.imaging.assess.target.i
+         info: |
+             Assess image quality
+         params:
+            residual_image: '{steps.masked-2.residual.mfs}'
+            outfile:        '{steps.masked-2.prefix}-image-{self.suffix}.json'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.assess.enable, IF(recipe.selfcal.assess.assess-with=="aimfast", false,true),true),true)
+         
+      upsample-2:
+         _use: lib.steps.imaging.upsample.target.i
+         info: |
+             Upsample model to a higher frequency
+         params:
+            input-prefix:  '{steps.masked-2.prefix}'
+            output-prefix: '{steps.masked-2.prefix}-upsampled'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.upsample.enable, IF(recipe.selfcal.upsample.upsample-with=="smops", false,true),true),true) 
+         
+      predict-2:
+         _use: lib.steps.imaging.predict.target.i
+         info: |
+             Predict model
+         params:
+            nchan:  =IFSET(recipe.selfcal.upsample.smops.channels-out, steps.upsample-2.channels-out,  steps.masked-2.nchan)
+            prefix: =IFSET(recipe.selfcal.upsample.smops.channels-out, steps.upsample-2.output-prefix, steps.masked-2.prefix)
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.image.enable, IF(recipe.selfcal.image.image-with=="wsclean", false,true),true),true) 
+         
+      flag2-delete:
+         _use: lib.steps.flagmanager.delete.target
+         info: |
+             Delete selfcal-2 flags
+         params:
+            versionname: 'selfcal-2'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, false,true),true)
+       
+      flag2-save:
+         _use: lib.steps.flagmanager.save.target
+         info: |
+             Back up flags after selfcal-2
+         params: 
+            versionname: 'selfcal-2'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, false,true),true)
+       
+      flag2-restore:
+         _use: lib.steps.flagmanager.restore.target
+         info: |
+             Restore the flags to the previous version
+         params:
+            versionname: 'selfcal-1'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.flag.restore.enable, IF(recipe.selfcal.flag.restore.version=="selfcal-1", false,true),true),true)
+       
+      flag2-summary:
+         _use: lib.steps.flagdata.summary.target
+         info: |
+             Generate a summary of flagged data after selfcal-2
+         params:
+            mode: 'summary' 
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.flag.summary.enable, false, true),true),true)  
+                         
+      selfcal3-phase:
+         _use: lib.steps.selfcal.quartical.phase-3
+         info: |
+             Solve for a phase term by performing selfcal on the target using QuartiCAL
+         params:
+            solver.terms: [Gp]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type1=="phase", false,true),true),true)
+         
+      selfcal3-delay:
+         _use: lib.steps.selfcal.quartical.delay_and_offset-3
+         info: |
+             Solve for a delay and offset term by performing selfcal on the target using QuartiCAL
+         params:
+            solver.terms: [K]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type1=="delay_and_offset", false,true),true),true)
+         
+      selfcal3-complex:
+         _use: lib.steps.selfcal.quartical.complex-1
+         info: |
+            Solve for a complex term by performing selfcal on the target using QuartiCal
+         params:
+            solver.terms: [G]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type1=="complex", false,true),true),true) 
+         
+      selfcal3-diag_complex:
+         _use: lib.steps.selfcal.quartical.diag_complex-1
+         info: |
+            Solve for a diag_complex term by performing selfcal on the target using QuartiCal
+         params:
+            solver.terms: [G]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type1=="diag_complex", false,true),true),true)
+          
+      masked-3:
+         _use: lib.steps.imaging.masked.target.i
+         info: |
+             Breizorro-masked deep I clean
+         params:
+            fits-mask:  =steps.mask.outfile
+            prefix:     '{steps.image.prefix}-selfcal-3'
+            auto-mask:      =IFSET(recipe.selfcal.image.wsclean.auto-mask,          recipe.selfcal.image.wsclean.auto-mask,          4.0)
+            auto-threshold: =IFSET(recipe.selfcal.image.wsclean.auto-threshold,     recipe.selfcal.image.wsclean.auto-threshold,     1.0)
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.image.enable, IF(recipe.selfcal.image.image-with=="wsclean", false,true), true),true)
+         
+      assess-3:
+         _use: lib.steps.imaging.assess.target.i
+         info: |
+             Assess image quality
+         params:
+            residual_image: '{steps.masked-3.residual.mfs}'
+            outfile:        '{steps.masked-3.prefix}-image-{self.suffix}.json'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.assess.enable, IF(recipe.selfcal.assess.assess-with=="aimfast", false,true),true),true)
+         
+      upsample-3:
+         _use: lib.steps.imaging.upsample.target.i
+         info: |
+             Upsample model to a higher frequency
+         params:
+            input-prefix:  '{steps.masked-3.prefix}'
+            output-prefix: '{steps.masked-3.prefix}-upsampled'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.upsample.enable, IF(recipe.selfcal.upsample.upsample-with=="smops", false,true),true),true) 
+         
+      predict-3:
+         _use: lib.steps.imaging.predict.target.i
+         info: |
+            Predict model
+         params:
+            nchan:  =IFSET(recipe.selfcal.upsample.smops.channels-out,  steps.upsample-3.channels-out,  steps.masked-3.nchan)
+            prefix: =IFSET(recipe.selfcal.upsample.smops.channels-out,  steps.upsample-3.output-prefix, steps.masked-3.prefix)
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.image.enable, IF(recipe.selfcal.image.image-with=="wsclean", false,true),true),true) 
+         
+      flag3-delete:
+         _use: lib.steps.flagmanager.delete.target
+         info: Delete selfcal-3 flags
+         params:
+            versionname: 'selfcal-3'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, false,true),true)
+       
+      flag3-save:
+         _use: lib.steps.flagmanager.save.target
+         info: |
+             Back up flags after selfcal-3
+         params: 
+            versionname: 'selfcal-3'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, false,true),true)
+       
+      flag3-restore:
+         _use: lib.steps.flagmanager.restore.target
+         info: |
+             Restore the flags to the previous version
+         params:
+            versionname: 'selfcal-2'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.flag.restore.enable, IF(recipe.selfcal.flag.restore.version=="selfcal-2", false,true),true),true)
+       
+      flag3-summary:
+         _use: lib.steps.flagdata.summary.target
+         info: |
+             Generate a summary of flagged data after selfcal-3
+         params:
+            mode: 'summary' 
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.flag.summary.enable, false, true),true),true) 
+         
+      selfcal4-phase:
+         _use: lib.steps.selfcal.quartical.phase-4
+         info: |
+             Solve for a phase term by performing selfcal on the target using QuartiCAL
+         params:
+            solver.terms: [Gp]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type2=="phase", false,true),true),true)
+         
+      selfcal4-delay:
+         _use: lib.steps.selfcal.quartical.delay_and_offset-4
+         info: |
+             Solve for a delay and offset term by performing selfcal on the target using QuartiCAL
+         params:
+            solver.terms: [K]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type2=="delay_and_offset", false,true),true),true)  
+                  
+      selfcal4-complex:
+         _use: lib.steps.selfcal.quartical.complex-1
+         info: |
+            Solve for a complex term by performing selfcal on the target using QuartiCal
+         params:
+            solver.terms: [G]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type2=="complex", false,true),true),true) 
+         
+      selfcal4-diag_complex:
+         _use: lib.steps.selfcal.quartical.diag_complex-1
+         info: |
+            Solve for a diag_complex term by performing selfcal on the target using QuartiCal
+         params:
+            solver.terms: [G]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type2=="diag_complex", false,true),true),true) 
+         
+      masked-4:
+         _use: lib.steps.imaging.masked.target.i
+         info: |
+             Breizorro-masked deep I clean
+         params:
+            fits-mask:  =steps.mask.outfile
+            prefix:     '{steps.image.prefix}-selfcal-4'
+            auto-mask:      =IFSET(recipe.selfcal.image.wsclean.auto-mask,          recipe.selfcal.image.wsclean.auto-mask,          4.0)
+            auto-threshold: =IFSET(recipe.selfcal.image.wsclean.auto-threshold,     recipe.selfcal.image.wsclean.auto-threshold,     1.0)
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.image.enable, IF(recipe.selfcal.image.image-with=="wsclean", false,true), true),true)
+         
+      assess-4:
+         _use: lib.steps.imaging.assess.target.i
+         info: |
+             Assess image quality
+         params:
+            residual_image: '{steps.masked-4.residual.mfs}'
+            outfile:        '{steps.masked-4.prefix}-image-{self.suffix}.json'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.assess.enable, IF(recipe.selfcal.assess.assess-with=="aimfast", false,true),true),true)
+         
+      upsample-4:
+         _use: lib.steps.imaging.upsample.target.i
+         info: |
+             Upsample model to a higher frequency
+         params:
+            input-prefix:  '{steps.masked-4.prefix}'
+            output-prefix: '{steps.masked-4.prefix}-upsampled'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.upsample.enable, IF(recipe.selfcal.upsample.upsample-with=="smops", false,true),true),true) 
+         
+      predict-4:
+         _use: lib.steps.imaging.predict.target.i
+         info: |
+            Predict model
+         params:
+            nchan:  =IFSET(recipe.selfcal.upsample.smops.channels-out,  steps.upsample-4.channels-out,  steps.masked-4.nchan)
+            prefix: =IFSET(recipe.selfcal.upsample.smops.channels-out,  steps.upsample-4.output-prefix, steps.masked-4.prefix)
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.image.enable, IF(recipe.selfcal.image.image-with=="wsclean", false,true),true),true) 
+         
+      flag4-delete:
+         _use: lib.steps.flagmanager.delete.target
+         info: Delete selfcal-4 flags
+         params:
+            versionname: 'selfcal-4'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, false,true),true)
+       
+      flag4-save:
+         _use: lib.steps.flagmanager.save.target
+         info: |
+             Back up flags after selfcal-4
+         params: 
+            versionname: 'selfcal-4'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, false,true),true)
+       
+      flag4-restore:
+         _use: lib.steps.flagmanager.restore.target
+         info: |
+             Restore the flags to the previous version
+         params:
+            versionname: 'selfcal-3'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.flag.restore.enable, IF(recipe.selfcal.flag.restore.version=="selfcal-3", false,true),true),true)
+       
+      flag4-summary:
+         _use: lib.steps.flagdata.summary.target
+         info: |
+             Generate a summary of flagged data after selfcal-4
+         params:
+            mode: 'summary' 
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.flag.summary.enable, false, true),true),true) 
+         
+      selfcal5-phase:
+         _use: lib.steps.selfcal.quartical.phase-5
+         info: |
+             Solve for a phase term by performing selfcal on the target using QuartiCAL
+         params:
+            solver.terms: [Gp]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type2=="phase", false,true),true),true)
+         
+      selfcal5-delay:
+         _use: lib.steps.selfcal.quartical.delay_and_offset-5
+         info: |
+             Solve for a delay and offset term by performing selfcal on the target using QuartiCAL
+         params:
+            solver.terms: [K]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type2=="delay_and_offset", false,true),true),true)  
+              
+      selfcal5-complex:
+         _use: lib.steps.selfcal.quartical.complex-2
+         info: |
+             Solve for a complex term by performing selfcal on the target using QuartiCal
+         params:
+            solver.terms: [G]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type2=="complex", false,true),true),true) 
+         
+      selfcal5-diag_complex:
+         _use: lib.steps.selfcal.quartical.diag_complex-2
+         info: |
+             Solve for a diag_complex term by performing selfcal on the target using QuartiCal
+         params:
+            solver.terms: [G]
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.calibrate.quartical.gain.type2=="diag_complex", false,true),true),true) 
+         
+      masked-5:
+         _use: lib.steps.imaging.masked.target.i
+         info: |
+             Breizorro-masked deep I clean
+         params:
+            fits-mask:  '{steps.mask.outfile}'
+            prefix:     '{steps.image.prefix}-selfcal-5' 
+            auto-mask:      =IFSET(recipe.selfcal.image.wsclean.auto-mask,          recipe.selfcal.image.wsclean.auto-mask,          4.0)
+            auto-threshold: =IFSET(recipe.selfcal.image.wsclean.auto-threshold,     recipe.selfcal.image.wsclean.auto-threshold,     1.0) 
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.image.enable, IF(recipe.selfcal.image.image-with=="wsclean", false,true), true),true)
+         
+      assess-5:
+         _use: lib.steps.imaging.assess.target.i
+         info: |
+             Assess image quality
+         params:
+            residual_image: '{steps.masked-5.residual.mfs}'
+            outfile:        '{steps.masked-5.prefix}-image-{self.suffix}.json'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.assess.enable, IF(recipe.selfcal.assess.assess-with=="aimfast", false,true),true),true)
+         
+      flag5-delete:
+         _use: lib.steps.flagmanager.delete.target
+         info: |
+            Delete selfcal-5 flags
+         params:
+            versionname: 'selfcal-5'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, false,true),true)
+       
+      flag5-save:
+         _use: lib.steps.flagmanager.save.target
+         info: |
+             Back up flags after selfcal-5
+         params: 
+            versionname: 'selfcal-5'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, false,true),true)
+         
+      flag5-list:
+         _use: lib.steps.flagmanager.list.target
+         info: |
+             List flagversions after self calibration 
+         params: 
+            mode: 'list'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, false,true),true)
+       
+      flag5-restore:
+         _use: lib.steps.flagmanager.restore.target
+         info: |
+             Restore the flags to the previous version
+         params:
+            versionname: 'selfcal-4'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.flag.restore.enable, IF(recipe.selfcal.flag.restore.version=="selfcal-4", false,true),true),true)
+       
+      flag5-summary:
+         _use: lib.steps.flagdata.summary.target
+         info: |
+             Generate a summary of flagged data after selfcal-5
+         params:
+            mode: 'summary' 
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.calibrate.enable, IF(recipe.selfcal.flag.summary.enable, false, true),true),true)  
+                   
+      flag5-reset:
+         _use: lib.steps.flagmanager.restore.target
+         info: |
+             Reset selfcal flags
+         params:
+            versionname: 'pre-selfcal'
+         skip: =IF(recipe.selfcal.enable, IF(recipe.selfcal.flag.reset.enable, false,true),true)
+         
+      flagdelete-pol:
+         _use: lib.steps.flagmanager.delete.target
+         info: |
+            Delete existing pre-image_pol flags
+         params: 
+            versionname: 'pre-image_pol'
+         skip: =IF(recipe.image-pol.enable, false,true)
+          
+      flagsave-pol:
+         _use: lib.steps.flagmanager.save.target
+         info: |
+            Back up flags before polarization imaging
+         params: 
+            versionname: 'pre-image_pol'
+         skip: =IF(recipe.image-pol.enable, false,true)
+         
+      image-pol:
+         _use: lib.steps.imaging.image.target.iquv
+         info: |
+             Auto-masked deep Stokes I cleaning of calibrated data
+         params:
+            auto-mask:  5.0
+            auto-threshold: 2.0
+         skip: =IF(recipe.image-pol.enable, IF(recipe.image-pol.image.enable, IF(recipe.image-pol.image.image-with=="wsclean", false,true),true), true) 
+                                    
+      mask-pol:
+         _use: lib.steps.imaging.mask.target.i
+         info: |
+             Creating a fits mask with breizorro
+         params:
+            restored-image: '{steps.image-pol.restored.i.mfs}'
+            outfile:        '{steps.image-pol.prefix}-MFS-maskpol.fits' 
+            threshold:     =IFSET(recipe.image-pol.mask.breizorro.threshold,          recipe.image-pol.mask.breizorro.threshold,     6.5)
+         skip: =IF(recipe.image-pol.enable, IF(recipe.image-pol.mask.enable, IF(recipe.image-pol.mask.mask-with=="breizorro", false,true),true),true)
+         
+      masked-pol:
+         _use: lib.steps.imaging.masked.target.iquv
+         info: |
+             Breizorro-masked deep IQUV clean
+         params:
+            fits-mask: '{steps.mask-pol.outfile}'
+            prefix:    '{steps.image-pol.prefix}-masked'
+            auto-mask:      =IFSET(recipe.image-pol.image.wsclean.auto-mask,          recipe.image-pol.image.wsclean.auto-mask,      5.0)
+            auto-threshold: =IFSET(recipe.image-pol.image.wsclean.auto-threshold,     recipe.image-pol.image.wsclean.auto-threshold, 1.0)
+         skip: =IF(recipe.image-pol.enable, IF(recipe.image-pol.image.enable, IF(recipe.image-pol.image.image-with=="wsclean", false,true),true), true) 
+         
+      assess-pol:
+         _use: lib.steps.imaging.assess.target.iquv
+         info: |
+             Assess image quality
+         params:
+            residual_image: '{steps.masked-pol.residual.i.mfs}'
+            outfile:        '{steps.masked-pol.prefix}-image-{self.suffix}.json'
+         skip: =IF(recipe.image-pol.enable, IF(recipe.image-pol.assess.enable, IF(recipe.image-pol.assess.assess-with=="aimfast", false,true),true), true) 
+         
+      flagsummary-pol:
+         _use: lib.steps.flagdata.summary.target
+         info: |
+             Generate a summary of flagged data after polarization imaging
+         params: 
+            mode: 'summary'
+         skip: =IF(recipe.image-pol.enable, IF(recipe.image-pol.flag.summary.enable, false,true),true)
+         
+      flagdelete2-pol:
+         _use: lib.steps.flagmanager.delete.target
+         info: |
+             Delete the flags after polarization imaging
+         params:
+            versionname: 'post-image_pol'
+         skip: =IF(recipe.image-pol.enable, false,true)
+         
+      flagsave2-pol:
+         _use: lib.steps.flagmanager.save.target
+         info: |
+            Back up original flags after polarization imaging
+         params: 
+            versionname: 'post-image_pol'
+         skip: =IF(recipe.image-pol.enable, false,true)
+         
+      flaglist-pol:
+         _use: lib.steps.flagmanager.list.target
+         info: |
+             List flagversions after polarization imaging 
+         params: 
+            mode: 'list'
+         skip: =IF(recipe.image-pol.enable, false,true)
+         
+      flagreset-pol:
+         _use: lib.steps.flagmanager.restore.target
+         info: |
+             Restore flags to the original before polarization imaging
+         params:
+            versionname: 'pre-image_pol'
+         skip: =IF(recipe.image-pol.enable, IF(recipe.image-pol.flag.restore.enable, false,true),true) 
+      
+   
+      
+      
+            
+              
+      
+            
+            
+            
+              
+      
+            
+        
+               
+             
+                  
+         
+                 
+                                    

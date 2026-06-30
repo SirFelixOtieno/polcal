@@ -1,0 +1,718 @@
+lib:
+   steps:
+      calibration:
+         quartical:
+         
+            crosscal:
+            
+               bpcal:
+               
+                  kgb:
+                     cab: quartical
+                     params:
+                        _use:  lib.params.quartical.primary
+               
+                        Gp.type: phase
+                        Gp.time_interval: 0
+                        Gp.freq_interval: 0
+                        Gp.respect_scan_boundaries: true
+                        
+                        Ga.type: amplitude
+                        Ga.time_interval: 0
+                        Ga.freq_interval: 0
+                        Ga.respect_scan_boundaries: true
+                     
+                        K.type: delay
+                        K.time_interval: 0 
+                        K.freq_interval: 0
+                        K.initial_estimate: true
+                        K.respect_scan_boundaries: true
+                        
+                        B.type: diag_complex
+                        B.time_interval: 0
+                        B.freq_interval: 16
+                        B.respect_scan_boundaries: false
+                        
+                        #Df.type: leakage
+                        #Df.time_interval: 0
+                        #Df.freq_interval: 8
+                        #Df.respect_scan_boundaries: false
+                        
+                        output.columns: [CORRECTED_DATA]
+                        output.products: [corrected_data]
+                        
+                        output.flags: false 
+                        
+                        mad_flags.enable: true
+                        mad_flags.threshold_bl: 5
+                        mad_flags.max_deviation: 0
+                        mad_flags.threshold_global: 10
+                        
+                        input_ms.group_by: [SCAN_NUMBER, FIELD_ID, DATA_DESC_ID]             
+               
+               bpcal1:
+               
+                  kgb:
+                     cab: quartical
+                     params:
+                        _use:  lib.params.quartical.primary
+               
+                        Gp.type: phase
+                        Gp.time_interval: 4
+                        Gp.freq_interval: 0
+                        Gp.respect_scan_boundaries: true
+                        Gp.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb.qc/Gp' 
+            
+                        Ga.type: amplitude
+                        Ga.time_interval: 4
+                        Ga.freq_interval: 0
+                        Ga.respect_scan_boundaries: true
+                        Ga.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb.qc/Ga' 
+             
+                        K.type: delay
+                        K.time_interval: 4
+                        K.freq_interval: 0
+                        K.respect_scan_boundaries: true
+                        K.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb.qc/K' 
+                     
+                        B.type: diag_complex
+                        B.time_interval: 0
+                        B.freq_interval: 16
+                        B.interp_mode: ampphase
+                        B.respect_scan_boundaries: false
+                        B.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb.qc/B'
+                        
+                        #Df.type: leakage
+                        #Df.time_interval: 4
+                        #Df.freq_interval: 16
+                        #Df.respect_scan_boundaries: false
+                        #Df.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb.qc/Df'
+                        
+                        
+                        output.columns: [CORRECTED_DATA]
+                        output.products: [corrected_data]
+                        
+                        output.flags: false 
+                        
+                        mad_flags.enable: true
+                        mad_flags.threshold_bl: 5
+                        mad_flags.max_deviation: 0
+                        mad_flags.threshold_global: 10
+                        
+                        input_ms.group_by: [SCAN_NUMBER, FIELD_ID, DATA_DESC_ID]
+                                 
+                  
+               phasecal:
+               
+                  #g_to_ABS:
+                     #cab: G2abs
+                     #info: Replace G with abs(G) since we won't need the phase again
+                     #params:
+                        #source: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb1.qc/G'  
+               
+                  #g_to_abs:
+                     #cab: kg2DGa
+                     #info: Replace G with abs(G) since we won't need the phase again
+                     #params:
+                        #sourceK: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb1.qc/K' 
+                        #sourceG: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb1.qc/G'  
+                        
+                  d:
+                     cab: quartical
+                     params:
+                        _use:  lib.params.quartical.secondary
+                        
+                        Gp.type: phase
+                        Gp.time_interval: 4
+                        Gp.freq_interval: 0
+                        Gp.respect_scan_boundaries: true
+                        Gp.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/Gp' 
+            
+                        Ga.type: amplitude
+                        Ga.time_interval: 4
+                        Ga.freq_interval: 0
+                        Ga.respect_scan_boundaries: true
+                        Ga.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/Ga' 
+             
+                        K.type: delay
+                        K.time_interval: 4
+                        K.freq_interval: 0
+                        K.respect_scan_boundaries: true
+                        K.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/K' 
+                     
+                        B.type: diag_complex
+                        B.time_interval: 0
+                        B.freq_interval: 1
+                        B.interp_mode: ampphase
+                        B.respect_scan_boundaries: true
+                        B.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/B'
+                        
+                        #Df.type: leakage
+                        #Df.time_interval: 0
+                        #Df.freq_interval: 1
+                        #Df.respect_scan_boundaries: false
+                        #Df.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb.qc/Df'
+                        
+                        mad_flags.enable: true
+                        mad_flags.threshold_bl: 5
+                        mad_flags.max_deviation: 0
+                        mad_flags.threshold_global: 10
+                        
+                        output.flags: false
+                        output.apply_p_jones_inv: false
+                        output.columns: [CORRECTED_DATA]
+                        output.products: [corrected_data]
+               
+                  d1:
+                     cab: quartical
+                     params:
+                        _use:  lib.params.quartical.secondary
+                  
+                        mad_flags.enable: false
+                        mad_flags.threshold_bl: 5
+                        mad_flags.max_deviation: 0
+                        mad_flags.threshold_global: 10
+                        
+                        Gp.type: phase
+                        Gp.time_interval: 4
+                        Gp.freq_interval: 0
+                        Gp.respect_scan_boundaries: true
+                        Gp.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'phasecal.qc/Gp' 
+            
+                        Ga.type: amplitude
+                        Ga.time_interval: 4
+                        Ga.freq_interval: 0
+                        Ga.respect_scan_boundaries: true
+                        Ga.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/Ga' 
+             
+                        K.type: delay
+                        K.time_interval: 4
+                        K.freq_interval: 0
+                        K.respect_scan_boundaries: true
+                        K.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'phasecal.qc/K' 
+                     
+                        B.type: diag_complex
+                        B.time_interval: 0
+                        B.freq_interval: 1
+                        B.interp_mode: ampphase
+                        B.respect_scan_boundaries: true
+                        B.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/B'
+                        
+                        #Df.type: leakage
+                        #Df.time_interval: 0
+                        #Df.freq_interval: 1
+                        #Df.respect_scan_boundaries: false
+                        #Df.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb.qc/Df'
+                        
+                        mad_flags.enable: true
+                        mad_flags.threshold_bl: 5
+                        mad_flags.max_deviation: 0
+                        mad_flags.threshold_global: 10
+                        
+                        output.flags: false
+                        output.apply_p_jones_inv: false
+                        output.columns: [CORRECTED_DATA]
+                        output.products: [corrected_data]
+                         
+            polcal:
+            
+               Xf:
+                  cab: quartical
+                  params:
+                     _use:  lib.params.quartical.polarization
+                     
+                     Gp.type: phase
+                     Gp.time_interval: 0
+                     Gp.freq_interval: 0
+                     Gp.respect_scan_boundaries: true
+                     Gp.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'phasecal1.qc/Gp' 
+            
+                     Ga.type: amplitude
+                     Ga.time_interval: 0
+                     Ga.freq_interval: 0
+                     Ga.respect_scan_boundaries: true
+                     Ga.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/Ga' 
+             
+                     K.type: delay
+                     K.time_interval: 0 
+                     K.freq_interval: 0
+                     K.respect_scan_boundaries: true
+                     K.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'phasecal1.qc/K' 
+                     
+                     B.type: diag_complex
+                     B.time_interval: 0
+                     B.freq_interval: 1
+                     B.interp_mode: ampphase
+                     B.respect_scan_boundaries: true
+                     B.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/B'
+                     
+                     D.type: phase 
+                     D.time_interval: 1
+                     D.freq_interval: 0
+                     D.respect_scan_boundaries: true
+            
+                     Xf.solve_per: array
+                     Xf.time_interval: 0
+                     Xf.freq_interval: 256
+                     Xf.type: crosshand_phase
+                     Xf.respect_scan_boundaries: false
+                     
+                     #Df.type: leakage
+                     #Df.time_interval: 0
+                     #Df.freq_interval: 1
+                     #Df.respect_scan_boundaries: false
+                     #Df.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb.qc/Df'
+                        
+                     #P.type: parallactic_angle  
+                     #P.time_interval: 1
+                     #P.freq_interval: 0
+                  
+                     mad_flags.enable: true
+                     
+                     input_ms.group_by: [DATA_DESC_ID, FIELD_ID]
+                     
+                     output.columns: [CORRECTED_DATA]
+                     output.products: [corrected_data]
+                     
+               Xf1:
+                  cab: quartical
+                  params:
+                     _use:  lib.params.quartical.polarization
+                     
+                     Gp.type: phase
+                     Gp.time_interval: 0
+                     Gp.freq_interval: 0
+                     Gp.respect_scan_boundaries: true
+                     Gp.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'phasecal1.qc/Gp' 
+            
+                     Ga.type: amplitude
+                     Ga.time_interval: 0
+                     Ga.freq_interval: 0
+                     Ga.respect_scan_boundaries: true
+                     Ga.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/Ga' 
+             
+                     K.type: delay
+                     K.time_interval: 0 
+                     K.freq_interval: 0
+                     K.respect_scan_boundaries: true
+                     K.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'phasecal1.qc/K' 
+                     
+                     B.type: diag_complex
+                     B.time_interval: 0
+                     B.freq_interval: 1
+                     B.interp_mode: ampphase
+                     B.respect_scan_boundaries: true
+                     B.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/B'
+                     
+                     D.type: phase 
+                     D.time_interval: 1
+                     D.freq_interval: 0
+                     D.respect_scan_boundaries: true
+                     D.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'polcal.qc/D'
+                     
+                     Xf.solve_per: array
+                     Xf.time_interval: 0
+                     Xf.freq_interval: 256
+                     Xf.type: crosshand_phase
+                     Xf.respect_scan_boundaries: false
+                     Xf.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'polcal.qc/Xf'
+                     
+                     #Df.type: leakage
+                     #Df.time_interval: 0
+                     #Df.freq_interval: 1
+                     #Df.respect_scan_boundaries: false
+                     #Df.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb1.qc/Df'
+            
+                     #P.type: parallactic_angle  
+                     #P.time_interval: 1
+                     #P.freq_interval: 0
+                  
+                     input_ms.group_by: [DATA_DESC_ID, FIELD_ID]
+                     
+                     output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+                     output.products: [corrected_data, corrected_weight]
+            
+               
+            
+               Df:
+                  cab: quartical
+                  params:
+                     _use:  lib.params.quartical.primary
+                     
+                     Gp.type: phase
+                     Gp.time_interval: 0
+                     Gp.freq_interval: 0
+                     Gp.respect_scan_boundaries: true
+                     Gp.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'phasecal1.qc/Gp' 
+            
+                     Ga.type: amplitude
+                     Ga.time_interval: 0
+                     Ga.freq_interval: 0
+                     Ga.respect_scan_boundaries: true
+                     Ga.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/Ga' 
+             
+                     K.type: delay
+                     K.time_interval: 0 
+                     K.freq_interval: 0
+                     K.respect_scan_boundaries: true
+                     K.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'phasecal1.qc/K' 
+                     
+                     B.type: diag_complex
+                     B.time_interval: 0
+                     B.freq_interval: 1
+                     B.interp_mode: ampphase
+                     B.respect_scan_boundaries: true
+                     B.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/B'
+                     
+                     D.type: phase 
+                     D.time_interval: 1
+                     D.freq_interval: 0
+                     D.respect_scan_boundaries: true
+                     D.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'polcal1.qc/D'
+                     
+            
+                     Xf.solve_per: array
+                     Xf.time_interval: 0
+                     Xf.freq_interval: 256
+                     Xf.type: crosshand_phase
+                     Xf.respect_scan_boundaries: false
+                     Xf.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'polcal1.qc/Xf'
+                     
+                     Df.type: leakage
+                     Df.time_interval: 0
+                     Df.freq_interval: 1
+                     Df.respect_scan_boundaries: false
+                     #Df.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb1.qc/Df'
+            
+                     #P.type: parallactic_angle  
+                     #P.time_interval: 1
+                     #P.freq_interval: 0
+                  
+                     mad_flags.enable: =IFSET(recipe.polcal.calibrate.quartical.mad_flags.enable, recipe.polcal.calibrate.quartical.mad_flags.enable, true)
+                     
+                     input_ms.group_by: [DATA_DESC_ID, FIELD_ID]
+                     
+                     output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+                     output.products: [corrected_data, corrected_weight]
+            
+               
+            transfer:
+               
+               bpcal:
+                  
+                  cab: quartical
+                  params:
+                     _use:  lib.params.quartical.transfer.bpcal
+                  
+                     mad_flags.enable: false
+                     
+                     Gp.type: phase
+                     Gp.time_interval: 0
+                     Gp.freq_interval: 0
+                     Gp.respect_scan_boundaries: true
+                     Gp.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/Gp' 
+            
+                     Ga.type: amplitude
+                     Ga.time_interval: 0
+                     Ga.freq_interval: 0
+                     Ga.respect_scan_boundaries: true
+                     Ga.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/Ga' 
+            
+                     K.type: delay
+                     K.time_interval: 0 
+                     K.freq_interval: 0
+                     K.respect_scan_boundaries: true
+                     K.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/K' 
+                     
+                     B.type: diag_complex 
+                     B.time_interval: 0
+                     B.freq_interval: 1
+                     B.respect_scan_boundaries: true
+                     B.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/B' 
+                        
+                     Df.type: leakage
+                     Df.time_interval: 0
+                     Df.freq_interval: 1
+                     Df.respect_scan_boundaries: false
+                     Df.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'polcal2.qc/Df'
+                        
+                     Xf.solve_per: array
+                     Xf.time_interval: 0
+                     Xf.freq_interval: 1
+                     Xf.type: crosshand_phase
+                     Xf.respect_scan_boundaries: true
+                     Xf.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'polcal1.qc/Xf'
+            
+                     #P.type: parallactic_angle  
+                     #P.time_interval: 1
+                     #P.freq_interval: 0        
+                         
+                     output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+                     output.products: [corrected_data, corrected_weight]
+                  
+               gcal:
+                  cab: quartical
+                  params:
+                     _use:  lib.params.quartical.transfer.gcal
+                  
+                     mad_flags.enable: false
+                     
+                     Gp.type: phase
+                     Gp.time_interval: 0
+                     Gp.freq_interval: 0
+                     Gp.respect_scan_boundaries: true
+                     Gp.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'phasecal1.qc/Gp' 
+            
+                     Ga.type: amplitude
+                     Ga.time_interval: 0
+                     Ga.freq_interval: 0
+                     Ga.respect_scan_boundaries: true
+                     Ga.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/Ga' 
+             
+                     K.type: delay
+                     K.time_interval: 0 
+                     K.freq_interval: 0
+                     K.respect_scan_boundaries: true
+                     K.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'phasecal1.qc/K' 
+                     
+                     B.type: diag_complex
+                     B.time_interval: 0
+                     B.freq_interval: 1
+                     B.respect_scan_boundaries: true
+                     B.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/B'
+            
+                     Xf.solve_per: array
+                     Xf.time_interval: 0
+                     Xf.freq_interval: 1
+                     Xf.type: crosshand_phase
+                     Xf.respect_scan_boundaries: true
+                     Xf.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'polcal1.qc/Xf'
+            
+                     Df.type: leakage
+                     Df.time_interval: 0
+                     Df.freq_interval: 1
+                     Df.respect_scan_boundaries: false
+                     Df.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'polcal2.qc/Df'
+                             
+                         
+                     output.net_gains: 
+                     output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+                     output.products: [corrected_data, corrected_weight]
+                  
+               xcal:
+               
+                  cab: quartical
+                  params:
+                     _use:  lib.params.quartical.transfer.xcal
+                  
+                     mad_flags.enable: false
+                     
+                     Gp.type: phase
+                     Gp.time_interval: 0
+                     Gp.freq_interval: 0
+                     Gp.respect_scan_boundaries: true
+                     Gp.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'phasecal1.qc/Gp' 
+            
+                     Ga.type: amplitude
+                     Ga.time_interval: 0
+                     Ga.freq_interval: 0
+                     Ga.respect_scan_boundaries: true
+                     Ga.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/Ga' 
+             
+                     K.type: delay
+                     K.time_interval: 0 
+                     K.freq_interval: 0
+                     K.respect_scan_boundaries: true
+                     K.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'phasecal1.qc/K' 
+                     
+                     B.type: diag_complex
+                     B.time_interval: 0
+                     B.freq_interval: 1
+                     B.interp_mode: ampphase
+                     B.respect_scan_boundaries: true
+                     B.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal1-kgb.qc/B'
+                     
+                     D.type: phase 
+                     D.time_interval: 1
+                     D.freq_interval: 0
+                     D.respect_scan_boundaries: true
+                     D.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'polcal1.qc/D'
+                     
+                     Xf.solve_per: array
+                     Xf.time_interval: 0
+                     Xf.freq_interval: 256
+                     Xf.type: crosshand_phase
+                     Xf.respect_scan_boundaries: false
+                     Xf.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'polcal1.qc/Xf'
+                     
+                     Df.type: leakage
+                     Df.time_interval: 0
+                     Df.freq_interval: 1
+                     Df.respect_scan_boundaries: false
+                     Df.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'polcal2.qc/Df'
+                  
+                      
+                     output.columns: [CORRECTED_DATA, WEIGHT_SPECTRUM]
+                     output.products: [corrected_data, corrected_weight]            
+            
+               target:
+                  
+                  cab: quartical
+                  params:
+                     _use:  lib.params.quartical.transfer.target
+                  
+                     mad_flags.enable: false
+                     
+                     Gp.type: phase
+                     Gp.time_interval: 0
+                     Gp.freq_interval: 0
+                     Gp.respect_scan_boundaries: true
+                     Gp.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'phasecal1.qc/Gp' 
+            
+                     Ga.type: amplitude
+                     Ga.time_interval: 0
+                     Ga.freq_interval: 0
+                     Ga.respect_scan_boundaries: true
+                     Ga.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb1.qc/Ga' 
+             
+                     K.type: delay
+                     K.time_interval: 0 
+                     K.freq_interval: 0
+                     K.respect_scan_boundaries: true
+                     K.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'phasecal1.qc/K' 
+                     
+                     B.type: diag_complex
+                     B.time_interval: 0
+                     B.freq_interval: 1
+                     B.interp_mode: ampphase
+                     B.respect_scan_boundaries: true
+                     B.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb1.qc/B'
+                     
+                     Xf.solve_per: array
+                     Xf.time_interval: 0
+                     Xf.freq_interval: 1
+                     Xf.type: crosshand_phase
+                     Xf.respect_scan_boundaries: true
+                     Xf.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'polcal1.qc/Xf'
+            
+                     Df.type: leakage
+                     Df.time_interval: 0
+                     Df.freq_interval: 1
+                     Df.respect_scan_boundaries: false
+                     Df.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb1.qc/Df'
+                        
+                         
+                     
+               
+               
+                     
+                  
+              
+           
+               
+             
+               
+      
+            
+            
+            
+            
+            
+               
+               
+                     
+         
+               
+               
+        
+      
+         
+         
+        
+         
+               
+         
+               
+         
+        
+        
+        
+        
+        
+        
+        
+       
+        
+        
+        
+
+                    
+         
+               
+               
+               
+               
+               
+               
+               
+           
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+        
+        
+        
+       
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+         
+               
+               
+                   
+         
+                  
+         
+        
+           
+                   
+     
+         
+         
+        
+               
+               
+               
+               
+              
+               
+               
+              
+     
+     
+             
+   
+   
+

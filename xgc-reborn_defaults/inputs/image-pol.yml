@@ -1,0 +1,225 @@
+image-pol:
+  enable:
+    dtype: bool
+    required: true
+  flag:
+    restore:
+      enable: 
+        dtype: bool
+        required: false
+    summary:
+      enable: 
+        dtype: bool
+        required: false
+  image:
+    enable:
+      dtype: bool
+      required: true 
+      default: true   
+    image-with:
+      dtype: str
+      required: false
+      default: wsclean
+    wsclean:
+      nchan: 
+        dtype: int
+        required: false
+      size: 
+        dtype: Union[int, Tuple[int, int]]
+        required: false
+      auto-threshold: 
+        dtype: float
+        required: false
+      weight: 
+        dtype: Union[str, Tuple[str, float]]
+        required: false
+      scale:
+        dtype: Union[str, float]
+        required: false
+      niter:
+        dtype: int
+        required: false
+      pol:
+        dtype: Union[str, List[str]]
+        required: false
+      threads:
+        dtype: int
+        required: false
+      verbose:
+        dtype: bool
+        required: false
+      mem:
+        dtype: int
+        required: false
+      abs-mem:
+        dtype: int
+        required: false
+      weighting-rank-filter:
+        dtype: int
+        required: false
+      log-time:
+        dtype: bool
+        required: false
+      no-update-model-required:
+        dtype: bool
+        required: false
+      squared-channel-joining:
+        dtype: bool
+        required: false
+      mf-weighting:
+        dtype: bool
+        required: false
+      no-mf-weighting:
+        dtype: bool
+        required: false
+      taper-tukey:
+        dtype: float
+        required: false
+      taper-inner-tukey:
+        dtype: float
+        required: false
+      padding:
+        dtype: float
+        required: false
+      maxuvw-m:
+        dtype: float
+        required: false
+      minuvw-m:
+        dtype: float
+        required: false
+      maxuv-l:
+        dtype: float
+        required: false
+      minuv-l:
+        dtype: float
+        required: false
+      auto-mask: 
+        dtype: float
+        required: false
+      mgain:
+        dtype: float
+        required: false
+      multiscale:
+        dtype: bool
+        required: false
+      multiscale-scales:
+        dtype: List[float]
+        required: false
+      fit-spectral-pol:
+        dtype: int
+        required: false
+      temp-dir:
+        dtype: Directory
+        required: false
+      model-column:
+        dtype: str
+        required: false
+      channel-range:
+        dtype: List[int]
+        required: false
+      join-polarizations:
+        dtype: bool
+        required: false
+      join-channels:
+        dtype: bool
+        required: false
+      link-polarizations:
+        dtype: Union[str, List[str]]
+        required: false
+      field:
+        dtype: Union[str, List[int]]
+        required: false
+      parallel-reordering:
+        dtype: int
+        required: false
+      parallel-gridding:
+        dtype: int
+        required: false
+      parallel-deconvolution:
+        dtype: int
+        required: false
+      deconvolution-threads:
+        dtype: int
+        required: false
+  upsample:
+    enable: 
+      dtype: bool
+      required: true
+      default: false
+    upsample-with: 
+      dtype: str
+      required: false
+      default: smops
+    smops:
+      num-threads: 
+        dtype: int
+        required: false
+      channels-out: 
+        dtype: int
+        required: false
+      polynomial-order: 
+        dtype: int
+        required: false  
+  mask:
+    enable:
+      dtype: bool
+      required: true
+      default: true
+    mask-with:
+      dtype: str
+      required: true
+      default: breizorro
+    breizorro:
+      threshold:
+        dtype: float
+        required: false
+      boxsize:
+        dtype: int
+        required: false
+      dilate:
+        dtype: int
+        required: false
+      savenoise:
+        dtype: bool
+        required: false
+      fill-holes:
+        dtype: bool
+        required: false
+  assess:
+    enable:
+      dtype: bool
+      required: false
+      default: true   
+    assess-with:
+      dtype: str
+      required: true
+      default: aimfast
+    aimfast:
+      all_source:
+        dtype: bool
+        required: false
+      tolerance:
+        dtype: float
+        required: false
+  
+     
+         
+         
+            
+        
+        
+                  
+            
+           
+  
+
+            
+      
+               
+
+  
+     
+  
+   
+  
+  

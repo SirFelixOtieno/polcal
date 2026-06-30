@@ -1,0 +1,18 @@
+lib:
+  recipes:
+    image-pfb:
+      name: image-pfb
+      info: A recipe for imaging using sara algorithm
+      
+      assign:
+            dirs.base: 
+            dirs.temp: '{config.run.env.HOME}/tmp'
+            log.dir: '{root.logdir}/log-{config.run.datetime}'
+            
+      inputs:
+            field:
+                 dtype: str 
+            
+      steps:
+            
+            

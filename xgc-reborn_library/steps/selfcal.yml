@@ -1,0 +1,307 @@
+lib:
+   steps:
+      selfcal:
+         quartical:
+            
+            phase-1:
+               cab: quartical
+               params:
+                  _use: lib.params.selfcal.quartical
+                  Gp.type: phase
+                  Gp.solve_per: antenna
+                  Gp.respect_scan_boundaries: true
+                  Gp.time_interval:        =IFSET(recipe.selfcal.calibrate.quartical.gain.time_interval,                recipe.selfcal.calibrate.quartical.gain.time_interval,        1) 
+                  Gp.freq_interval:        =IFSET(recipe.selfcal.calibrate.quartical.gain.freq_interval,                recipe.selfcal.calibrate.quartical.gain.freq_interval,        0)
+                  
+                  input_ms.freq_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,               recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,       0)
+                  input_ms.time_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.time_chunk,               recipe.selfcal.calibrate.quartical.input_ms.time_chunk,      25)
+                  
+                  mad_flags.enable:        =IFSET(recipe.selfcal.calibrate.quartical.mad_flags.enable,                  recipe.selfcal.calibrate.quartical.mad_flags.enable,      false)
+                  
+            phase-2:
+               cab: quartical
+               params:
+                  _use: lib.params.selfcal.quartical
+                  Gp.type: phase
+                  Gp.solve_per: antenna
+                  Gp.respect_scan_boundaries: true
+                  Gp.time_interval:        =IFSET(recipe.selfcal.calibrate.quartical.gain.time_interval,                recipe.selfcal.calibrate.quartical.gain.time_interval,        1)
+                  Gp.freq_interval:        =IFSET(recipe.selfcal.calibrate.quartical.gain.freq_interval,                recipe.selfcal.calibrate.quartical.gain.freq_interval,        0)
+                  Gp.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'selfcal' + '/' + 'gains' + '/'+ 'selfcal1-phase.qc/Gp'
+                  
+                  input_ms.freq_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,               recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,       0)
+                  input_ms.time_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.time_chunk,               recipe.selfcal.calibrate.quartical.input_ms.time_chunk,      25)
+                  
+            phase-3:
+               cab: quartical
+               params:
+                  _use: lib.params.selfcal.quartical
+                  Gp.type: phase
+                  Gp.solve_per: antenna
+                  Gp.respect_scan_boundaries: true
+                  Gp.time_interval:       =IFSET(recipe.selfcal.calibrate.quartical.gain.time_interval,                 recipe.selfcal.calibrate.quartical.gain.time_interval,        1)
+                  Gp.freq_interval:       =IFSET(recipe.selfcal.calibrate.quartical.gain.freq_interval,                 recipe.selfcal.calibrate.quartical.gain.freq_interval,        0)
+                  Gp.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'selfcal' + '/' + 'gains' + '/'+ 'selfcal2-phase.qc/Gp'
+                  
+                  input_ms.freq_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,               recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,       0)
+                  input_ms.time_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.time_chunk,               recipe.selfcal.calibrate.quartical.input_ms.time_chunk,      25)
+                  
+            phase-4:
+               cab: quartical
+               params:
+                  _use: lib.params.selfcal.quartical
+                  Gp.type: phase
+                  Gp.solve_per: antenna
+                  Gp.respect_scan_boundaries: true
+                  Gp.time_interval:       =IFSET(recipe.selfcal.calibrate.quartical.gain.time_interval,                 recipe.selfcal.calibrate.quartical.gain.time_interval,        1)
+                  Gp.freq_interval:       =IFSET(recipe.selfcal.calibrate.quartical.gain.freq_interval,                 recipe.selfcal.calibrate.quartical.gain.freq_interval,        0)
+                  Gp.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'selfcal' + '/' + 'gains' + '/'+ 'selfcal3-phase.qc/Gp'
+                  
+                  input_ms.freq_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,               recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,       0)
+                  input_ms.time_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.time_chunk,               recipe.selfcal.calibrate.quartical.input_ms.time_chunk,      25)  
+                      
+            phase-5:
+               cab: quartical
+               params:
+                  _use: lib.params.selfcal.quartical
+                  Gp.type: phase
+                  Gp.solve_per: antenna
+                  Gp.respect_scan_boundaries: true
+                  Gp.time_interval:       =IFSET(recipe.selfcal.calibrate.quartical.gain.time_interval,                 recipe.selfcal.calibrate.quartical.gain.time_interval,        1)
+                  Gp.freq_interval:       =IFSET(recipe.selfcal.calibrate.quartical.gain.freq_interval,                 recipe.selfcal.calibrate.quartical.gain.freq_interval,        0)
+                  Gp.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'selfcal' + '/' + 'gains' + '/'+ 'selfcal4-phase.qc/Gp'
+                  
+                  input_ms.freq_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,               recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,       0)
+                  input_ms.time_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.time_chunk,               recipe.selfcal.calibrate.quartical.input_ms.time_chunk,      25)
+                  
+            delay_and_offset-1:
+               cab: quartical
+               params:
+                  _use: lib.params.selfcal.quartical
+                  K.solve_per: antenna
+                  K.type: delay_and_offset
+                  K.respect_scan_boundaries: true
+                  K.time_interval:         =IFSET(recipe.selfcal.calibrate.quartical.gain.time_interval,                recipe.selfcal.calibrate.quartical.gain.time_interval,        1) 
+                  K.freq_interval:         =IFSET(recipe.selfcal.calibrate.quartical.gain.freq_interval,                recipe.selfcal.calibrate.quartical.gain.freq_interval,        0)  
+                  
+                  input_ms.freq_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,               recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,       0)
+                  input_ms.time_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.time_chunk,               recipe.selfcal.calibrate.quartical.input_ms.time_chunk,      25)
+                  
+                  mad_flags.enable:        =IFSET(recipe.selfcal.calibrate.quartical.mad_flags.enable,                  recipe.selfcal.calibrate.quartical.mad_flags.enable,      false)
+                  
+            delay_and_offset-2:
+               cab: quartical
+               params:
+                  _use: lib.params.selfcal.quartical
+                  K.solve_per: antenna
+                  K.type: delay_and_offset
+                  K.respect_scan_boundaries: true
+                  K.time_interval:         =IFSET(recipe.selfcal.calibrate.quartical.gain.time_interval,                recipe.selfcal.calibrate.quartical.gain.time_interval,        1)
+                  K.freq_interval:         =IFSET(recipe.selfcal.calibrate.quartical.gain.freq_interval,                recipe.selfcal.calibrate.quartical.gain.freq_interval,        0) 
+                  K.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'selfcal' + '/' + 'gains' + '/' + 'selfcal1-delay.qc/K'
+                  
+                  input_ms.freq_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,               recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,       0)
+                  input_ms.time_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.time_chunk,               recipe.selfcal.calibrate.quartical.input_ms.time_chunk,      25)
+                  
+            delay_and_offset-3:
+               cab: quartical
+               params:
+                  _use: lib.params.selfcal.quartical
+                  K.solve_per: antenna
+                  K.type: delay_and_offset
+                  K.respect_scan_boundaries: true
+                  K.time_interval:         =IFSET(recipe.selfcal.calibrate.quartical.gain.time_interval,                recipe.selfcal.calibrate.quartical.gain.time_interval,        1)
+                  K.freq_interval:         =IFSET(recipe.selfcal.calibrate.quartical.gain.freq_interval,                recipe.selfcal.calibrate.quartical.gain.freq_interval,        0) 
+                  K.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'selfcal' + '/' + 'gains' + '/' + 'selfcal2-delay.qc/K'
+                  
+                  input_ms.freq_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,               recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,       0)
+                  input_ms.time_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.time_chunk,               recipe.selfcal.calibrate.quartical.input_ms.time_chunk,      25)
+                  
+            delay_and_offset-4:
+               cab: quartical
+               params:
+                  _use: lib.params.selfcal.quartical
+                  K.solve_per: antenna
+                  K.type: delay_and_offset
+                  K.respect_scan_boundaries: true
+                  K.time_interval:         =IFSET(recipe.selfcal.calibrate.quartical.gain.time_interval,                recipe.selfcal.calibrate.quartical.gain.time_interval,        1)
+                  K.freq_interval:         =IFSET(recipe.selfcal.calibrate.quartical.gain.freq_interval,                recipe.selfcal.calibrate.quartical.gain.freq_interval,        0) 
+                  K.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'selfcal' + '/' + 'gains' + '/' + 'selfcal3-delay.qc/K'
+                  
+                  input_ms.freq_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,               recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,       0)
+                  input_ms.time_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.time_chunk,               recipe.selfcal.calibrate.quartical.input_ms.time_chunk,      25)       
+                  
+            delay_and_offset-5:
+               cab: quartical
+               params:
+                  _use: lib.params.selfcal.quartical
+                  K.solve_per: antenna
+                  K.type: delay_and_offset
+                  K.respect_scan_boundaries: true
+                  K.time_interval:         =IFSET(recipe.selfcal.calibrate.quartical.gain.time_interval,                recipe.selfcal.calibrate.quartical.gain.time_interval,        1)
+                  K.freq_interval:         =IFSET(recipe.selfcal.calibrate.quartical.gain.freq_interval,                recipe.selfcal.calibrate.quartical.gain.freq_interval,        0) 
+                  K.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'selfcal' + '/' + 'gains' + '/' + 'selfcal4-delay.qc/K'
+                  
+                  input_ms.freq_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,               recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,       0)
+                  input_ms.time_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.time_chunk,               recipe.selfcal.calibrate.quartical.input_ms.time_chunk,      25)
+                     
+            complex-1:
+               cab: quartical
+               params:
+                  _use: lib.params.selfcal.quartical    
+                  G.type: complex
+                  G.solve_per: antenna
+                  G.respect_scan_boundaries: true
+                  G.time_interval:         =IFSET(recipe.selfcal.calibrate.quartical.gain.time_interval,                recipe.selfcal.calibrate.quartical.gain.time_interval,        1) 
+                  G.freq_interval:         =IFSET(recipe.selfcal.calibrate.quartical.gain.freq_interval,                recipe.selfcal.calibrate.quartical.gain.freq_interval,        0)
+                  
+                  input_ms.freq_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,               recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,       0)
+                  input_ms.time_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.time_chunk,               recipe.selfcal.calibrate.quartical.input_ms.time_chunk,      25)
+                   
+            complex-2:
+               cab: quartical
+               params:
+                  _use: lib.params.selfcal.quartical   
+                  G.type: complex
+                  G.solve_per: antenna
+                  G.respect_scan_boundaries: true
+                  G.time_interval:         =IFSET(recipe.selfcal.calibrate.quartical.gain.time_interval,                recipe.selfcal.calibrate.quartical.gain.time_interval,        1) 
+                  G.freq_interval:         =IFSET(recipe.selfcal.calibrate.quartical.gain.freq_interval,                recipe.selfcal.calibrate.quartical.gain.freq_interval,        0)
+                  G.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'selfcal' + '/' + 'gains' + '/' + 'selfcal1-complex.qc/G'
+                  
+                  input_ms.freq_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,               recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,       0)
+                  input_ms.time_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.time_chunk,               recipe.selfcal.calibrate.quartical.input_ms.time_chunk,      25) 
+                  
+            complex-3:
+               cab: quartical
+               params:
+                  _use: lib.params.selfcal.quartical   
+                  G.type: complex
+                  G.solve_per: antenna
+                  G.respect_scan_boundaries: true
+                  G.time_interval: =IFSET(recipe.selfcal.calibrate.quartical.gain.time_interval, recipe.selfcal.calibrate.quartical.gain.time_interval, 1) 
+                  G.freq_interval: =IFSET(recipe.selfcal.calibrate.quartical.gain.freq_interval, recipe.selfcal.calibrate.quartical.gain.freq_interval, 0)
+                  G.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'selfcal' + '/' + 'gains' + '/' + 'selfcal2-complex.qc/G'
+                  
+                  input_ms.freq_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,               recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,        0)
+                  input_ms.time_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.time_chunk,               recipe.selfcal.calibrate.quartical.input_ms.time_chunk,       25) 
+                  
+            diag_complex-1:
+               cab: quartical
+               params:
+                  _use: lib.params.selfcal.quartical    
+                  G.type: diag_complex
+                  G.solve_per: antenna
+                  G.respect_scan_boundaries: true
+                  G.time_interval: =IFSET(recipe.selfcal.calibrate.quartical.gain.time_interval, recipe.selfcal.calibrate.quartical.gain.time_interval, 1) #
+                  G.freq_interval: =IFSET(recipe.selfcal.calibrate.quartical.gain.freq_interval, recipe.selfcal.calibrate.quartical.gain.freq_interval, 0) 
+                  
+                  input_ms.freq_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,               recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,          0)
+                  input_ms.time_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.time_chunk,               recipe.selfcal.calibrate.quartical.input_ms.time_chunk,         25) 
+                  
+            diag_complex-2:
+               cab: quartical
+               params:
+                  _use: lib.params.selfcal.quartical   
+                  G.type: diag_complex
+                  G.solve_per: antenna
+                  G.respect_scan_boundaries: true
+                  G.time_interval: =IFSET(recipe.selfcal.calibrate.quartical.gain.time_interval, recipe.selfcal.calibrate.quartical.gain.time_interval, 1) #
+                  G.freq_interval: =IFSET(recipe.selfcal.calibrate.quartical.gain.freq_interval, recipe.selfcal.calibrate.quartical.gain.freq_interval, 0) 
+                  G.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'selfcal' + '/' +  'gains' + '/'+ 'selfcal1-diag_complex.qc/G' 
+                  
+                  input_ms.freq_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,               recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,          0)
+                  input_ms.time_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.time_chunk,               recipe.selfcal.calibrate.quartical.input_ms.time_chunk,         25) 
+                  
+            diag_complex-3:
+               cab: quartical
+               params:
+                  _use: lib.params.selfcal.quartical   
+                  G.type: diag_complex
+                  G.solve_per: antenna
+                  G.respect_scan_boundaries: true
+                  G.time_interval: =IFSET(recipe.selfcal.calibrate.quartical.gain.time_interval, recipe.selfcal.calibrate.quartical.gain.time_interval, 1) #
+                  G.freq_interval: =IFSET(recipe.selfcal.calibrate.quartical.gain.freq_interval, recipe.selfcal.calibrate.quartical.gain.freq_interval, 0) 
+                  G.load_from: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'selfcal' + '/' +  'gains' + '/'+ 'selfcal2-diag_complex.qc/G'
+                  
+                  input_ms.freq_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,               recipe.selfcal.calibrate.quartical.input_ms.freq_chunk,          0)
+                  input_ms.time_chunk:     =IFSET(recipe.selfcal.calibrate.quartical.input_ms.time_chunk,               recipe.selfcal.calibrate.quartical.input_ms.time_chunk,         25) 
+                  
+                  
+             
+                  
+            
+        
+        
+        
+
+                    
+         
+               
+               
+               
+               
+               
+               
+               
+           
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+        
+        
+        
+       
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+
+         
+               
+               
+                   
+         
+                  
+         
+        
+           
+                   
+     
+         
+         
+        
+               
+               
+               
+               
+              
+               
+               
+              
+     
+     
+             
+   
+   
+
