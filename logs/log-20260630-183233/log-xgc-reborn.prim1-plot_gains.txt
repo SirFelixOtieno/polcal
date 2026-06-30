@@ -1,0 +1,1 @@
+2026-06-30 18:34:04 STIMELA.xgc-reborn.prim1-plot_gains INFO: selecting recipe steps for (sub)recipe: [bold green]inspect-prim2[/bold green]

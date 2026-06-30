@@ -1,0 +1,12 @@
+2026-06-30 16:34:09	INFO	::casa	
+2026-06-30 16:34:09	INFO	::casa	
+2026-06-30 16:34:09	INFO	::casa	The casa data found at measurespath is not being maintained by casaconfig.
+2026-06-30 16:34:09	INFO	::casa	The measures data found at measurespath is not being maintained by casaconfig.
+2026-06-30 16:34:09	INFO	::casa	visit https://casadocs.readthedocs.io/en/stable/notebooks/external-data.html for more information
+2026-06-30 16:34:09	INFO	::casa	
+2026-06-30 16:34:09	INFO	::casa	
+2026-06-30 16:34:15	INFO	::casa	Python version 3.10.16
+2026-06-30 16:34:15	INFO	::casa	CASA Version MODULAR 6.7.0.31
+2026-06-30 16:34:15	INFO	listobs::::casa	##########################################
+2026-06-30 16:34:15	INFO	listobs::::casa	##### Begin Task: listobs            #####
+2026-06-30 16:34:15	INFO	listobs::::casa	listobs( vis='/net/sinatra/vault-ike/andati/pica_redux/msdir/1576687564_sdp_l0.ms', selectdata=True, spw='', field='', antenna='', uvrange='', timerange='', correlation='', scan='', intent='', feed='', array='', observation='', verbose=True, listfile='1576687564_sdp_l0/QuartiCal/output/obsinfo/1576687564_sdp_l0-obsinfo_ms.txt', listunfl=False, cachesize=50.0, overwrite=True )

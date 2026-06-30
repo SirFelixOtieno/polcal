@@ -1,0 +1,1 @@
+2026-06-30 18:34:04 STIMELA.xgc-reborn.pol-plot1_gains INFO: selecting recipe steps for (sub)recipe: [bold green]inspect-pol2[/bold green]

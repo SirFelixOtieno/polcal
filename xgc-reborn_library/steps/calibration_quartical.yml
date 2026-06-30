@@ -104,18 +104,18 @@ lib:
                   
                phasecal:
                
-                  #g_to_ABS:
-                     #cab: G2abs
-                     #info: Replace G with abs(G) since we won't need the phase again
-                     #params:
-                        #source: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb1.qc/G'  
+                  g_to_ABS:
+                     cab: G2abs
+                     info: Replace G with abs(G) since we won't need the phase again
+                     params:
+                        source: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb1.qc/G'  
                
-                  #g_to_abs:
-                     #cab: kg2DGa
-                     #info: Replace G with abs(G) since we won't need the phase again
-                     #params:
-                        #sourceK: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb1.qc/K' 
-                        #sourceG: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb1.qc/G'  
+                  g_to_abs:
+                     cab: kg2DGa
+                     info: Replace G with abs(G) since we won't need the phase again
+                     params:
+                        sourceK: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb1.qc/K' 
+                        sourceG: =STRIPEXT(BASENAME(recipe.ms-path)) + '/' + '{recipe.crosscal.calibrate-with}/output' + '/' + 'gains' + '/'+ 'bpcal-kgb1.qc/G'  
                         
                   d:
                      cab: quartical
@@ -168,11 +168,6 @@ lib:
                      params:
                         _use:  lib.params.quartical.secondary
                   
-                        mad_flags.enable: false
-                        mad_flags.threshold_bl: 5
-                        mad_flags.max_deviation: 0
-                        mad_flags.threshold_global: 10
-                        
                         Gp.type: phase
                         Gp.time_interval: 4
                         Gp.freq_interval: 0

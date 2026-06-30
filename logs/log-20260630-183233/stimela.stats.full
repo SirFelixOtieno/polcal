@@ -1,0 +1,74 @@
+xgc-reborn:
+  elapsed: 16.50981
+  avg:
+    cpu: 18.365000000000002
+    mem_used: 334.0
+    mem_total: 504.0
+    load: 9.289999999999997
+    read_count: 5.0
+    read_gb: 0.000180816650390625
+    read_gbps: 0.00018403374250791922
+    read_ms: 98.55
+    write_count: 19.75
+    write_gb: 0.000110626220703125
+    write_gbps: 0.00011189934514996768
+    write_ms: 11.0
+    num_samples: 1.0
+  peak:
+    cpu: 36.4
+    mem_used: 334
+    mem_total: 504
+    load: 9.58
+    read_count: 64
+    read_gb: 0.00146484375
+    read_gbps: 0.001461257823301618
+    read_ms: 1271
+    write_count: 83
+    write_gb: 0.000614166259765625
+    write_gbps: 0.0006123439242470657
+    write_ms: 198
+    num_samples: 1
+  total:
+    read_count: 100
+    read_gb: 0.0036163330078125
+    read_ms: 1971
+    write_count: 395
+    write_gb: 0.0022125244140625
+    write_ms: 220
+xgc-reborn.obsinfo-listobs:
+  elapsed: 14.625114
+  avg:
+    cpu: 17.35
+    mem_used: 334.0
+    mem_total: 504.0
+    load: 9.275555555555552
+    read_count: 5.555555555555555
+    read_gb: 0.00020090738932291666
+    read_gbps: 0.00020448193611991025
+    read_ms: 109.5
+    write_count: 21.944444444444443
+    write_gb: 0.00012291802300347222
+    write_gbps: 0.0001243326057221863
+    write_ms: 12.222222222222221
+    num_samples: 1.0
+  peak:
+    cpu: 25.5
+    mem_used: 334
+    mem_total: 504
+    load: 9.58
+    read_count: 64
+    read_gb: 0.00146484375
+    read_gbps: 0.001461257823301618
+    read_ms: 1271
+    write_count: 83
+    write_gb: 0.000614166259765625
+    write_gbps: 0.0006123439242470657
+    write_ms: 198
+    num_samples: 1
+  total:
+    read_count: 100
+    read_gb: 0.0036163330078125
+    read_ms: 1971
+    write_count: 395
+    write_gb: 0.0022125244140625
+    write_ms: 220

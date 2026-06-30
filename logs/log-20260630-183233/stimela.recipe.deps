@@ -1,0 +1,463 @@
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/stimela:
+  version: 2.1.2.1
+  mtime: 1757497734.9582746
+  mtime_str: Wed Sep 10 11:48:54 2025
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/stimela/config.py:
+  origin: /home/otieno/xgc-reborn-env/lib/python3.10/site-packages/stimela
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/scabha/configuratt/__init__.py:
+  origin: /home/otieno/xgc-reborn-env/lib/python3.10/site-packages/stimela
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/scabha/configuratt/cache.py:
+  version: null
+  mtime: 1757497734.8742716
+  mtime_str: Wed Sep 10 11:48:54 2025
+  md5hash: 9fb396babd51469a809176f5cc8523fb
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/stimela/stimela.conf:
+  mtime: 1757497734.8942723
+  mtime_str: Wed Sep 10 11:48:54 2025
+  md5hash: 843e72355d34615d96a943da475592c1
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/stimela.conf:
+  mtime: 1757497745.5586731
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: d8547362d63e7bb23c550ef5ac13fc0b
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/genesis/cult-cargo-base.yml:
+  mtime: 1757497745.5186718
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: 6d406f9ea1abbba6325d269d245088fe
+/home/otieno/polcal/xgc-reborn_recipe.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: b1d7f2e6a23a6372d5106eadd4f50f52
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_cabs/xgc-reborn_cabs.yml:
+  mtime: 1782836978.7281847
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: ace170d215155f577c45ddc2f4e1df9b
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_library/recipes/inspect.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 94d48bab3c335bc67576fd0da4321ad5
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_library/steps/inspect.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: c7db065e77d0a5e54fdfea9022df6d8b
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_library/steps/imaging.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: ea4c8ee3bdfb14d45e23b59e3ee06c60
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_library/steps/flagging.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 81913b8bfd41fc06511f321e269c642a
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_library/steps/selfcal.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 7ea8cb718080e4560f835af25aa1d2a1
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_library/steps/prepdata.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: d78aa1a8ce6f09c258a0701a575eec7f
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_library/steps/calibration_casa.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 03f5635fbe15bac9f4ddefca940c87b3
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_library/steps/calibration_quartical.yml:
+  mtime: 1782837142.6184485
+  mtime_str: Tue Jun 30 18:32:22 2026
+  md5hash: e8dc00e318a184d420e4a8cd29ceffb1
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_library/params/imaging.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: dff54471219e0acac1ee198b9392322d
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_library/params/selfcal.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: aca35458bfb20464f3b31c8e8a894e9d
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_library/params/flagdata.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: b84347a47870b6872dbb1a83adae9076
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_library/params/information.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: ea29e140a9ed868475dd8c399c2df673
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_library/params/manipulation.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: a9c0d00f422aa489b00253613df1f1d8
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_library/params/visualization.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 3617aee39bcb84ccf9623366c4cd55d6
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_library/params/calibration_casa.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 5e044767111ce07d2484a0e9e2b5fc1f
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_library/params/calibration_quartical.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 09f27aa0ebabbad8ab5f327a28af914b
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/bdsf.yml:
+  mtime: 1757497745.502671
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: 1bdd6c5f9e8087063d55628be8df9932
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/smops.yml:
+  mtime: 1757497745.5586731
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: 3c207017d635062c37b973736784851d
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/cubical.yml:
+  mtime: 1757497745.5106714
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: 3cb8f6364a39717a000c4f11a1a3b88c
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/genesis/cubical/schema.yaml:
+  mtime: 1757497745.5186718
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: ce723b8c324f9cd238d71934d9572a26
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/msutils.yml:
+  mtime: 1757497745.550673
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: e327344d0a3095660487746294dcc4be
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/aimfast.yml:
+  mtime: 1757497745.502671
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: d2e2422eeba873c872dbefef47a3c389
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/shadems.yml:
+  mtime: 1757418418.0
+  mtime_str: Tue Sep  9 13:46:58 2025
+  md5hash: ebaf9e73d6de995387b5237892ad2a1c
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/rfinder.yml:
+  mtime: 1759092162.2142353
+  mtime_str: Sun Sep 28 22:42:42 2025
+  md5hash: 6a22aa0e08e7ddd3c9e50291b026f016
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/wsclean.yml:
+  mtime: 1757497745.5586731
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: 8fbc2c9706910c0da121909626eaaef4
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/genesis/wsclean/wsclean-base.yml:
+  mtime: 1754384332.0
+  mtime_str: Tue Aug  5 10:58:52 2025
+  md5hash: 1613a7a2911b287c210ce1ef7803feed
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/quartical.yml:
+  mtime: 1757497745.5586731
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: c898ab49ba104b6f6f4cfb6e0da46f5b
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/genesis/quartical/argument_schema.yaml:
+  mtime: 1757497745.530672
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: f570149bd9a7a29d8f625b6aafccf97e
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/breizorro.yml:
+  mtime: 1757497745.502671
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: 0afa76886ab183074a9ed859b9b80ddd
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/genesis/breizorro/breizorro.yaml:
+  mtime: 1757497745.5106714
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: 321f7b1cb37265be2ef626af83462ca3
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/tricolour.yml:
+  mtime: 1757497745.5586731
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: 3ddf9c78dbc77da0caa7b9a97d6b6956
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/crystalball.yml:
+  mtime: 1758817022.2640169
+  mtime_str: Thu Sep 25 18:17:02 2025
+  md5hash: 3a21c4a0eaf7eb209ce47570d62850c2
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/casa/flag.yml:
+  mtime: 1757497745.5106714
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: ad88460afcd5caca242a201cbd6ef929
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/genesis/casa/casa-inputs.yml:
+  mtime: 1757497745.5186718
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: 38700d1ebc1c2d801ab39e98abd260e6
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/casa/setjy.yml:
+  mtime: 1757497745.5106714
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: bd1eb6e08aa312fd34e5b8b24a1d35b7
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/casa/polcal.yml:
+  mtime: 1757497745.5106714
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: 7e88e07d734245c082d9d2adf7424260
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/casa/plotms.yml:
+  mtime: 1757497745.5106714
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: 8fc4ce07d98940a693c8a8ef2cc02f2e
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/casa/listobs.yml:
+  mtime: 1757497745.5106714
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: 4c8865be394af15e37704f101997059f
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/casa/bandpass.yml:
+  mtime: 1757497745.502671
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: 44ec9fe071906f881b079c7c98bd68db
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/casa/plotants.yml:
+  mtime: 1757497745.5106714
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: b9c7ed2ec795125786267e2d7c701b07
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/casa/clearcal.yml:
+  mtime: 1757497745.502671
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: 809062003f192edcfa48fe4a3d7105f5
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/casa/calibration.yml:
+  mtime: 1757497745.502671
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: bf1c5e5d501cf07f96ed9936b96c2b37
+/home/otieno/xgc-reborn-env/lib/python3.10/site-packages/cultcargo/casa/mstransform.yml:
+  mtime: 1757497745.5106714
+  mtime_str: Wed Sep 10 11:49:05 2025
+  md5hash: 9f90c109db63b67dbfb42a9efee3747c
+/home/otieno/polcal/xgc-reborn_cabs/CASA/immath.yml:
+  mtime: 1782836978.7281847
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 15547ca75cf202a28c35a0015792da2c
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_cabs/CASA/rmtables.yml:
+  mtime: 1782836978.7281847
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: d2a74aeb778395db489e02555e60eadc
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_cabs/quartical/quartical-plotter.yml:
+  mtime: 1782836978.7281847
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 5875d24e266e4aca398f197af24e1cd4
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_vars/xgc-reborn_vars.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 00c071c39d7e33751b3196399f7c6c1c
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_obs.yml:
+  mtime: 1782836978.7601857
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 82b656228805e0772f0a485ebc9cb33c
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_defaults/inputs/flag.yml:
+  mtime: 1782836978.7561858
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 077a096e62256d26881a34b914c38038
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_defaults/inputs/polcal.yml:
+  mtime: 1782836978.7561858
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 8972781744ba2db813c9434847e76038
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_defaults/inputs/selfcal.yml:
+  mtime: 1782836978.7561858
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: ea1ab758284c26e5c75255a056f6b781
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_defaults/inputs/prepare.yml:
+  mtime: 1782836978.7561858
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: fd0c377347a87bb1954646bff54bc651
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_defaults/inputs/inspect.yml:
+  mtime: 1782836978.7561858
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 13e2a2fd83e5cbac7defa69a38abf706
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_defaults/inputs/obsconf.yml:
+  mtime: 1782836978.7561858
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 49601ff81fe26699ef67f8c2eaf40978
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_defaults/inputs/crosscal.yml:
+  mtime: 1782836978.7561858
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 7e2b9da4378966800f06a87c3b6ab994
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_defaults/inputs/image-pol.yml:
+  mtime: 1782836978.7561858
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 3cfa28b20273a78c03197bd228602a5d
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_defaults/inputs/transform.yml:
+  mtime: 1782836978.7561858
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 4c72327ee9f19890ddcb65a35498de63
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
+/home/otieno/polcal/xgc-reborn_defaults/outputs/outputs.yml:
+  mtime: 1782836978.7561858
+  mtime_str: Tue Jun 30 18:29:38 2026
+  md5hash: 6c75424519fd6a4177bcb57d1b76c10f
+  git:
+    branch: main                             057869c [origin/main] correct error
+    describe: heads/main-0-g057869c50459e733
+    remotes:
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (fetch)"
+    - "origin\thttps://github.com/SirFelixOtieno/polcal.git (push)"
